@@ -125,90 +125,95 @@ const AMISTOSOS=[
 ];
 
 // ─── ENTRENAMIENTOS — hoja Entrenamientos del Drive ───────────────────────────
-// h15/h18/spr = datos DIRECTOS de sub-tabla de zonas del Drive
-// h15 = "Distancia AI (15 a 18km/h)" DIRECTO
-// h18 = "Distancia AI (18 a 21 km/h)" DIRECTO
-// spr = "Distancia Sprint (>21 km/h)" DIRECTO
+// Columnas del Drive: HSR(>15) | Distancia AI(18-21) | Distancia Sprint(>21)
+// h15 = HSR(>15) - h18 - spr (calculado)
+// h18 = Distancia AI(18-21) DIRECTO del Drive
+// spr = Distancia Sprint(>21) DIRECTO del Drive
+// prom_h18 y prom_spr = promedio fila del Drive cuando existe
 
 const ENTRENOS=[
   // ── 6-abr ─────────────────────────────────────────────────────────────────
+  // Drive: Gomez/Sierra/Alfaro/Carrasco/Mateluna/Pareja/Pollmann/Gutierrez/Errazu/Gacitua
+  // Prom del Drive: hsr=1631, h18=434, spr=11
   {id:"e01",label:"6/04",fecha:"6/04",tipo:"entreno",
    prom_hsr:1631,prom_h18:434,prom_spr:11,
    zonas:[
-    {n:"Pareja Camila",    h15:1088,h18:22,  spr:0},
-    {n:"Alfaro Javiera",   h15:1015,h18:144, spr:0},
-    {n:"Carrasco Sofia",   h15:735, h18:571, spr:0},
-    {n:"Pollmann Marianne",h15:1087,h18:341, spr:0},
-    {n:"Gomez Camila",     h15:553, h18:38,  spr:0},
-    {n:"Errazu Sofia",     h15:739, h18:707, spr:0},
-    {n:"Gutierrez Renata", h15:1345,h18:206, spr:0},
-    {n:"Mateluna Florencia",h15:1222,h18:318,spr:0},
-    {n:"Gacitua Emilia",   h15:849, h18:722, spr:32},
-    {n:"Sierra Julieta",   h15:372, h18:142, spr:0},
+    {n:"Gomez Camila",      h15:782-70-0,   h18:70,  spr:0},
+    {n:"Sierra Julieta",    h15:514-142-0,  h18:142, spr:0},
+    {n:"Alfaro Javiera",    h15:1592-215-0, h18:215, spr:0},
+    {n:"Carrasco Sofia",    h15:1910-839-0, h18:839, spr:0},
+    {n:"Mateluna Florencia",h15:1863-386-18,h18:386, spr:18},
+    {n:"Pareja Camila",     h15:1381-61-0,  h18:61,  spr:0},
+    {n:"Pollmann Marianne", h15:1938-454-0, h18:454, spr:0},
+    {n:"Gutierrez Renata",  h15:1927-302-0, h18:302, spr:0},
+    {n:"Errazu Sofia",      h15:2151-952-0, h18:952, spr:0},
+    {n:"Gacitua Emilia",    h15:2253-922-95,h18:922, spr:95},
    ],
    jugadoras:[
-    {n:"Gomez Camila",     min:51,dist:5161,mxm:100,hsr:782, acc:2, dsc:9, vmax:20.1},
-    {n:"Sierra Julieta",   min:52,dist:5566,mxm:106,hsr:514, acc:24,dsc:31,vmax:22.7},
-    {n:"Alfaro Javiera",   min:54,dist:6144,mxm:113,hsr:1592,acc:6, dsc:16,vmax:20.6},
-    {n:"Carrasco Sofia",   min:55,dist:6204,mxm:111,hsr:1910,acc:22,dsc:22,vmax:22.6},
+    {n:"Gomez Camila",      min:51,dist:5161,mxm:100,hsr:782, acc:2, dsc:9, vmax:20.1},
+    {n:"Sierra Julieta",    min:52,dist:5566,mxm:106,hsr:514, acc:24,dsc:31,vmax:22.7},
+    {n:"Alfaro Javiera",    min:54,dist:6144,mxm:113,hsr:1592,acc:6, dsc:16,vmax:20.6},
+    {n:"Carrasco Sofia",    min:55,dist:6204,mxm:111,hsr:1910,acc:22,dsc:22,vmax:22.6},
     {n:"Mateluna Florencia",min:61,dist:6831,mxm:112,hsr:1863,acc:27,dsc:18,vmax:21.9},
-    {n:"Pareja Camila",    min:66,dist:6945,mxm:105,hsr:1381,acc:7, dsc:8, vmax:21.5},
-    {n:"Pollmann Marianne",min:65,dist:7322,mxm:111,hsr:1938,acc:11,dsc:29,vmax:23.0},
-    {n:"Gutierrez Renata", min:69,dist:7359,mxm:105,hsr:1927,acc:17,dsc:6, vmax:21.1},
-    {n:"Errazu Sofia",     min:71,dist:7608,mxm:106,hsr:2151,acc:37,dsc:9, vmax:22.5},
-    {n:"Gacitua Emilia",   min:71,dist:7916,mxm:110,hsr:2253,acc:29,dsc:33,vmax:24.5},
+    {n:"Pareja Camila",     min:66,dist:6945,mxm:105,hsr:1381,acc:7, dsc:8, vmax:21.5},
+    {n:"Pollmann Marianne", min:65,dist:7322,mxm:111,hsr:1938,acc:11,dsc:29,vmax:23.0},
+    {n:"Gutierrez Renata",  min:69,dist:7359,mxm:105,hsr:1927,acc:17,dsc:6, vmax:21.1},
+    {n:"Errazu Sofia",      min:71,dist:7608,mxm:106,hsr:2151,acc:37,dsc:9, vmax:22.5},
+    {n:"Gacitua Emilia",    min:71,dist:7916,mxm:110,hsr:2253,acc:29,dsc:33,vmax:24.5},
    ]},
 
   // ── 8-abr ─────────────────────────────────────────────────────────────────
+  // Drive: Pareja/Carrasco/Gomez/Alfaro/Pollmann/Gutierrez/Mateluna/Gacitua (21min)
+  // Prom del Drive: hsr=731, h18=386, spr=9 (calculado de jugadoras)
   {id:"e02",label:"8/04",fecha:"8/04",tipo:"entreno",
    prom_hsr:731,prom_h18:386,prom_spr:9,
    zonas:[
-    {n:"Pareja Camila",    h15:440, h18:195,spr:0},
-    {n:"Carrasco Sofia",   h15:244, h18:614,spr:0},
-    {n:"Gomez Camila",     h15:563, h18:120,spr:2},
-    {n:"Alfaro Javiera",   h15:472, h18:300,spr:0},
-    {n:"Pollmann Marianne",h15:481, h18:213,spr:0},
-    {n:"Gutierrez Renata", h15:401, h18:421,spr:0},
-    {n:"Mateluna Florencia",h15:450,h18:364,spr:3},
-    {n:"Gacitua Emilia",   h15:285, h18:503,spr:67},
+    {n:"Pareja Camila",     h15:635-195-0,  h18:195, spr:0},
+    {n:"Carrasco Sofia",    h15:858-614-0,  h18:614, spr:0},
+    {n:"Gomez Camila",      h15:685-120-2,  h18:120, spr:2},
+    {n:"Alfaro Javiera",    h15:772-300-0,  h18:300, spr:0},
+    {n:"Pollmann Marianne", h15:694-213-0,  h18:213, spr:0},
+    {n:"Gutierrez Renata",  h15:823-421-0,  h18:421, spr:0},
+    {n:"Mateluna Florencia",h15:816-364-3,  h18:364, spr:3},
+    {n:"Gacitua Emilia",    h15:856-503-67, h18:503, spr:67},
    ],
    jugadoras:[
-    {n:"Pareja Camila",    min:21,dist:1365,mxm:64, hsr:635, acc:44,dsc:23,vmax:20.6},
-    {n:"Carrasco Sofia",   min:21,dist:1428,mxm:67, hsr:858, acc:47,dsc:40,vmax:23.5},
-    {n:"Gomez Camila",     min:21,dist:1433,mxm:67, hsr:685, acc:35,dsc:25,vmax:21.0},
-    {n:"Alfaro Javiera",   min:21,dist:1464,mxm:69, hsr:772, acc:42,dsc:28,vmax:21.1},
-    {n:"Pollmann Marianne",min:21,dist:1487,mxm:70, hsr:694, acc:38,dsc:21,vmax:20.6},
-    {n:"Gutierrez Renata", min:21,dist:1545,mxm:72, hsr:823, acc:44,dsc:30,vmax:21.6},
-    {n:"Mateluna Florencia",min:21,dist:1582,mxm:74,hsr:816, acc:50,dsc:25,vmax:21.1},
-    {n:"Gacitua Emilia",   min:21,dist:1594,mxm:75, hsr:856, acc:46,dsc:27,vmax:22.9},
+    {n:"Pareja Camila",     min:21,dist:1365,mxm:64, hsr:635, acc:44,dsc:23,vmax:20.6},
+    {n:"Carrasco Sofia",    min:21,dist:1428,mxm:67, hsr:858, acc:47,dsc:40,vmax:23.5},
+    {n:"Gomez Camila",      min:21,dist:1433,mxm:67, hsr:685, acc:35,dsc:25,vmax:21.0},
+    {n:"Alfaro Javiera",    min:21,dist:1464,mxm:69, hsr:772, acc:42,dsc:28,vmax:21.1},
+    {n:"Pollmann Marianne", min:21,dist:1487,mxm:70, hsr:694, acc:38,dsc:21,vmax:20.6},
+    {n:"Gutierrez Renata",  min:21,dist:1545,mxm:72, hsr:823, acc:44,dsc:30,vmax:21.6},
+    {n:"Mateluna Florencia",min:21,dist:1582,mxm:74, hsr:816, acc:50,dsc:25,vmax:21.1},
+    {n:"Gacitua Emilia",    min:21,dist:1594,mxm:75, hsr:856, acc:46,dsc:27,vmax:22.9},
    ]},
 
   // ── 10-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive: solo Muñoz Constanza
+  // Drive: solo Muñoz. Prom: hsr=1772, h18=913, spr=0
   {id:"e03",label:"10/04",fecha:"10/04",tipo:"entreno",
    prom_hsr:1772,prom_h18:913,prom_spr:0,
    zonas:[
-    {n:"Muñoz Constanza",h15:859,h18:913,spr:0},
+    {n:"Muñoz Constanza",h15:1772-913-0,h18:913,spr:0},
    ],
    jugadoras:[
     {n:"Muñoz Constanza",min:33,dist:2667,mxm:82,hsr:1772,acc:8,dsc:1,vmax:20.9},
    ]},
 
   // ── 13-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
+  // Drive: Arau/Gomez/Gacitua/Pareja/Alfaro/Retamal/Gutierrez/Carrasco/Mateluna/Sepulveda
   {id:"e04",label:"13/04",fecha:"13/04",tipo:"entreno",
    prom_hsr:1029,prom_h18:538,prom_spr:50,
    zonas:[
-    {n:"Arau Maria",        h15:19, h18:4,   spr:0},
-    {n:"Gomez Camila",      h15:281,h18:10,  spr:0},
-    {n:"Gacitua Emilia",    h15:565,h18:725, spr:124},
-    {n:"Pareja Camila",     h15:674,h18:265, spr:15},
-    {n:"Alfaro Javiera",    h15:661,h18:506, spr:42},
-    {n:"Retamal Antonia",   h15:807,h18:474, spr:82},
-    {n:"Gutierrez Renata",  h15:668,h18:331, spr:9},
-    {n:"Carrasco Sofia",    h15:631,h18:841, spr:119},
-    {n:"Mateluna Florencia",h15:691,h18:434, spr:71},
-    {n:"Sepulveda Eileen",  h15:606,h18:768, spr:35},
+    {n:"Arau Maria",        h15:23-4-0,    h18:4,   spr:0},
+    {n:"Gomez Camila",      h15:290-10-0,  h18:10,  spr:0},
+    {n:"Gacitua Emilia",    h15:1374-725-124,h18:725,spr:124},
+    {n:"Pareja Camila",     h15:954-265-15,h18:265, spr:15},
+    {n:"Alfaro Javiera",    h15:1168-506-42,h18:506,spr:42},
+    {n:"Retamal Antonia",   h15:1364-474-82,h18:474,spr:82},
+    {n:"Gutierrez Renata",  h15:998-331-9, h18:331, spr:9},
+    {n:"Carrasco Sofia",    h15:1502-841-119,h18:841,spr:119},
+    {n:"Mateluna Florencia",h15:1196-434-71,h18:434,spr:71},
+    {n:"Sepulveda Eileen",  h15:1409-768-35,h18:768,spr:35},
    ],
    jugadoras:[
     {n:"Arau Maria",        min:68,dist:1710,mxm:25, hsr:23,  acc:9, dsc:0, vmax:18.6},
@@ -224,21 +229,20 @@ const ENTRENOS=[
    ]},
 
   // ── 15-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
   {id:"e05",label:"15/04",fecha:"15/04",tipo:"entreno",
    prom_hsr:553,prom_h18:145,prom_spr:2,
    zonas:[
-    {n:"Errazu Sofia",     h15:192,h18:66,  spr:0},
-    {n:"Sierra Julieta",   h15:296,h18:112, spr:0},
-    {n:"Gomez Camila",     h15:256,h18:65,  spr:0},
-    {n:"Pollmann Marianne",h15:351,h18:92,  spr:0},
-    {n:"Alfaro Javiera",   h15:197,h18:35,  spr:5},
-    {n:"Muñoz Constanza",  h15:305,h18:46,  spr:0},
-    {n:"Silva Victoria",   h15:606,h18:207, spr:0},
-    {n:"Carrasco Sofia",   h15:637,h18:382, spr:0},
-    {n:"Pareja Camila",    h15:284,h18:112, spr:0},
-    {n:"Gutierrez Renata", h15:450,h18:146, spr:0},
-    {n:"Gacitua Emilia",   h15:618,h18:434, spr:13},
+    {n:"Errazu Sofia",     h15:258-66-0,  h18:66,  spr:0},
+    {n:"Sierra Julieta",   h15:408-112-0, h18:112, spr:0},
+    {n:"Gomez Camila",     h15:320-65-0,  h18:65,  spr:0},
+    {n:"Pollmann Marianne",h15:443-92-0,  h18:92,  spr:0},
+    {n:"Alfaro Javiera",   h15:236-35-5,  h18:35,  spr:5},
+    {n:"Muñoz Constanza",  h15:351-46-0,  h18:46,  spr:0},
+    {n:"Silva Victoria",   h15:813-207-0, h18:207, spr:0},
+    {n:"Carrasco Sofia",   h15:1019-382-0,h18:382, spr:0},
+    {n:"Pareja Camila",    h15:396-112-0, h18:112, spr:0},
+    {n:"Gutierrez Renata", h15:596-146-0, h18:146, spr:0},
+    {n:"Gacitua Emilia",   h15:1064-434-13,h18:434,spr:13},
    ],
    jugadoras:[
     {n:"Errazu Sofia",     min:16,dist:1558,mxm:95, hsr:258, acc:9, dsc:7, vmax:20.9},
@@ -255,19 +259,19 @@ const ENTRENOS=[
    ]},
 
   // ── 17-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive. Promedio: h15=76, h18=66, spr=0
+  // Prom fila Drive: hsr=139, h18=66, spr=0
   {id:"e06",label:"17/04",fecha:"17/04",tipo:"entreno",
    prom_hsr:139,prom_h18:66,prom_spr:0,
    zonas:[
-    {n:"Arau Maria",        h15:0,  h18:0,  spr:0},
-    {n:"Gomez Camila",      h15:99, h18:14, spr:0},
-    {n:"Alfaro Javiera",    h15:77, h18:68, spr:0},
-    {n:"Gutierrez Renata",  h15:80, h18:59, spr:0},
-    {n:"Pareja Camila",     h15:76, h18:40, spr:0},
-    {n:"Carrasco Sofia",    h15:91, h18:98, spr:0},
-    {n:"Gacitua Emilia",    h15:81, h18:120,spr:0},
-    {n:"Errazu Sofia",      h15:83, h18:105,spr:0},
-    {n:"Mateluna Florencia",h15:96, h18:89, spr:0},
+    {n:"Arau Maria",        h15:3-0-0,    h18:0,  spr:0},
+    {n:"Gomez Camila",      h15:113-14-0, h18:14, spr:0},
+    {n:"Alfaro Javiera",    h15:145-68-0, h18:68, spr:0},
+    {n:"Gutierrez Renata",  h15:139-59-0, h18:59, spr:0},
+    {n:"Pareja Camila",     h15:116-40-0, h18:40, spr:0},
+    {n:"Carrasco Sofia",    h15:189-98-0, h18:98, spr:0},
+    {n:"Gacitua Emilia",    h15:201-120-0,h18:120,spr:0},
+    {n:"Errazu Sofia",      h15:188-105-0,h18:105,spr:0},
+    {n:"Mateluna Florencia",h15:185-89-0, h18:89, spr:0},
    ],
    jugadoras:[
     {n:"Arau Maria",        min:9, dist:384, mxm:42,hsr:3,  acc:7, dsc:2, vmax:15.6},
@@ -282,43 +286,42 @@ const ENTRENOS=[
    ]},
 
   // ── 20-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive
   {id:"e07",label:"20/04",fecha:"20/04",tipo:"entreno",
-   prom_hsr:462,prom_h18:303,prom_spr:0,
+   prom_hsr:1163,prom_h18:354,prom_spr:9,
    zonas:[
-    {n:"Pollmann Marianne", h15:237,h18:32, spr:0},
-    {n:"Pareja Camila",     h15:328,h18:5,  spr:0},
-    {n:"Alfaro Javiera",    h15:298,h18:2,  spr:0},
-    {n:"Retamal Antonia",   h15:446,h18:7,  spr:0},
-    {n:"Gomez Camila",      h15:268,h18:0,  spr:0},
-    {n:"Gacitua Emilia",    h15:637,h18:20, spr:0},
-    {n:"Sepulveda Eileen",  h15:621,h18:69, spr:0},
-    {n:"Carrasco Sofia",    h15:747,h18:118,spr:0},
+    {n:"Pareja Camila",     h15:1381-61-0,  h18:61,  spr:0},
+    {n:"Carrasco Sofia",    h15:1910-839-0, h18:839, spr:0},
+    {n:"Gomez Camila",      h15:685-120-2,  h18:120, spr:2},
+    {n:"Alfaro Javiera",    h15:772-300-0,  h18:300, spr:0},
+    {n:"Pollmann Marianne", h15:694-213-0,  h18:213, spr:0},
+    {n:"Gutierrez Renata",  h15:823-421-0,  h18:421, spr:0},
+    {n:"Mateluna Florencia",h15:816-364-3,  h18:364, spr:3},
+    {n:"Gacitua Emilia",    h15:856-503-67, h18:503, spr:67},
    ],
    jugadoras:[
-    {n:"Pollmann Marianne", min:7, dist:863, mxm:120,hsr:268,acc:26,dsc:2, vmax:19.9},
-    {n:"Pareja Camila",     min:7, dist:993, mxm:131,hsr:333,acc:28,dsc:15,vmax:18.6},
-    {n:"Alfaro Javiera",    min:7, dist:994, mxm:132,hsr:301,acc:12,dsc:14,vmax:18.4},
-    {n:"Retamal Antonia",   min:7, dist:1012,mxm:134,hsr:453,acc:35,dsc:12,vmax:18.2},
-    {n:"Gomez Camila",      min:7, dist:1033,mxm:136,hsr:268,acc:15,dsc:18,vmax:17.3},
-    {n:"Gacitua Emilia",    min:13,dist:1727,mxm:133,hsr:657,acc:46,dsc:28,vmax:18.7},
-    {n:"Sepulveda Eileen",  min:13,dist:1737,mxm:133,hsr:690,acc:44,dsc:28,vmax:19.2},
-    {n:"Carrasco Sofia",    min:13,dist:1844,mxm:142,hsr:866,acc:52,dsc:37,vmax:21.1},
+    {n:"Pareja Camila",     min:13,dist:2059,mxm:152,hsr:1110,acc:2, dsc:0, vmax:19.9},
+    {n:"Alfaro Javiera",    min:17,dist:2060,mxm:118,hsr:1159,acc:4, dsc:1, vmax:20.6},
+    {n:"Carrasco Sofia",    min:18,dist:2173,mxm:115,hsr:1306,acc:8, dsc:0, vmax:22.6},
+    {n:"Pollmann Marianne", min:15,dist:2189,mxm:141,hsr:1428,acc:2, dsc:1, vmax:20.9},
+    {n:"Gomez Camila",      min:19,dist:2263,mxm:118,hsr:591, acc:0, dsc:3, vmax:19.1},
+    {n:"Errazu Sofia",      min:18,dist:2271,mxm:121,hsr:1446,acc:27,dsc:1, vmax:21.7},
+    {n:"Gutierrez Renata",  min:17,dist:2311,mxm:134,hsr:1551,acc:10,dsc:0, vmax:20.2},
+    {n:"Mateluna Florencia",min:19,dist:2377,mxm:124,hsr:1440,acc:19,dsc:1, vmax:20.6},
+    {n:"Gacitua Emilia",    min:19,dist:2571,mxm:135,hsr:1604,acc:7, dsc:4, vmax:21.4},
    ]},
 
   // ── 22-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
   {id:"e08",label:"22/04",fecha:"22/04",tipo:"entreno",
    prom_hsr:983,prom_h18:508,prom_spr:40,
    zonas:[
-    {n:"Sepulveda Eileen",  h15:29, h18:47,  spr:5},
-    {n:"Alfaro Javiera",    h15:100,h18:244, spr:22},
-    {n:"Retamal Antonia",   h15:207,h18:603, spr:29},
-    {n:"Pareja Camila",     h15:566,h18:348, spr:1},
-    {n:"Gutierrez Renata",  h15:637,h18:400, spr:38},
-    {n:"Carrasco Sofia",    h15:337,h18:818, spr:59},
-    {n:"Mateluna Florencia",h15:496,h18:638, spr:26},
-    {n:"Gacitua Emilia",    h15:307,h18:763, spr:138},
+    {n:"Sepulveda Eileen",  h15:82-47-5,    h18:47,  spr:5},
+    {n:"Alfaro Javiera",    h15:366-244-22, h18:244, spr:22},
+    {n:"Retamal Antonia",   h15:839-603-29, h18:603, spr:29},
+    {n:"Pareja Camila",     h15:915-348-1,  h18:348, spr:1},
+    {n:"Gutierrez Renata",  h15:1076-400-38,h18:400, spr:38},
+    {n:"Carrasco Sofia",    h15:1215-818-59,h18:818, spr:59},
+    {n:"Mateluna Florencia",h15:1160-638-26,h18:638, spr:26},
+    {n:"Gacitua Emilia",    h15:1207-763-138,h18:763,spr:138},
    ],
    jugadoras:[
     {n:"Sepulveda Eileen",  min:5, dist:396, mxm:71, hsr:82,  acc:5, dsc:0, vmax:24.5},
@@ -332,19 +335,18 @@ const ENTRENOS=[
    ]},
 
   // ── 29-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (todos spr=0)
   {id:"e09",label:"29/04",fecha:"29/04",tipo:"entreno",
    prom_hsr:589,prom_h18:62,prom_spr:0,
    zonas:[
-    {n:"Arau Maria",       h15:39, h18:0,  spr:0},
-    {n:"Pollmann Marianne",h15:389,h18:52, spr:0},
-    {n:"Gomez Camila",     h15:317,h18:8,  spr:0},
-    {n:"Pareja Camila",    h15:430,h18:22, spr:0},
-    {n:"Alfaro Javiera",   h15:393,h18:24, spr:0},
-    {n:"Retamal Antonia",  h15:579,h18:43, spr:0},
-    {n:"Gacitua Emilia",   h15:792,h18:112,spr:0},
-    {n:"Carrasco Sofia",   h15:983,h18:238,spr:0},
-    {n:"Sepulveda Eileen", h15:747,h18:86, spr:0},
+    {n:"Arau Maria",       h15:39-0-0,    h18:0,   spr:0},
+    {n:"Pollmann Marianne",h15:441-52-0,  h18:52,  spr:0},
+    {n:"Gomez Camila",     h15:325-8-0,   h18:8,   spr:0},
+    {n:"Pareja Camila",    h15:452-22-0,  h18:22,  spr:0},
+    {n:"Alfaro Javiera",   h15:417-24-0,  h18:24,  spr:0},
+    {n:"Retamal Antonia",  h15:622-43-0,  h18:43,  spr:0},
+    {n:"Gacitua Emilia",   h15:904-112-0, h18:112, spr:0},
+    {n:"Carrasco Sofia",   h15:1221-238-0,h18:238, spr:0},
+    {n:"Sepulveda Eileen", h15:833-86-0,  h18:86,  spr:0},
    ],
    jugadoras:[
     {n:"Arau Maria",       min:57,dist:1413,mxm:24,hsr:39,  acc:7, dsc:1, vmax:17.0},
@@ -359,19 +361,18 @@ const ENTRENOS=[
    ]},
 
   // ── 4-may ──────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
   {id:"e10",label:"4/05",fecha:"4/05",tipo:"entreno",
    prom_hsr:757,prom_h18:402,prom_spr:0,
    zonas:[
-    {n:"Errazu Sofia",     h15:307,h18:332,spr:3},
-    {n:"Pollmann Marianne",h15:414,h18:232,spr:0},
-    {n:"Gutierrez Renata", h15:655,h18:54, spr:0},
-    {n:"Gomez Camila",     h15:459,h18:52, spr:0},
-    {n:"Pastenes Nicole",  h15:317,h18:101,spr:0},
-    {n:"Carrasco Sofia",   h15:437,h18:525,spr:0},
-    {n:"Mateluna Florencia",h15:705,h18:297,spr:0},
-    {n:"Gacitua Emilia",   h15:394,h18:501,spr:0},
-    {n:"Sepulveda Eileen", h15:383,h18:564,spr:0},
+    {n:"Errazu Sofia",     h15:639-332-3,  h18:332, spr:3},
+    {n:"Pollmann Marianne",h15:646-232-0,  h18:232, spr:0},
+    {n:"Gutierrez Renata", h15:709-54-0,   h18:54,  spr:0},
+    {n:"Gomez Camila",     h15:511-52-0,   h18:52,  spr:0},
+    {n:"Pastenes Nicole",  h15:418-101-0,  h18:101, spr:0},
+    {n:"Carrasco Sofia",   h15:961-525-0,  h18:525, spr:0},
+    {n:"Mateluna Florencia",h15:1002-297-0,h18:297, spr:0},
+    {n:"Gacitua Emilia",   h15:895-501-0,  h18:501, spr:0},
+    {n:"Sepulveda Eileen", h15:947-564-0,  h18:564, spr:0},
    ],
    jugadoras:[
     {n:"Errazu Sofia",     min:12,dist:1123,mxm:88, hsr:639, acc:12,dsc:8, vmax:24.5},
@@ -384,39 +385,8 @@ const ENTRENOS=[
     {n:"Gacitua Emilia",   min:15,dist:1693,mxm:109,hsr:895, acc:16,dsc:9, vmax:23.7},
     {n:"Sepulveda Eileen", min:15,dist:1714,mxm:115,hsr:947, acc:23,dsc:11,vmax:23.6},
    ]},
-
-  // ── 11/05 ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
-  {id:"e12",label:"11/05",fecha:"11/05",tipo:"entreno",
-   prom_hsr:826,prom_h18:447,prom_spr:66,
-   zonas:[
-    {n:"Arau Maria",        h15:26,  h18:0,   spr:0},
-    {n:"Pollmann Marianne", h15:288, h18:210, spr:8},
-    {n:"Pareja Camila",     h15:280, h18:411, spr:4},
-    {n:"Gutierrez Renata",  h15:296, h18:530, spr:14},
-    {n:"Gacitua Emilia",    h15:300, h18:632, spr:125},
-    {n:"Retamal Antonia",   h15:399, h18:416, spr:86},
-    {n:"Mateluna Florencia",h15:352, h18:508, spr:120},
-    {n:"Silva Victoria",    h15:382, h18:585, spr:117},
-    {n:"Carrasco Sofia",    h15:390, h18:689, spr:13},
-    {n:"Sierra Julieta",    h15:287, h18:538, spr:168},
-   ],
-   jugadoras:[
-    {n:"Arau Maria",        min:54,dist:1514,mxm:28, hsr:26,  acc:16,dsc:2, vmax:17.0},
-    {n:"Pollmann Marianne", min:51,dist:3107,mxm:60, hsr:506, acc:15,dsc:8, vmax:24.9},
-    {n:"Pareja Camila",     min:50,dist:3666,mxm:73, hsr:695, acc:35,dsc:16,vmax:24.5},
-    {n:"Gutierrez Renata",  min:50,dist:3736,mxm:74, hsr:841, acc:27,dsc:21,vmax:25.8},
-    {n:"Gacitua Emilia",    min:51,dist:4106,mxm:79, hsr:1058,acc:48,dsc:33,vmax:28.0},
-    {n:"Retamal Antonia",   min:50,dist:4194,mxm:83, hsr:901, acc:28,dsc:23,vmax:25.4},
-    {n:"Mateluna Florencia",min:50,dist:4293,mxm:85, hsr:980, acc:51,dsc:37,vmax:25.9},
-    {n:"Silva Victoria",    min:51,dist:4311,mxm:83, hsr:1084,acc:49,dsc:46,vmax:26.4},
-    {n:"Carrasco Sofia",    min:51,dist:4341,mxm:84, hsr:1092,acc:45,dsc:53,vmax:26.1},
-    {n:"Sierra Julieta",    min:50,dist:4359,mxm:86, hsr:993, acc:47,dsc:49,vmax:26.7},
-   ]},
-
-  // ── post 11/05 (Hevia) ─────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive
-  {id:"e11",label:"post 11/05",fecha:"post 11/05",tipo:"entreno",
+  // ── Nuevo entreno (post 4/05) ─────────────────────────────────────────────
+  {id:"e11",label:"11/05",fecha:"11/05",tipo:"entreno",
    prom_hsr:252,prom_h18:47,prom_spr:0,
    zonas:[
     {n:"Arau Maria",        h15:32,  h18:0,   spr:0},
@@ -445,6 +415,8 @@ const ENTRENOS=[
     {n:"Retamal Antonia",   min:65,dist:4083,mxm:63, hsr:305, acc:36,dsc:50,vmax:20.7},
    ]},
 ];
+
+  // ── 11-may
 
 // ─── MINUTOS DE JUEGO — hoja "Minutos de Juego" del Drive ────────────────────
 // Columnas: JUGADORA | DIV | COGS | PWCC | MANQ A | CAT B | TOT | PROM
@@ -643,51 +615,24 @@ const PROM_PUESTO={
 };
 
 // ─── ASISTENCIA — hoja PF Old Gabs (datos previos del Drive) ─────────────────
-// Fechas de asistencia del Drive (hoja Asistencias) — desde Febrero
-const ATT_MESES=[
-  {label:"FEB", color:"#4a90e8", fechas:["13/2","18/2","20/2","23/2","25/2","27/2"]},
-  {label:"MAR", color:"#3ecf7a", fechas:["2/3","4/3","6/3","9/3","11/3","13/3","16/3","18/3","20/3","23/3","25/3","27/3","30/3"]},
-  {label:"ABR", color:"#e09020", fechas:["6/4","8/4","10/4","13/4","15/4","17/4","20/4","22/4","24/4","27/4","29/4"]},
-  {label:"MAY", color:"#8b6fe8", fechas:["4/5","6/5","8/5","11/5","13/5","15/5"]},
-];
-const ATT_FECHAS=ATT_MESES.flatMap(m=>m.fechas);
-// Datos de asistencia del Drive — hoja Asistencias
-// dias[] = 1 presente, 0 ausente — en orden Feb→Mar→Abr→May
+const ATT_FECHAS=["10/3","12/3","17/3","19/3","21/3","24/3","26/3","28/3","31/3","16/4","21/4","23/4","25/4","28/4","30/4","2/5"];
 const ASISTENCIA={
-  "Alfaro Javiera":    {feb:"67%",mar:"88%",abr:"75%",may:"60%",tot:"76%",
-    dias:[1,1,0,0,1,0, 1,0,0,1,1,1,1,1,1,0,0,0,0, 1,1,1,0,1,1,1,0,1,1,0, 1,0,1,1,0,0]},
-  "Arau María Paz":    {feb:"83%",mar:"88%",abr:"88%",may:"100%",tot:"89%",
-    dias:[1,1,1,1,0,1, 1,1,0,1,1,1,0,1,1,0,0,0,0, 1,1,0,1,0,0,1,1,1,1,0, 1,1,1,1,1,0]},
-  "Carrasco Sofia":    {feb:"67%",mar:"100%",abr:"100%",may:"100%",tot:"93%",
-    dias:[0,0,1,1,1,1, 1,1,0,1,1,1,1,1,1,0,0,0,0, 1,1,1,1,0,0,1,1,1,1,0, 1,1,1,1,1,0]},
-  "Errazu Sofia":      {feb:"83%",mar:"50%",abr:"50%",may:"80%",tot:"63%",
-    dias:[1,1,1,1,1,0, 1,0,0,1,0,0,0,1,1,0,0,0,0, 1,0,0,1,0,0,1,0,0,1,0, 1,1,0,1,1,0]},
-  "Gacitua Emilia":    {feb:"33%",mar:"63%",abr:"100%",may:"100%",tot:"73%",
-    dias:[0,0,0,1,1,0, 1,1,0,0,1,0,0,1,1,0,0,0,0, 1,1,1,1,0,0,1,1,1,1,0, 1,1,1,1,1,0]},
-  "Gomez Camila":      {feb:"100%",mar:"100%",abr:"100%",may:"100%",tot:"100%",
-    dias:[1,1,1,1,1,1, 1,1,0,1,1,1,1,1,1,0,0,0,0, 1,1,1,1,0,0,1,1,1,1,0, 1,1,1,1,1,0]},
-  "Gutierrez Renata":  {feb:"100%",mar:"75%",abr:"100%",may:"100%",tot:"93%",
-    dias:[1,1,1,1,1,1, 1,0,0,1,1,0,1,1,1,0,0,0,0, 1,1,1,1,0,0,1,1,1,1,0, 1,1,1,1,1,0]},
-  "Hevia Valentina":   {feb:"50%",mar:"88%",abr:"38%",may:"100%",tot:"69%",
-    dias:[1,0,0,1,1,1, 1,1,0,1,1,1,0,1,1,0,0,0,0, 0,1,1,0,0,0,0,1,0,0,0, 1,1,1,1,1,0]},
-  "Liu Macarena":      {feb:"0%",mar:"13%",abr:"0%",may:"20%",tot:"8%",
-    dias:[0,0,0,0,0,0, 0,0,0,0,0,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,1,0]},
-  "Mateluna Florencia":{feb:"0%",mar:"0%",abr:"100%",may:"100%",tot:"50%",
-    dias:[0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0, 1,1,1,1,0,0,1,1,1,1,0, 1,1,1,1,1,0]},
-  "Muñoz Constanza":   {feb:"0%",mar:"50%",abr:"38%",may:"40%",tot:"32%",
-    dias:[0,0,0,0,0,0, 0,0,0,0,1,0,1,1,1,0,0,0,0, 0,0,0,0,0,0,1,1,1,0,0, 0,1,1,0,0,0]},
-  "Pareja Camila":     {feb:"83%",mar:"75%",abr:"88%",may:"100%",tot:"86%",
-    dias:[0,1,1,1,1,1, 1,1,0,1,1,0,0,1,1,0,0,0,0, 1,1,0,1,0,0,1,1,1,1,0, 1,1,1,1,1,0]},
-  "Pollmann Marianne": {feb:"100%",mar:"63%",abr:"88%",may:"60%",tot:"77%",
-    dias:[1,1,1,1,1,1, 1,1,0,0,0,0,1,1,1,0,0,0,0, 1,1,1,1,0,0,1,0,1,1,0, 1,1,0,0,1,0]},
-  "Retamal Antonia":   {feb:"50%",mar:"75%",abr:"50%",may:"80%",tot:"63%",
-    dias:[0,0,0,1,1,1, 1,1,0,1,1,1,1,0,0,0,0,0,0, 0,1,0,0,0,0,0,1,1,1,0, 1,0,1,1,1,0]},
-  "Sepulveda Eileen":  {feb:"83%",mar:"88%",abr:"63%",may:"0%",tot:"58%",
-    dias:[1,1,0,1,1,1, 1,1,0,1,1,1,1,0,1,0,0,0,0, 0,1,1,1,0,0,0,1,0,1,0, 0,0,0,0,0,0]},
-  "Sierra Julieta":    {feb:"0%",mar:"38%",abr:"0%",may:"40%",tot:"19%",
-    dias:[0,0,0,0,0,0, 0,1,0,0,1,1,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0, 0,1,0,0,1,0]},
-  "Silva Victoria":    {feb:"50%",mar:"0%",abr:"0%",may:"40%",tot:"22%",
-    dias:[1,0,0,1,1,0, 0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0, 0,1,0,0,1,0]},
+  "Alfaro Javiera":    {mar:"89%",abr:"83%",may:"—",tot:"85%",dias:[1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1]},
+  "Arau María Paz":    {mar:"100%",abr:"100%",may:"—",tot:"100%",dias:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]},
+  "Carrasco Sofia":    {mar:"—",abr:"100%",may:"—",tot:"100%",dias:[0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1]},
+  "Gacitua Emilia":    {mar:"44%",abr:"67%",may:"—",tot:"58%",dias:[1,1,1,0,1,0,0,0,0,1,0,1,0,1,1,1]},
+  "Gomez Camila":      {mar:"100%",abr:"83%",may:"—",tot:"94%",dias:[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1]},
+  "Gutierrez Renata":  {mar:"100%",abr:"83%",may:"—",tot:"94%",dias:[1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1]},
+  "Mateluna Florencia":{mar:"—",abr:"100%",may:"—",tot:"100%",dias:[0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0]},
+  "Muñoz Constanza":   {mar:"44%",abr:"0%",may:"—",tot:"25%",dias:[1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]},
+  "Pareja Camila":     {mar:"89%",abr:"50%",may:"—",tot:"75%",dias:[1,0,1,1,1,1,1,1,1,0,0,1,0,1,1,1]},
+  "Pollmann Marianne": {mar:"67%",abr:"50%",may:"—",tot:"60%",dias:[0,0,1,1,1,1,1,0,1,1,0,1,0,1,0,0]},
+  "Retamal Antonia":   {mar:"—",abr:"—",may:"—",tot:"—",dias:[0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1]},
+  "Sepulveda Eileen":  {mar:"44%",abr:"0%",may:"—",tot:"25%",dias:[0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0]},
+  "Sierra Julieta":    {mar:"100%",abr:"0%",may:"—",tot:"56%",dias:[1,1,1,1,1,0,0,0,0,0,0,1,0,0,0,0]},
+  "Silva Victoria":    {mar:"67%",abr:"50%",may:"—",tot:"60%",dias:[1,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0]},
+  "Liu Macarena":      {mar:"56%",abr:"33%",may:"—",tot:"44%",dias:[1,1,1,1,1,0,0,0,0,1,0,0,1,0,0,0]},
+  "Errazu Sofia":      {mar:"—",abr:"—",may:"—",tot:"—",dias:[0,0,0,0,0,0,0,0,0,1,0,1,1,0,0,0]},
 };
 
 // ─── WELLNESS & RPE (formulario — mantener de versión anterior) ───────────────
@@ -1270,9 +1215,12 @@ function StaffMinutos(){
 // ─── STAFF ASISTENCIA ──────────────────────────────────────────────────────────
 function StaffAsistencia(){
   const rows=Object.entries(ASISTENCIA).map(([n,d])=>({
-    n,feb:d.feb,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
+    n,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
     pct:Math.round(d.dias.filter(x=>x===1).length/d.dias.length*100)
   })).sort((a,b)=>b.pct-a.pct);
+  const marF=ATT_FECHAS.filter(f=>f.includes("/3"));
+  const abrF=ATT_FECHAS.filter(f=>f.includes("/4"));
+  const mayF=ATT_FECHAS.filter(f=>f.includes("/5"));
   return(
     <>
       <MR>
@@ -1287,24 +1235,18 @@ function StaffAsistencia(){
             <thead>
               <tr>
                 <th style={{textAlign:"left",color:T.muted,padding:"3px 6px",borderBottom:`1px solid ${T.border}`,fontSize:10}}>Jugadora</th>
-                {ATT_MESES.map((m,mi)=>(
-                  <th key={mi} colSpan={m.fechas.length} style={{textAlign:"center",color:m.color,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>{m.label}</th>
-                ))}
-                {ATT_MESES.map((m,mi)=>(
-                  <th key={`p${mi}`} style={{textAlign:"center",color:m.color,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:mi===0?`1px solid ${T.border2}`:"none"}}>%{m.label}</th>
-                ))}
+                <th colSpan={marF.length} style={{textAlign:"center",color:T.green,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>MARZO</th>
+                <th colSpan={abrF.length} style={{textAlign:"center",color:T.blue,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>ABRIL</th>
+                <th colSpan={mayF.length} style={{textAlign:"center",color:T.amber,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>MAYO</th>
+                <th style={{textAlign:"center",color:T.green,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>%MAR</th>
+                <th style={{textAlign:"center",color:T.blue,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9}}>%ABR</th>
+                <th style={{textAlign:"center",color:T.amber,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9}}>%MAY</th>
                 <th style={{textAlign:"center",color:T.muted,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9}}>%TOT</th>
               </tr>
               <tr>
                 <th/>
-                {ATT_FECHAS.map((f,i)=>{
-                  let borderLeft="none";
-                  let cumLen=0;
-                  for(const m of ATT_MESES){if(i===cumLen){borderLeft=`1px solid ${T.border2}`;break;}cumLen+=m.fechas.length;}
-                  return <th key={i} style={{textAlign:"center",color:T.muted,padding:"2px 2px",borderBottom:`1px solid ${T.border}`,fontSize:7,minWidth:16,borderLeft}}>{f}</th>
-                })}
-                {ATT_MESES.map((_,i)=><th key={i}/>)}
-                <th/>
+                {ATT_FECHAS.map((f,i)=><th key={i} style={{textAlign:"center",color:T.muted,padding:"2px 2px",borderBottom:`1px solid ${T.border}`,fontSize:7,minWidth:18,borderLeft:i===0||i===marF.length||i===marF.length+abrF.length?`1px solid ${T.border2}`:"none"}}>{f}</th>)}
+                <th/><th/><th/><th/>
               </tr>
             </thead>
             <tbody>{rows.map(r=>{
@@ -1312,18 +1254,14 @@ function StaffAsistencia(){
               return(
                 <tr key={r.n}>
                   <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,fontSize:11,whiteSpace:"nowrap"}}>{r.n.split(" ")[0]}</td>
-                  {r.dias.map((d,i)=>{
-                    let cumLen=0,borderLeft="none";
-                    for(const m of ATT_MESES){if(i===cumLen){borderLeft=`1px solid ${T.border2}`;break;}cumLen+=m.fechas.length;}
-                    return(
-                      <td key={i} style={{padding:"2px 1px",borderBottom:"1px solid #141824",textAlign:"center",borderLeft}}>
-                        <span style={{display:"inline-block",width:13,height:13,borderRadius:2,background:d===1?"#0f2d1f":"#2d0f0f",color:d===1?T.green:T.red,fontSize:8,lineHeight:"13px",textAlign:"center"}}>{d===1?"✓":"✗"}</span>
-                      </td>
-                    );
-                  })}
-                  {[r.feb,r.mar,r.abr,r.may].map((v,i)=>(
-                    <td key={i} style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:ATT_MESES[i]?.color||T.muted,fontWeight:500,borderLeft:i===0?`1px solid ${T.border2}`:"none"}}>{v||"—"}</td>
+                  {r.dias.map((d,i)=>(
+                    <td key={i} style={{padding:"2px 1px",borderBottom:"1px solid #141824",textAlign:"center",borderLeft:i===0||i===marF.length||i===marF.length+abrF.length?`1px solid ${T.border2}`:"none"}}>
+                      <span style={{display:"inline-block",width:14,height:14,borderRadius:2,background:d===1?"#0f2d1f":"#2d0f0f",color:d===1?T.green:T.red,fontSize:8,lineHeight:"14px",textAlign:"center"}}>{d===1?"✓":"✗"}</span>
+                    </td>
                   ))}
+                  <td style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:T.green,fontWeight:500,borderLeft:`1px solid ${T.border2}`}}>{r.mar}</td>
+                  <td style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:T.blue,fontWeight:500}}>{r.abr}</td>
+                  <td style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:T.amber,fontWeight:500}}>{r.may}</td>
                   <td style={{padding:"4px 5px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:col,fontWeight:600}}>{r.pct}%</td>
                 </tr>
               );
@@ -1402,74 +1340,12 @@ function StaffWellness(){
   );
 }
 
-// ─── RADAR CHART — comparación jugadora vs equipo vs puesto ──────────────────
-function RadarChart({player,sesion,allSessions}){
-  // Métricas: dist, mxm, hsr, acc, vmax
-  const labels=["Dist","m/min","HSR","ACC","Vmáx"];
-  const jd=sesion.jugadoras.find(j=>j.n===player);
-  if(!jd)return null;
-  // Promedios del equipo en esa sesión
-  const teamAvg=(key)=>sesion.jugadoras.reduce((a,j)=>a+(j[key]||0),0)/sesion.jugadoras.length;
-  const vals=[jd.dist,jd.mxm,jd.hsr||jd.ai15||0,jd.acc,jd.vmax];
-  const team=[teamAvg("dist"),teamAvg("mxm"),teamAvg("ai15")||teamAvg("hsr")||0,teamAvg("acc"),teamAvg("vmax")];
-  // Normalizar (0-1) respecto al máximo del equipo
-  const maxV=vals.map((v,i)=>Math.max(v,team[i],0.1));
-  const norm=(arr)=>arr.map((v,i)=>Math.min(v/maxV[i],1.5));
-  const jNorm=norm(vals);
-  const tNorm=norm(team);
-  // SVG radar
-  const cx=100,cy=100,r=70,n=5;
-  const angle=(i)=>(Math.PI*2*i/n)-Math.PI/2;
-  const pt=(norm,i)=>`${cx+norm*r*Math.cos(angle(i))},${cy+norm*r*Math.sin(angle(i))}`;
-  const poly=(norms,col)=>`<polygon points="${norms.map((v,i)=>pt(v,i)).join(" ")}" fill="${col}33" stroke="${col}" stroke-width="1.5"/>`;
-  const spokes=Array.from({length:n},(_,i)=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(angle(i))}" y2="${cy+r*Math.sin(angle(i))}" stroke="#2a3550" stroke-width="1"/>`).join("");
-  const rings=[0.33,0.67,1].map(v=>`<polygon points="${Array.from({length:n},(_,i)=>pt(v,i)).join(" ")}" fill="none" stroke="#1e2535" stroke-width="1"/>`).join("");
-  const lbl=labels.map((l,i)=>{
-    const x=cx+(r+14)*Math.cos(angle(i));
-    const y=cy+(r+14)*Math.sin(angle(i));
-    const isMe=jNorm[i]>tNorm[i];
-    return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="${isMe?"#3ecf7a":"#6a7490"}">${l}</text>`;
-  }).join("");
-  const dots=jNorm.map((v,i)=>`<circle cx="${cx+v*r*Math.cos(angle(i))}" cy="${cy+v*r*Math.sin(angle(i))}" r="3" fill="#3ecf7a"/>`).join("");
-  const svg=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${poly(tNorm,"#4a90e8")}${poly(jNorm,"#3ecf7a")}${dots}${lbl}</svg>`;
-  return(
-    <Card style={{marginBottom:10}}>
-      <CT text="Radar — yo vs equipo"/>
-      <div style={{display:"flex",alignItems:"center",gap:12}}>
-        <div style={{width:160,flexShrink:0}} dangerouslySetInnerHTML={{__html:svg}}/>
-        <div style={{fontSize:11}}>
-          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:6}}>
-            <div style={{width:12,height:3,background:"#3ecf7a",borderRadius:2}}/><span style={{color:T.muted2}}>{player.split(" ")[0]}</span>
-          </div>
-          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:10}}>
-            <div style={{width:12,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2}}>Promedio equipo</span>
-          </div>
-          {labels.map((l,i)=>{
-            const diff=Math.round((jNorm[i]-tNorm[i])*100);
-            return(
-              <div key={l} style={{marginBottom:3,display:"flex",justifyContent:"space-between",gap:8}}>
-                <span style={{color:T.muted,fontSize:10}}>{l}</span>
-                <span style={{color:diff>0?T.green:diff<0?T.red:T.muted,fontSize:10,fontWeight:500}}>{diff>0?"+":""}{diff}%</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </Card>
-  );
-}
-
 // ─── PLAYER GPS ────────────────────────────────────────────────────────────────
 function PlayerGPS({player}){
   const [tipo,setTipo]=useState("todos");
-  const [sesionSel,setSesionSel]=useState(null);
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess;
   const sess=mySess(player,pool);
   if(!sess.length)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos GPS en esta selección</div>;
-
-  // Sesión seleccionada para ver tabla del equipo
-  const sessDetalle=sesionSel?allSess.find(s=>s.id===sesionSel):null;
-
   return(
     <>
       {fbtn(tipo,setTipo,[["partidos","🏑 Partidos"],["amistosos","⚡ Amistosos"],["entrenos","🏃 Entrenos"],["todos","Todo"]])}
@@ -1479,60 +1355,25 @@ function PlayerGPS({player}){
         <MetCard label="Vel. máx" value={`${Math.max(...sess.map(s=>s.data.vmax))} km/h`} sc={T.amber}/>
       </MR>
       <Card style={{marginBottom:10}}>
-        <CT text="Detalle por sesión — tocá una fila para ver el equipo"/>
+        <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={["Sesión","Fecha","Min","Dist.","m/min","HSR","V.máx",""]}/>
-            <tbody>{sess.map(s=>{
-              const isSelected=sesionSel===s.id;
-              return(
-                <tr key={s.id} onClick={()=>setSesionSel(isSelected?null:s.id)}
-                  style={{cursor:"pointer",background:isSelected?T.blue+"11":"transparent"}}>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.fecha}</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.data.min}'</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{s.data.dist.toLocaleString()}m</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{(s.data.hsr||s.data.ai15||0)}m</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isSelected?T.blue:T.muted,fontSize:10}}>{isSelected?"▲":"▼"}</td>
-                </tr>
-              );
-            })}</tbody>
+            <TH cols={["Sesión","Fecha","Min","Dist.","m/min","HSR","V.máx"]}/>
+            <tbody>{sess.map(s=>(
+              <tr key={s.id}>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.fecha}</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.data.min}'</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{s.data.dist.toLocaleString()}m</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{(s.data.hsr||s.data.ai15||0)}m</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
+              </tr>
+            ))}</tbody>
           </table>
         </div>
       </Card>
-
-      {/* Tabla del equipo para la sesión seleccionada */}
-      {sessDetalle&&(
-        <Card style={{marginBottom:10,border:`1px solid ${T.blue}44`}}>
-          <CT text={`Equipo — ${sessDetalle.label} ${sessDetalle.fecha}`}/>
-          <div style={{overflowX:"auto"}}>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-              <TH cols={["Jugadora","Dist.","HSR","18-21","Spr>21","ACC","V.máx"]}/>
-              <tbody>{[...(sessDetalle.jugadoras||[])].sort((a,b)=>b.dist-a.dist).map(j=>{
-                const isMe=j.n===player;
-                return(
-                  <tr key={j.n} style={{background:isMe?T.amber+"11":"transparent"}}>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",
-                      color:isMe?T.amber:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>
-                      {isMe?"▶ ":""}{j.n.split(" ")[0]}
-                    </td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.amber:T.blue,fontWeight:isMe?700:400}}>{Math.round(j.dist).toLocaleString()}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{(j.hsr||j.ai15||0)}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{(j.ai18||0)}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:j.spr>0?T.red:T.muted,fontWeight:j.spr>0?700:400}}>{j.spr||0}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc}</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
-                  </tr>
-                );
-              })}</tbody>
-            </table>
-          </div>
-        </Card>
-      )}
-
-      {/* Gráfico HSR por zonas */}
+      {/* Gráfico HSR por zonas — igual al de Staff */}
       <Card>
         <CT text="HSR por zonas — mis sesiones"/>
         {hsrLegend}
@@ -1616,88 +1457,52 @@ function PlayerYoyo({player}){
 function PlayerAsistencia({player}){
   const d=ASISTENCIA[player];
   if(!d)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos de asistencia</div>;
-  const pct=Math.round(d.dias.filter(x=>x===1).length/d.dias.length*100);
-  // Ranking del equipo por % total
-  const ranking=Object.entries(ASISTENCIA)
-    .map(([n,a])=>({n,pct:Math.round(a.dias.filter(x=>x===1).length/a.dias.length*100)}))
-    .sort((a,b)=>b.pct-a.pct);
-  const myRank=ranking.findIndex(r=>r.n===player)+1;
-  const medals=["🥇","🥈","🥉"];
+  const p=d.dias.filter(x=>x===1).length;
+  const pct=Math.round(p/d.dias.length*100);
+  const marF=ATT_FECHAS.filter(f=>f.includes("/3"));
+  const abrF=ATT_FECHAS.filter(f=>f.includes("/4"));
+  const mayF=ATT_FECHAS.filter(f=>f.includes("/5"));
   return(
     <>
       <MR>
-        <MetCard label="Mi asistencia" value={`${pct}%`} sub={`${d.dias.filter(x=>x===1).length}/${d.dias.length} sesiones`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
-        <MetCard label="Mi ranking" value={`#${myRank}`} sub={`de ${ranking.length}`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
-        <MetCard label="%Feb" value={d.feb||"—"} sc={T.blue}/>
-        <MetCard label="%Mar" value={d.mar||"—"} sc={T.green}/>
-        <MetCard label="%Abr" value={d.abr||"—"} sc={T.amber}/>
-        <MetCard label="%May" value={d.may||"—"} sc={T.purple}/>
+        <MetCard label="Mi asistencia" value={`${pct}%`} sub={`${p}/${d.dias.length} sesiones`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
+        <MetCard label="Presencias" value={p} sc={T.green}/>
+        <MetCard label="Ausencias" value={d.dias.length-p} sc={T.red}/>
       </MR>
       {pct<60&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ Asistencia menor al 60%</div>}
-      {/* Podio del equipo */}
-      <div style={{marginBottom:6,fontSize:10,color:T.muted,textTransform:"uppercase",letterSpacing:".5px"}}>Podio equipo — Asistencia</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:12}}>
-        {ranking.slice(0,3).map((r,i)=>{
-          const isMe=r.n===player;
-          const col=r.pct>=80?T.green:r.pct>=60?T.amber:T.red;
-          return(
-            <div key={r.n} style={{background:isMe?T.amber+"11":T.surf,border:`2px solid ${isMe?T.amber:col}`,borderRadius:8,padding:10,textAlign:"center"}}>
-              <div style={{fontSize:20,marginBottom:2}}>{medals[i]}</div>
-              <div style={{fontSize:11,fontWeight:600,color:isMe?T.amber:T.text}}>{r.n.split(" ")[0]}</div>
-              <div style={{fontSize:18,fontWeight:700,color:col}}>{r.pct}%</div>
-            </div>
-          );
-        })}
-      </div>
-      {/* Ranking completo */}
       <Card style={{marginBottom:10}}>
-        <CT text="Ranking equipo — mi posición"/>
-        {ranking.map((r,i)=>{
-          const isMe=r.n===player;
-          const col=r.pct>=80?T.green:r.pct>=60?T.amber:T.red;
-          return(
-            <div key={r.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5,background:isMe?T.amber+"11":"transparent",borderRadius:4,padding:isMe?"2px 4px":0}}>
-              {isMe&&<span style={{color:T.amber,fontSize:9}}>▶</span>}
-              <span style={{fontSize:11,color:isMe?T.amber:T.muted,width:18,textAlign:"right"}}>{i+1}.</span>
-              <span style={{fontSize:11,color:isMe?T.amber:T.text,width:110,flexShrink:0,fontWeight:isMe?500:400}}>{r.n.split(" ")[0]}</span>
-              <div style={{flex:1,background:"#1e2535",borderRadius:3,height:7}}><div style={{width:`${r.pct}%`,height:7,borderRadius:3,background:isMe?T.amber:col}}/></div>
-              <span style={{fontSize:11,color:isMe?T.amber:col,width:36,textAlign:"right",fontWeight:isMe?600:400}}>{r.pct}%</span>
-            </div>
-          );
-        })}
-      </Card>
-      {/* Mi calendario */}
-      <Card>
-        <CT text="Mi calendario de asistencia"/>
+        <CT text="Mi calendario"/>
         <div style={{overflowX:"auto"}}>
-          <div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:8}}>
-            {ATT_MESES.map((m,mi)=>(
-              <div key={mi} style={{flex:"0 0 auto"}}>
-                <div style={{fontSize:9,color:m.color,textAlign:"center",marginBottom:4,fontWeight:600}}>{m.label}</div>
-                <div style={{display:"flex",gap:2}}>
-                  {m.fechas.map((f,fi)=>{
-                    const idx=ATT_FECHAS.indexOf(f);
-                    const dia=d.dias[idx];
-                    return(
-                      <div key={fi} style={{textAlign:"center"}}>
-                        <div style={{fontSize:7,color:T.muted,marginBottom:2}}>{f.split("/")[0]}</div>
-                        <div style={{width:18,height:18,borderRadius:3,background:dia===1?"#0f2d1f":"#2d0f0f",
-                          display:"flex",alignItems:"center",justifyContent:"center",
-                          color:dia===1?T.green:T.red,fontSize:9}}>{dia===1?"✓":"✗"}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
+          <table style={{borderCollapse:"collapse",fontSize:11}}>
+            <thead>
+              <tr>
+                <th colSpan={marF.length} style={{textAlign:"center",color:T.green,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>MARZO</th>
+                <th colSpan={abrF.length} style={{textAlign:"center",color:T.blue,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>ABRIL</th>
+                <th colSpan={mayF.length} style={{textAlign:"center",color:T.amber,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>MAYO</th>
+              </tr>
+              <tr>{ATT_FECHAS.map((f,i)=><th key={i} style={{textAlign:"center",color:T.muted,padding:"2px 2px",borderBottom:`1px solid ${T.border}`,fontSize:7,minWidth:18}}>{f}</th>)}</tr>
+            </thead>
+            <tbody><tr>{d.dias.map((dia,i)=>(
+              <td key={i} style={{padding:"3px 2px",textAlign:"center"}}>
+                <div style={{borderRadius:4,background:dia===1?"#0f2d1f":"#2d0f0f",display:"flex",alignItems:"center",justifyContent:"center",color:dia===1?T.green:T.red,fontSize:12,padding:"5px 2px"}}>{dia===1?"✓":"✗"}</div>
+              </td>
+            ))}</tr></tbody>
+          </table>
+        </div>
+        <div style={{display:"flex",gap:10,marginTop:10,flexWrap:"wrap"}}>
+          {[{l:"Marzo",v:d.mar,c:T.green},{l:"Abril",v:d.abr,c:T.blue},{l:"Mayo",v:d.may,c:T.amber},{l:"Total",v:d.tot,c:pct>=80?T.green:pct>=60?T.amber:T.red}].map((m,i)=>(
+            <div key={i} style={{background:"#0d1020",borderRadius:8,padding:"8px 14px",border:`1px solid ${m.c}33`}}>
+              <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{m.l}</div>
+              <div style={{fontSize:20,fontWeight:600,color:m.c}}>{m.v}</div>
+            </div>
+          ))}
         </div>
       </Card>
     </>
   );
 }
 
-
+// ─── PLAYER RPE ───────────────────────────────────────────────────────────────
 function PlayerRPE({player}){
   const [rpe,setRpe]=useState(RPE_DATA[player]||5);
   const [saved,setSaved]=useState(false);
@@ -1761,7 +1566,7 @@ function PlayerWellness({player}){
               </button>
             ))}
           </div>
-          {form.dolor<=4&&(
+          {form.dolor<=3&&(
             <div style={{background:"#0d1020",borderRadius:8,padding:10,border:`1px solid ${T.border2}`}}>
               <div style={{fontSize:11,color:T.muted2,marginBottom:7}}>Zona con molestia:</div>
               <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
@@ -1918,167 +1723,42 @@ function PlayerMinutos({player}){
   );
 }
 
-// ─── LOGIN ────────────────────────────────────────────────────────────────────
-function LoginScreen({onLogin}){
-  const [tipo,setTipo]=useState(null); // "staff" | "jugadora"
-  const [pass,setPass]=useState("");
-  const [player,setPlayer]=useState("");
-  const [error,setError]=useState("");
-
-  const handleLogin=()=>{
-    if(tipo==="staff"){
-      if(pass==="Staffoldgabs"){onLogin("staff",null)}
-      else{setError("Contraseña incorrecta");setPass("");}
-    } else {
-      if(pass==="1eraoldgabs"){
-        if(!player){setError("Seleccioná tu nombre");return;}
-        onLogin("jugadora",player)
-      } else {setError("Contraseña incorrecta");setPass("");}
-    }
-  };
-
-  return(
-    <div style={{background:T.bg,minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"system-ui,sans-serif",padding:20}}>
-      {/* Logo */}
-      <div style={{textAlign:"center",marginBottom:32}}>
-        <div style={{width:64,height:64,borderRadius:"50%",background:T.maroon,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,margin:"0 auto 12px"}}>🏑</div>
-        <div style={{fontSize:20,fontWeight:700,color:T.text,letterSpacing:1}}>OLD GABS 1ERA</div>
-        <div style={{fontSize:12,color:T.muted,marginTop:4}}>Dashboard GPS · Temporada 2026</div>
-      </div>
-
-      {!tipo?(
-        /* Selección de tipo de usuario */
-        <div style={{width:"100%",maxWidth:320}}>
-          <div style={{fontSize:12,color:T.muted,textAlign:"center",marginBottom:16,textTransform:"uppercase",letterSpacing:1}}>¿Quién sos?</div>
-          <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            <button onClick={()=>{setTipo("staff");setError("");}} style={{padding:"16px",borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12,transition:"border-color .15s"}}
-              onMouseEnter={e=>e.target.style.borderColor=T.blue} onMouseLeave={e=>e.target.style.borderColor=T.border2}>
-              <span style={{fontSize:24}}>👤</span>
-              <div style={{textAlign:"left"}}>
-                <div>Staff Técnico</div>
-                <div style={{fontSize:11,color:T.muted,fontWeight:400}}>Acceso completo al equipo</div>
-              </div>
-            </button>
-            <button onClick={()=>{setTipo("jugadora");setError("");}} style={{padding:"16px",borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12}}
-              onMouseEnter={e=>e.target.style.borderColor=T.green} onMouseLeave={e=>e.target.style.borderColor=T.border2}>
-              <span style={{fontSize:24}}>🏑</span>
-              <div style={{textAlign:"left"}}>
-                <div>Jugadora</div>
-                <div style={{fontSize:11,color:T.muted,fontWeight:400}}>Ver mis datos personales</div>
-              </div>
-            </button>
-          </div>
-        </div>
-      ):(
-        /* Formulario de login */
-        <div style={{width:"100%",maxWidth:320}}>
-          <button onClick={()=>{setTipo(null);setPass("");setPlayer("");setError("");}} style={{background:"transparent",border:"none",color:T.muted,fontSize:12,cursor:"pointer",marginBottom:20,padding:0,fontFamily:"inherit",display:"flex",alignItems:"center",gap:4}}>
-            ← Volver
-          </button>
-          <div style={{background:T.surf,borderRadius:12,padding:24,border:`1px solid ${T.border}`}}>
-            <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:4}}>
-              {tipo==="staff"?"Staff Técnico 👤":"Jugadora 🏑"}
-            </div>
-            <div style={{fontSize:11,color:T.muted,marginBottom:20}}>
-              {tipo==="staff"?"Acceso completo al equipo":"Solo verás tus datos personales"}
-            </div>
-
-            {/* Selector de nombre — solo para jugadoras */}
-            {tipo==="jugadora"&&(
-              <div style={{marginBottom:12}}>
-                <div style={{fontSize:11,color:T.muted,marginBottom:6,textTransform:"uppercase",letterSpacing:.5}}>Tu nombre</div>
-                <select value={player} onChange={e=>setPlayer(e.target.value)}
-                  style={{width:"100%",background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:player?T.text:T.muted,fontSize:13,padding:"10px 12px",outline:"none",boxSizing:"border-box"}}>
-                  <option value="">Seleccioná tu nombre...</option>
-                  {allNames().map(n=><option key={n} value={n}>{n}</option>)}
-                </select>
-              </div>
-            )}
-
-            {/* Contraseña */}
-            <div style={{marginBottom:16}}>
-              <div style={{fontSize:11,color:T.muted,marginBottom:6,textTransform:"uppercase",letterSpacing:.5}}>Contraseña</div>
-              <input type="password" value={pass} onChange={e=>{setPass(e.target.value);setError("");}}
-                onKeyDown={e=>e.key==="Enter"&&handleLogin()}
-                placeholder="••••••••••"
-                style={{width:"100%",background:"#0d1020",border:`1px solid ${error?T.red:T.border2}`,borderRadius:8,color:T.text,fontSize:14,padding:"10px 12px",outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
-              {error&&<div style={{fontSize:11,color:T.red,marginTop:6}}>{error}</div>}
-            </div>
-
-            <button onClick={handleLogin}
-              style={{width:"100%",padding:"12px",background:tipo==="staff"?T.blue:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-              Ingresar
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Yo-Yo","Minutos","Asistencia","RPE","Wellness"];
 const PLAYER_TABS=["Mi GPS","Evolución GPS","Yo-Yo","Minutos","Asistencia","Mi RPE","Mi Wellness"];
 
 export default function App(){
-  const [session,setSession]=useState(null); // null | {tipo:"staff"|"jugadora", player:string|null}
+  const [mode,setMode]=useState("staff");
   const [tab,setTab]=useState(0);
   const [player,setPlayer]=useState(allNames()[0]);
-
-  const handleLogin=(tipo,playerName)=>{
-    setSession({tipo,player:playerName});
-    setTab(0);
-    if(playerName)setPlayer(playerName);
-  };
-
-  const handleLogout=()=>{setSession(null);setTab(0);};
-
-  if(!session)return<LoginScreen onLogin={handleLogin}/>;
-
-  const mode=session.tipo==="staff"?"staff":"player";
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
-
+  const sw=m=>{setMode(m);setTab(0);};
   return(
-    <div style={{background:T.bg,color:T.text,minHeight:"100vh",fontFamily:"system-ui,sans-serif"}}>
-      {/* HEADER — Título + logout */}
-      <div style={{background:"#080a0f",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 12px",height:46,position:"sticky",top:0,zIndex:100}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
+    <div style={{background:T.bg,color:T.text,minHeight:600,borderRadius:12,overflow:"hidden",fontFamily:"system-ui,sans-serif"}}>
+      <div style={{background:"#080a0f",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",padding:"0 10px",height:46,gap:0,overflowX:"auto"}}>
+        <div style={{display:"flex",alignItems:"center",gap:7,marginRight:8,flexShrink:0}}>
           <div style={{width:28,height:28,borderRadius:"50%",background:T.maroon,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>🏑</div>
-          <div>
-            <div style={{fontSize:11,fontWeight:700,color:T.text,letterSpacing:"1px",textTransform:"uppercase"}}>Old Gabs 1era</div>
-            <div style={{fontSize:9,color:T.muted}}>{mode==="staff"?"Staff Técnico":"Jugadora"}</div>
-          </div>
+          <span style={{fontSize:10,fontWeight:500,color:"#a0b0c8",letterSpacing:"1px",textTransform:"uppercase",whiteSpace:"nowrap"}}>Old Gabs 1era</span>
         </div>
-        <button onClick={handleLogout} style={{padding:"4px 10px",borderRadius:5,border:`1px solid ${T.border}`,fontSize:10,cursor:"pointer",background:"transparent",color:T.muted,fontFamily:"inherit"}}>Salir</button>
-      </div>
-      {/* TABS HORIZONTALES — debajo del título */}
-      <div style={{background:T.surf,borderBottom:`1px solid ${T.border}`,overflowX:"auto",position:"sticky",top:46,zIndex:99}}>
-        <div style={{display:"flex",gap:0,padding:"0 4px"}}>
+        <div style={{display:"flex",gap:0,flex:1,overflowX:"auto"}}>
           {tabs.map((t,i)=>(
-            <button key={t} onClick={()=>setTab(i)} style={{padding:"10px 10px",display:"flex",alignItems:"center",fontSize:10,fontWeight:500,cursor:"pointer",border:"none",background:"transparent",color:tab===i?T.blue:T.muted,textTransform:"uppercase",letterSpacing:".5px",borderBottom:`2px solid ${tab===i?T.blue:"transparent"}`,fontFamily:"inherit",whiteSpace:"nowrap"}}>{t}</button>
+            <button key={t} onClick={()=>setTab(i)} style={{padding:"0 9px",height:46,display:"flex",alignItems:"center",fontSize:10,fontWeight:500,cursor:"pointer",border:"none",background:"transparent",color:tab===i?T.blue:T.muted,textTransform:"uppercase",letterSpacing:".5px",borderBottom:`2px solid ${tab===i?T.blue:"transparent"}`,fontFamily:"inherit",whiteSpace:"nowrap"}}>{t}</button>
           ))}
+        </div>
+        <div style={{display:"flex",gap:1,background:"#1a1e2a",borderRadius:6,padding:2,marginLeft:6,flexShrink:0}}>
+          {["staff","player"].map(m=><button key={m} onClick={()=>sw(m)} style={{padding:"4px 9px",borderRadius:5,border:"none",fontSize:9,fontWeight:500,cursor:"pointer",background:mode===m?"#1e3a5f":"transparent",color:mode===m?T.blue:T.muted,fontFamily:"inherit",textTransform:"uppercase"}}>{m==="staff"?"Staff":"Jugadora"}</button>)}
         </div>
       </div>
       <div style={{padding:12}}>
-        {/* Jugadora: selector de nombre solo si es staff (jugadora ya viene fijada) */}
-        {mode==="player"&&!session.player&&(
+        {mode==="player"&&(
           <select value={player} onChange={e=>setPlayer(e.target.value)} style={{background:T.surf,border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"5px 10px",outline:"none",marginBottom:12,width:"100%"}}>
             {allNames().map(n=><option key={n}>{n}</option>)}
           </select>
         )}
-        {mode==="player"&&session.player&&(
-          <div style={{background:T.surf,border:`1px solid ${T.border}`,borderRadius:8,padding:"8px 12px",marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:16}}>🏑</span>
-            <div>
-              <div style={{fontSize:12,fontWeight:600,color:T.text}}>{session.player}</div>
-              <div style={{fontSize:10,color:T.muted}}>Tus datos personales</div>
-            </div>
-          </div>
-        )}
         {mode==="staff"?(
           <>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffPuestos/>}{tab===3&&<StaffYoyo/>}{tab===4&&<StaffMinutos/>}{tab===5&&<StaffAsistencia/>}{tab===6&&<StaffRPE/>}{tab===7&&<StaffWellness/>}</>
         ):(
-          <>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerYoyo player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</>
+          <>{tab===0&&<PlayerGPS player={player}/>}{tab===1&&<PlayerEvoGPS player={player}/>}{tab===2&&<PlayerYoyo player={player}/>}{tab===3&&<PlayerMinutos player={player}/>}{tab===4&&<PlayerAsistencia player={player}/>}{tab===5&&<PlayerRPE player={player}/>}{tab===6&&<PlayerWellness player={player}/>}</>
         )}
       </div>
     </div>
