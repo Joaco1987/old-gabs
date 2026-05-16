@@ -125,13 +125,15 @@ const AMISTOSOS=[
 ];
 
 // ─── ENTRENAMIENTOS — hoja Entrenamientos del Drive ───────────────────────────
-// h15/h18/spr = datos DIRECTOS de sub-tabla de zonas del Drive
-// h15 = "Distancia AI (15 a 18km/h)" DIRECTO
-// h18 = "Distancia AI (18 a 21 km/h)" DIRECTO
-// spr = "Distancia Sprint (>21 km/h)" DIRECTO
+// Zonas EXACTAS del Drive: h15=AI(15-18) | h18=AI(18-21) | spr=Sprint(>21)
+// TODOS son datos directos de la sub-tabla de zonas del Drive
 
 const ENTRENOS=[
   // ── 6-abr ─────────────────────────────────────────────────────────────────
+  // Sub-tabla zonas del Drive (exacta):
+  // Pareja:1088/22/0 Alfaro:1015/144/0 Carrasco:735/571/0 Pollmann:1087/341/0
+  // Gomez:553/38/0 Errazu:739/707/0 Gutierrez:1345/206/0 Mateluna:1222/318/0 Gacitua:849/722/32
+  // Sierra (de tabla gral): 372/142/0
   {id:"e01",label:"6/04",fecha:"6/04",tipo:"entreno",
    prom_hsr:1631,prom_h18:434,prom_spr:11,
    zonas:[
@@ -160,8 +162,11 @@ const ENTRENOS=[
    ]},
 
   // ── 8-abr ─────────────────────────────────────────────────────────────────
+  // Sub-tabla zonas del Drive:
+  // Pareja:440/195/0 Carrasco:244/614/0 Gomez:563/120/2 Alfaro:472/300/0
+  // Pollmann:481/213/0 Gutierrez:401/421/0 Mateluna:450/364/3 Gacitua:285/503/67
   {id:"e02",label:"8/04",fecha:"8/04",tipo:"entreno",
-   prom_hsr:731,prom_h18:386,prom_spr:9,
+   prom_hsr:731,prom_h18:317,prom_spr:9,
    zonas:[
     {n:"Pareja Camila",    h15:440, h18:195,spr:0},
     {n:"Carrasco Sofia",   h15:244, h18:614,spr:0},
@@ -184,7 +189,7 @@ const ENTRENOS=[
    ]},
 
   // ── 10-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive: solo Muñoz Constanza
+  // Sub-tabla zonas del Drive: Muñoz:859/913/0
   {id:"e03",label:"10/04",fecha:"10/04",tipo:"entreno",
    prom_hsr:1772,prom_h18:913,prom_spr:0,
    zonas:[
@@ -195,7 +200,10 @@ const ENTRENOS=[
    ]},
 
   // ── 13-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
+  // Sub-tabla zonas del Drive:
+  // Arau:19/4/0 Gomez:281/10/0 Gacitua:565/725/124 Pareja:674/265/15
+  // Alfaro:661/506/42 Retamal:807/474/82 Gutierrez:668/331/9 Carrasco:631/841/119
+  // Mateluna:691/434/71 Sepulveda:606/768/35
   {id:"e04",label:"13/04",fecha:"13/04",tipo:"entreno",
    prom_hsr:1029,prom_h18:538,prom_spr:50,
    zonas:[
@@ -224,7 +232,10 @@ const ENTRENOS=[
    ]},
 
   // ── 15-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
+  // Sub-tabla zonas del Drive:
+  // Errazu:192/66/0 Sierra:296/112/0 Gomez:256/65/0 Pollmann:351/92/0
+  // Alfaro:197/35/5 Muñoz:305/46/0 Silva:606/207/0 Carrasco:637/382/0
+  // Pareja:284/112/0 Gutierrez:450/146/0 Gacitua:618/434/13
   {id:"e05",label:"15/04",fecha:"15/04",tipo:"entreno",
    prom_hsr:553,prom_h18:145,prom_spr:2,
    zonas:[
@@ -256,6 +267,8 @@ const ENTRENOS=[
 
   // ── 17-abr ─────────────────────────────────────────────────────────────────
   // Sub-tabla zonas del Drive. Promedio: h15=76, h18=66, spr=0
+  // Arau:0/0/0 Gomez:99/14/0 Alfaro:77/68/0 Gutierrez:80/59/0
+  // Pareja:76/40/0 Carrasco:91/98/0 Gacitua:81/120/0 Errazu:83/105/0 Mateluna:96/89/0
   {id:"e06",label:"17/04",fecha:"17/04",tipo:"entreno",
    prom_hsr:139,prom_h18:66,prom_spr:0,
    zonas:[
@@ -282,9 +295,11 @@ const ENTRENOS=[
    ]},
 
   // ── 20-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive
+  // Sub-tabla zonas del Drive:
+  // Pollmann:237/32/0 Pareja:328/5/0 Alfaro:298/2/0 Retamal:446/7/0
+  // Gomez:268/0/0 Gacitua:637/20/0 Sepulveda:621/69/0 Carrasco:747/118/0
   {id:"e07",label:"20/04",fecha:"20/04",tipo:"entreno",
-   prom_hsr:462,prom_h18:303,prom_spr:0,
+   prom_hsr:462,prom_h18:32,prom_spr:0,
    zonas:[
     {n:"Pollmann Marianne", h15:237,h18:32, spr:0},
     {n:"Pareja Camila",     h15:328,h18:5,  spr:0},
@@ -307,9 +322,11 @@ const ENTRENOS=[
    ]},
 
   // ── 22-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
+  // Sub-tabla zonas del Drive:
+  // Sepulveda:29/47/5 Alfaro:100/244/22 Retamal:207/603/29 Pareja:566/348/1
+  // Gutierrez:637/400/38 Carrasco:337/818/59 Mateluna:496/638/26 Gacitua:307/763/138
   {id:"e08",label:"22/04",fecha:"22/04",tipo:"entreno",
-   prom_hsr:983,prom_h18:508,prom_spr:40,
+   prom_hsr:983,prom_h18:477,prom_spr:40,
    zonas:[
     {n:"Sepulveda Eileen",  h15:29, h18:47,  spr:5},
     {n:"Alfaro Javiera",    h15:100,h18:244, spr:22},
@@ -332,7 +349,9 @@ const ENTRENOS=[
    ]},
 
   // ── 29-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (todos spr=0)
+  // Sub-tabla zonas del Drive (todos spr=0):
+  // Arau:39/0/0 Pollmann:389/52/0 Gomez:317/8/0 Pareja:430/22/0
+  // Alfaro:393/24/0 Retamal:579/43/0 Gacitua:792/112/0 Carrasco:983/238/0 Sepulveda:747/86/0
   {id:"e09",label:"29/04",fecha:"29/04",tipo:"entreno",
    prom_hsr:589,prom_h18:62,prom_spr:0,
    zonas:[
@@ -359,9 +378,11 @@ const ENTRENOS=[
    ]},
 
   // ── 4-may ──────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
+  // Sub-tabla zonas del Drive:
+  // Errazu:307/332/3 Pollmann:414/232/0 Gutierrez:655/54/0 Gomez:459/52/0
+  // Pastenes:317/101/0 Carrasco:437/525/0 Mateluna:705/297/0 Gacitua:394/501/0 Sepulveda:383/564/0
   {id:"e10",label:"4/05",fecha:"4/05",tipo:"entreno",
-   prom_hsr:757,prom_h18:402,prom_spr:0,
+   prom_hsr:757,prom_h18:295,prom_spr:0,
    zonas:[
     {n:"Errazu Sofia",     h15:307,h18:332,spr:3},
     {n:"Pollmann Marianne",h15:414,h18:232,spr:0},
@@ -385,10 +406,13 @@ const ENTRENOS=[
     {n:"Sepulveda Eileen", min:15,dist:1714,mxm:115,hsr:947, acc:23,dsc:11,vmax:23.6},
    ]},
 
-  // ── 11/05 ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta)
+  // ── 11/05 ──────────────────────────────────────────────────────────────────
+  // Sub-tabla zonas del Drive:
+  // Arau:26/0/0 Pollmann:288/210/8 Pareja:280/411/4 Gutierrez:296/530/14
+  // Gacitua:300/632/125 Retamal:399/416/86 Mateluna:352/508/120 Silva:382/585/117
+  // Carrasco:390/689/13 Sierra:287/538/168
   {id:"e12",label:"11/05",fecha:"11/05",tipo:"entreno",
-   prom_hsr:826,prom_h18:447,prom_spr:66,
+   prom_hsr:826,prom_h18:452,prom_spr:66,
    zonas:[
     {n:"Arau Maria",        h15:26,  h18:0,   spr:0},
     {n:"Pollmann Marianne", h15:288, h18:210, spr:8},
@@ -415,12 +439,15 @@ const ENTRENOS=[
    ]},
 
   // ── post 11/05 (Hevia) ─────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive
+  // Sub-tabla zonas del Drive:
+  // Arau:32/0/0 Gomez:127/17/0 Gutierrez:180/51/0 Carrasco:327/84/0
+  // Mateluna:175/34/0 Pareja:260/26/0 Alfaro:161/46/0 Hevia:190/26/0
+  // Gacitua:206/184/0 Errazu:284/68/0 Retamal:243/62/0
   {id:"e11",label:"post 11/05",fecha:"post 11/05",tipo:"entreno",
    prom_hsr:252,prom_h18:47,prom_spr:0,
    zonas:[
     {n:"Arau Maria",        h15:32,  h18:0,   spr:0},
-    {n:"Gomez Camila",      h15:122, h18:17,  spr:0},
+    {n:"Gomez Camila",      h15:127, h18:17,  spr:0},
     {n:"Gutierrez Renata",  h15:180, h18:51,  spr:0},
     {n:"Carrasco Sofia",    h15:327, h18:84,  spr:0},
     {n:"Mateluna Florencia",h15:175, h18:34,  spr:0},
@@ -711,7 +738,7 @@ const RPE_DATA={
   "Mateluna Florencia":7,"Sierra Julieta":7,"Gacitua Emilia":8,
   "Carrasco Sofia":9,"Pareja Camila":8,"Muñoz Constanza":6,
 };
-const ZONAS_DOLOR=["Gemelo/Sóleo","Lumbar","Cuello","Rodilla","Periostitis","Bíceps","Espalda Alta","Trapecio","Hombro","Cuádriceps"];
+const ZONAS_DOLOR=["Gemelo/Sóleo","Cuádriceps","Isquiotibial","Rodilla","Aductor","Flexor cadera","Glúteo","Lumbar","Cuello"];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 const avg=arr=>{const v=arr.filter(x=>x!=null&&x>0);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;};
@@ -1026,1061 +1053,110 @@ function StaffEvoGPS(){
 
 // ─── STAFF PERFIL PUESTOS ─────────────────────────────────────────────────────
 function StaffPuestos(){
-  const [puesto,setPuesto]=useState(null);
-  const sel=puesto?PERFIL_PUESTOS.find(p=>p.p===puesto):null;
+  const [puestoSel,setPuestoSel]=useState(null);
+  const [jugSel,setJugSel]=useState(null);
+  const sel=puestoSel?PUESTOS.find(p=>p.p===puestoSel):null;
   const colors={DC:T.blue,LT:T.green,MC:T.amber,VL:T.red,WG:T.cyan,DL:T.purple};
-  return(
-    <>
-      <div style={{fontSize:10,color:T.muted2,marginBottom:8}}>Solo partidos oficiales · Solo jugadoras ≥45 min · {PARTIDOS.length} partidos</div>
-      <MR>
-        {PERFIL_PUESTOS.map(p=>{
-          const col=colors[p.p]||T.blue;
-          return(
-            <div key={p.p} onClick={()=>setPuesto(puesto===p.p?null:p.p)} style={{background:T.surf,border:`1px solid ${puesto===p.p?col:T.border}`,borderRadius:8,padding:"10px 12px",cursor:"pointer",transition:"border-color .15s"}}>
-              <div style={{fontSize:12,fontWeight:700,color:col}}>{p.p}</div>
-              <div style={{fontSize:10,color:T.muted,marginBottom:6}}>{p.nombre}</div>
-              <div style={{fontSize:16,fontWeight:600,color:T.text}}>{pProm(p,"dist").toLocaleString()}m</div>
-              <div style={{fontSize:10,color:T.muted2}}>Dist. prom.</div>
-              <div style={{marginTop:4,fontSize:11,color:T.green}}>{pProm(p,"hsr")}m HSR</div>
-              <div style={{fontSize:10,color:T.muted}}>{p.filas.length} obs · {p.jugadoras.length} jug.</div>
-            </div>
-          );
-        })}
-      </MR>
-      {sel&&(
-        <Card style={{marginBottom:10,border:`1px solid ${colors[sel.p]||T.blue}44`}}>
-          <CT text={`${sel.p} — ${sel.nombre} · detalle`}/>
-          <div style={{overflowX:"auto"}}>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-              <TH cols={["Jugadora","Min","Dist.","HSR","18-21","Spr>21","ACC","DSC","V.máx"]}/>
-              <tbody>
-                {sel.filas.map((f,i)=>(
-                  <tr key={i} style={{background:i%2===0?"transparent":"#0d1020"}}>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{f.n}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{f.min}'</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{f.dist.toLocaleString()}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{f.hsr}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{f.h18}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:f.spr>0?T.red:T.muted,fontWeight:f.spr>0?700:400}}>{f.spr}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{f.acc}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{f.dsc}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{f.vmax}</td>
-                  </tr>
-                ))}
-                <tr style={{background:"#111520"}}>
-                  <td style={{padding:"5px 6px",color:T.muted,fontWeight:600,fontSize:10}} colSpan={2}>PROMEDIO</td>
-                  <td style={{padding:"5px 6px",color:T.blue,fontWeight:700}}>{pProm(sel,"dist").toLocaleString()}m</td>
-                  <td style={{padding:"5px 6px",color:T.text,fontWeight:600}}>{pProm(sel,"hsr")}m</td>
-                  <td style={{padding:"5px 6px",color:T.amber}}>{pProm(sel,"h18")}m</td>
-                  <td style={{padding:"5px 6px",color:T.red}}>{pProm(sel,"spr")}m</td>
-                  <td style={{padding:"5px 6px",color:T.purple}}>{pProm(sel,"acc")}</td>
-                  <td style={{padding:"5px 6px",color:T.cyan}}>{pProm(sel,"dsc")}</td>
-                  <td style={{padding:"5px 6px",color:T.amber}}>{pPromF(sel,"vmax")}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </Card>
-      )}
-      {/* Tabla resumen comparativa */}
-      <Card>
-        <CT text="Comparativa por puesto (promedios)"/>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={["Puesto","Jugadoras","Obs.","Dist.","HSR","18-21","Spr>21","ACC","DSC","V.máx"]}/>
-            <tbody>{PERFIL_PUESTOS.map(p=>{
-              const col=colors[p.p]||T.blue;
-              return(
-                <tr key={p.p} onClick={()=>setPuesto(puesto===p.p?null:p.p)} style={{cursor:"pointer",background:puesto===p.p?col+"11":"transparent"}}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700}}>{p.p}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2,fontSize:10}}>{p.jugadoras.map(n=>n.split(" ")[0]).join(", ")}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{p.filas.length}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{pProm(p,"dist").toLocaleString()}m</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{pProm(p,"hsr")}m</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{pProm(p,"h18")}m</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.red,fontWeight:pProm(p,"spr")>0?700:400}}>{pProm(p,"spr")}m</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{pProm(p,"acc")}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{pProm(p,"dsc")}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{pPromF(p,"vmax")}</td>
-                </tr>
-              );
-            })}</tbody>
-          </table>
-        </div>
-      </Card>
-    </>
-  );
-}
 
-// ─── STAFF YO-YO ──────────────────────────────────────────────────────────────
-function StaffYoyo(){
-  const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
-  const medals=["🥇","🥈","🥉"];
-  // Grupos por VAM m/s
-  const grupos=[
-    {label:"Grupo 1 — VAM ≥4.3 m/s",color:T.green,   items:sorted.filter(p=>p.ms>=4.3)},
-    {label:"Grupo 2 — VAM 4.2 m/s",  color:T.amber,   items:sorted.filter(p=>p.ms>=4.2&&p.ms<4.3)},
-    {label:"Grupo 3 — VAM <4.2 m/s", color:T.muted2,  items:sorted.filter(p=>p.ms<4.2)},
-  ].filter(g=>g.items.length>0);
-  return(
-    <>
-      <MR>
-        <MetCard label="Nivel prom." value="15.8" sub="Yo-Yo IRT1 · 15/4/26"/>
-        <MetCard label="Nivel más alto" value={sorted[0].nivel} sub={sorted[0].n.split(" ")[0]} sc={T.amber}/>
-        <MetCard label="VO2 Máx prom." value="41.9" sub="ml/kg/min" sc={T.purple}/>
-        <MetCard label="Evaluadas" value={YOYO.length} sub="9 jugadoras"/>
-      </MR>
-      {/* Referencias */}
-      <Card style={{marginBottom:10}}>
-        <CT text="Clasificación por Nivel Alcanzado"/>
-        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-          {[{label:"≥17 — Verde",c:"#3ecf7a"},{label:"15.5–16.9 — Amarillo",c:"#e09020"},{label:"<15.5 — Rojo",c:"#e05555"}].map((r,i)=>(
-            <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
-              <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/>
-              <span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
-            </div>
-          ))}
+  // Radar: comparar jugadora vs promedio del puesto
+  function RadarPuesto({jug,puesto}){
+    const labs=["Dist","HSR","18-21","ACC","Vmáx"];
+    const jVals=[jug.dist,jug.hsr,jug.ai18,jug.acc,jug.vmax];
+    const pVals=[puesto.dist,puesto.hsr,puesto.ai18,puesto.acc,puesto.vmax];
+    const maxV=jVals.map((v,i)=>Math.max(v,pVals[i],0.1));
+    const norm=(arr)=>arr.map((v,i)=>Math.min(v/maxV[i],1.5));
+    const jN=norm(jVals);const pN=norm(pVals);
+    const cx=90,cy=90,r=65,n=5;
+    const angle=(i)=>(Math.PI*2*i/n)-Math.PI/2;
+    const pt=(nv,i)=>`${cx+nv*r*Math.cos(angle(i))},${cy+nv*r*Math.sin(angle(i))}`;
+    const poly=(norms,col)=>`<polygon points="${norms.map((v,i)=>pt(v,i)).join(" ")}" fill="${col}33" stroke="${col}" stroke-width="1.5"/>`;
+    const spokes=Array.from({length:n},(_,i)=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(angle(i))}" y2="${cy+r*Math.sin(angle(i))}" stroke="#2a3550" stroke-width="1"/>`).join("");
+    const rings=[0.33,0.67,1].map(v=>`<polygon points="${Array.from({length:n},(_,i)=>pt(v,i)).join(" ")}" fill="none" stroke="#1e2535" stroke-width="1"/>`).join("");
+    const lbl=labs.map((l,i)=>{const x=cx+(r+14)*Math.cos(angle(i));const y=cy+(r+14)*Math.sin(angle(i));return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="#6a7490">${l}</text>`;}).join("");
+    const svg=`<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${poly(pN,T.blue)}${poly(jN,T.green)}${lbl}</svg>`;
+    return(
+      <div style={{display:"flex",alignItems:"center",gap:12,marginTop:10}}>
+        <div style={{width:140,flexShrink:0}} dangerouslySetInnerHTML={{__html:svg}}/>
+        <div style={{fontSize:11}}>
+          <div style={{fontSize:10,color:T.muted,marginBottom:6,fontWeight:600}}>Radar vs promedio puesto</div>
+          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}><div style={{width:10,height:3,background:T.green,borderRadius:2}}/><span style={{color:T.muted2}}>{jug.n.split(" ")[0]}</span></div>
+          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:8}}><div style={{width:10,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2}}>Prom. {puesto.p}</span></div>
+          {labs.map((l,i)=>{const diff=Math.round((jN[i]-pN[i])*100);return(<div key={l} style={{display:"flex",justifyContent:"space-between",gap:8,marginBottom:2}}><span style={{color:T.muted,fontSize:10}}>{l}</span><span style={{color:diff>0?T.green:diff<0?T.red:T.muted,fontSize:10,fontWeight:500}}>{diff>0?"+":""}{diff}%</span></div>);})}
         </div>
-      </Card>
-      {/* PODIO — por Nivel Alcanzado */}
-      <div style={{marginBottom:6,fontSize:10,color:T.muted,textTransform:"uppercase",letterSpacing:".5px"}}>Podio — Nivel Alcanzado</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
-        {sorted.slice(0,3).map((p,i)=>{
-          const col=yoyoColor(p.nivel);
-          return(
-            <div key={p.n} style={{background:T.surf,border:`2px solid ${col}`,borderRadius:8,padding:12,textAlign:"center"}}>
-              <div style={{fontSize:24,marginBottom:4}}>{medals[i]}</div>
-              <div style={{fontSize:12,fontWeight:600,color:T.text,marginBottom:2}}>{p.n.split(" ")[0]}</div>
-              <div style={{fontSize:22,fontWeight:700,color:col,margin:"4px 0"}}>Niv. {p.nivel}</div>
-              <div style={{fontSize:12,color:T.muted2,marginBottom:2}}>{p.dist}m</div>
-              <div style={{fontSize:13,color:col,fontWeight:600}}>{p.ms} m/s</div>
-              <div style={{marginTop:6,background:col+"22",borderRadius:6,padding:"3px 0",color:col,fontSize:10,fontWeight:500}}>{yoyoLabel(p.nivel)}</div>
-            </div>
-          );
-        })}
       </div>
-      {/* TABLA completa */}
+    );
+  }
+
+  return(
+    <>
+      <MR>
+        <MetCard label="Dist. prom." value={`${PROM_PUESTO.dist.toLocaleString()}m`} sub="Partidos ≥45 min"/>
+        <MetCard label="HSR prom." value={`${PROM_PUESTO.hsr}m`}/>
+        <MetCard label="ACC prom." value={PROM_PUESTO.acc} sc={T.purple}/>
+        <MetCard label="Vel. máx prom." value={`${PROM_PUESTO.vmax} km/h`} sc={T.cyan}/>
+      </MR>
+      <div style={{fontSize:10,color:T.muted2,marginBottom:8}}>Solo jugadoras con ≥45 min. Tocá un puesto para ver detalle.</div>
       <Card style={{marginBottom:10}}>
-        <CT text="Tabla completa — Nivel | Distancia | VAM m/s"/>
+        <CT text="Perfil por puesto — partidos oficiales (prom. jugadoras ≥45 min)"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["#","Jugadora","Nivel Alcanzado","Distancia (m)","VAM m/s","Grupo","Clasificación"]}/>
-            <tbody>{sorted.map((p,i)=>{
-              const col=yoyoColor(p.nivel);
-              const gc=p.ms>=4.3?"#3ecf7a":p.ms>=4.2?"#e09020":"#6a7490";
-              return(
-                <tr key={p.n} style={{background:i%2===0?"transparent":"#0d1020"}}>
-                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.muted}}>{i+1}</td>
-                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.text,fontWeight:600,whiteSpace:"nowrap"}}>{p.n}</td>
-                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:col,fontWeight:700,fontSize:15,fontFamily:"monospace"}}>{p.nivel}</td>
-                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500}}>{p.dist}m</td>
-                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:col,fontWeight:700,fontSize:14}}>{p.ms}</td>
-                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824"}}>
-                    <span style={{background:gc+"22",color:gc,padding:"2px 8px",borderRadius:4,fontSize:10,fontWeight:500,whiteSpace:"nowrap"}}>{yoyoGrupo(p.ms)}</span>
-                  </td>
-                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824"}}>
-                    <span style={{background:col+"22",color:col,padding:"2px 8px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoLabel(p.nivel)}</span>
-                  </td>
+            <TH cols={["Puesto","Nombre","Dist.","HSR >15","18-21","Spr >21","ACC","DSC","V.máx"]}/>
+            <tbody>
+              {PUESTOS.map(p=>(
+                <tr key={p.p} onClick={()=>{setPuestoSel(puestoSel===p.p?null:p.p);setJugSel(null);}}
+                  style={{cursor:"pointer",background:puestoSel===p.p?T.blue+"11":"transparent"}}>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:colors[p.p]||T.blue,fontWeight:700}}>{p.p}</td>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.text}}>{p.n}</td>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{p.dist.toLocaleString()}m</td>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.text}}>{p.hsr.toLocaleString()}m</td>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.amber}}>{p.ai18}m</td>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.red}}>{p.spr}m</td>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.purple,fontWeight:500}}>{p.acc}</td>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.cyan}}>{p.dsc}</td>
+                  <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{p.vmax}</td>
                 </tr>
-              );
-            })}</tbody>
-            <tfoot>
-              <tr style={{background:"#111520"}}>
-                <td colSpan={3} style={{padding:"6px 8px",color:T.muted,fontWeight:600,fontSize:10}}>PROMEDIO</td>
-                <td style={{padding:"6px 8px",color:T.amber,fontWeight:700}}>15.8</td>
-                <td style={{padding:"6px 8px",color:T.text,fontWeight:500}}>1027m</td>
-                <td style={{padding:"6px 8px",color:T.amber,fontWeight:700}}>4.2</td>
-                <td/><td/>
+              ))}
+              <tr style={{background:"#0d1020"}}>
+                <td colSpan={2} style={{padding:"6px 8px",color:T.muted,fontWeight:600,fontSize:10}}>PROM GENERAL</td>
+                <td style={{padding:"6px 8px",color:T.blue,fontWeight:700}}>{PROM_PUESTO.dist.toLocaleString()}m</td>
+                <td style={{padding:"6px 8px",color:T.text}}>{PROM_PUESTO.hsr}m</td>
+                <td style={{padding:"6px 8px",color:T.amber}}>{PROM_PUESTO.ai18}m</td>
+                <td style={{padding:"6px 8px",color:T.red}}>—</td>
+                <td style={{padding:"6px 8px",color:T.purple,fontWeight:500}}>{PROM_PUESTO.acc}</td>
+                <td style={{padding:"6px 8px",color:T.cyan}}>{PROM_PUESTO.dsc}</td>
+                <td style={{padding:"6px 8px",color:T.amber}}>{PROM_PUESTO.vmax}</td>
               </tr>
-            </tfoot>
+            </tbody>
           </table>
         </div>
       </Card>
-      {/* GRUPOS por VAM */}
-      {grupos.map(g=>(
-        <Card key={g.label} style={{marginBottom:8,border:`1px solid ${g.color}44`}}>
-          <CT text={g.label}/>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            {g.items.map(p=>(
-              <div key={p.n} style={{background:g.color+"11",border:`1px solid ${g.color}55`,borderRadius:8,padding:"8px 12px",textAlign:"center",minWidth:90}}>
-                <div style={{fontSize:11,color:T.muted2,marginBottom:2}}>{p.n.split(" ")[0]}</div>
-                <div style={{fontSize:15,fontWeight:700,color:g.color}}>Niv. {p.nivel}</div>
-                <div style={{fontSize:12,color:T.text}}>{p.dist}m</div>
-                <div style={{fontSize:13,fontWeight:600,color:g.color}}>{p.ms} m/s</div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      ))}
-    </>
-  );
-}
-
-
-function StaffMinutos(){
-  const partidos=["COGS","PWCC","MANQ A","UC B","CAT B"];
-  const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
-  return(
-    <>
-      <MR>
-        <MetCard label="Jugadoras" value={MINUTOS.length}/>
-        <MetCard label="Máx. minutos" value={`${Math.max(...MINUTOS.map(m=>m.tot))} min`} sub="Arau/Gutierrez/Pareja" sc={T.green}/>
-        <MetCard label="Prom. equipo" value={`${Math.round(avg(MINUTOS.map(m=>m.tot)))} min`} sub="Total temporada"/>
-        <MetCard label="Partidos" value={4} sub="COGS · PWCC · MANQ · UC B"/>
-      </MR>
-      <Card>
-        <CT text="Minutos de juego por jugadora — hoja Minutos de Juego"/>
-        <div style={{overflowX:"auto"}}>
+      {sel&&(
+        <Card style={{border:`1px solid ${colors[sel.p]||T.blue}44`}}>
+          <CT text={`${sel.p} — ${sel.n}: detalle jugadoras`}/>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Jugadora","Div","COGS","PWCC","MANQ A","CAT B","Total","Prom."]}/>
-            <tbody>{[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
-              const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
-              return(
-                <tr key={m.n}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{m.n}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}><Chip text={m.div} color={m.div==="S16"?T.purple:T.blue}/></td>
-                  {[m.cogs,m.pwcc,m.manq,m.catb].map((v,i)=>(
-                    <td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v!=null?`${v}'`:"—"}</td>
-                  ))}
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700}}>{m.tot}'</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{m.prom.toFixed(1)}'</td>
-                </tr>
-              );
-            })}</tbody>
-          </table>
-        </div>
-        <div style={{marginTop:12}}>
-          <CT text="Minutos totales — barra"/>
-          {[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
-            const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
-            return(
-              <div key={m.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}>
-                <span style={{fontSize:11,color:T.text,width:130,flexShrink:0,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.n.split(" ")[0]}</span>
-                <div style={{flex:1,background:"#1e2535",borderRadius:3,height:8}}><div style={{width:`${Math.round(m.tot/maxTot*100)}%`,height:8,borderRadius:3,background:col}}/></div>
-                <span style={{fontSize:11,color:col,width:40,textAlign:"right",fontWeight:500}}>{m.tot}'</span>
-              </div>
-            );
-          })}
-        </div>
-      </Card>
-    </>
-  );
-}
-
-// ─── STAFF ASISTENCIA ──────────────────────────────────────────────────────────
-function StaffAsistencia(){
-  const rows=Object.entries(ASISTENCIA).map(([n,d])=>({
-    n,feb:d.feb,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
-    pct:Math.round(d.dias.filter(x=>x===1).length/d.dias.length*100)
-  })).sort((a,b)=>b.pct-a.pct);
-  return(
-    <>
-      <MR>
-        <MetCard label="Prom. asistencia" value={`${Math.round(avg(rows.map(r=>r.pct)))}%`} sub="Total Mar-May"/>
-        <MetCard label="≥80%" value={rows.filter(r=>r.pct>=80).length} sub="Jugadoras"/>
-        <MetCard label="<60%" value={rows.filter(r=>r.pct<60).length} sub="Alertas" sc={T.red}/>
-      </MR>
-      <Card>
-        <CT text="Calendario — % mensual"/>
-        <div style={{overflowX:"auto"}}>
-          <table style={{borderCollapse:"collapse",fontSize:11,width:"100%"}}>
-            <thead>
-              <tr>
-                <th style={{textAlign:"left",color:T.muted,padding:"3px 6px",borderBottom:`1px solid ${T.border}`,fontSize:10}}>Jugadora</th>
-                {ATT_MESES.map((m,mi)=>(
-                  <th key={mi} colSpan={m.fechas.length} style={{textAlign:"center",color:m.color,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>{m.label}</th>
-                ))}
-                {ATT_MESES.map((m,mi)=>(
-                  <th key={`p${mi}`} style={{textAlign:"center",color:m.color,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:mi===0?`1px solid ${T.border2}`:"none"}}>%{m.label}</th>
-                ))}
-                <th style={{textAlign:"center",color:T.muted,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9}}>%TOT</th>
-              </tr>
-              <tr>
-                <th/>
-                {ATT_FECHAS.map((f,i)=>{
-                  let borderLeft="none";
-                  let cumLen=0;
-                  for(const m of ATT_MESES){if(i===cumLen){borderLeft=`1px solid ${T.border2}`;break;}cumLen+=m.fechas.length;}
-                  return <th key={i} style={{textAlign:"center",color:T.muted,padding:"2px 2px",borderBottom:`1px solid ${T.border}`,fontSize:7,minWidth:16,borderLeft}}>{f}</th>
-                })}
-                {ATT_MESES.map((_,i)=><th key={i}/>)}
-                <th/>
-              </tr>
-            </thead>
-            <tbody>{rows.map(r=>{
-              const col=r.pct>=80?T.green:r.pct>=60?T.amber:T.red;
-              return(
-                <tr key={r.n}>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,fontSize:11,whiteSpace:"nowrap"}}>{r.n.split(" ")[0]}</td>
-                  {r.dias.map((d,i)=>{
-                    let cumLen=0,borderLeft="none";
-                    for(const m of ATT_MESES){if(i===cumLen){borderLeft=`1px solid ${T.border2}`;break;}cumLen+=m.fechas.length;}
-                    return(
-                      <td key={i} style={{padding:"2px 1px",borderBottom:"1px solid #141824",textAlign:"center",borderLeft}}>
-                        <span style={{display:"inline-block",width:13,height:13,borderRadius:2,background:d===1?"#0f2d1f":"#2d0f0f",color:d===1?T.green:T.red,fontSize:8,lineHeight:"13px",textAlign:"center"}}>{d===1?"✓":"✗"}</span>
-                      </td>
-                    );
-                  })}
-                  {[r.feb,r.mar,r.abr,r.may].map((v,i)=>(
-                    <td key={i} style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:ATT_MESES[i]?.color||T.muted,fontWeight:500,borderLeft:i===0?`1px solid ${T.border2}`:"none"}}>{v||"—"}</td>
-                  ))}
-                  <td style={{padding:"4px 5px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:col,fontWeight:600}}>{r.pct}%</td>
-                </tr>
-              );
-            })}</tbody>
-          </table>
-        </div>
-      </Card>
-    </>
-  );
-}
-
-// ─── STAFF RPE ─────────────────────────────────────────────────────────────────
-function StaffRPE(){
-  const entries=Object.entries(RPE_DATA).sort((a,b)=>b[1]-a[1]);
-  const alerts=entries.filter(([,v])=>v>=8);
-  return(
-    <>
-      <MR>
-        <MetCard label="RPE prom." value={Math.round(avg(entries.map(([,v])=>v)))} sub="Última sesión (1-10)"/>
-        <MetCard label="RPE ≥8" value={alerts.length} sub="Alertas" sc={T.red}/>
-        <MetCard label="RPE ≤6" value={entries.filter(([,v])=>v<=6).length} sub="Normal" sc={T.green}/>
-      </MR>
-      {alerts.length>0&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"8px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ RPE ≥8: {alerts.map(([n])=>n.split(" ")[0]).join(", ")}</div>}
-      <Card>
-        <CT text="RPE individual — última sesión"/>
-        {entries.map(([n,v])=>{const col=v>=8?T.red:v>=7?T.amber:T.green;return(
-          <div key={n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-            <span style={{fontSize:11,color:T.text,width:140,flexShrink:0}}>{n}</span>
-            <div style={{flex:1,background:"#1e2535",borderRadius:3,height:8}}><div style={{width:`${v/10*100}%`,height:8,borderRadius:3,background:col}}/></div>
-            <span style={{fontSize:14,fontWeight:700,color:col,width:18,textAlign:"right"}}>{v}</span>
-          </div>
-        );})}
-      </Card>
-    </>
-  );
-}
-
-// ─── STAFF WELLNESS ────────────────────────────────────────────────────────────
-function StaffWellness(){
-  const entries=Object.entries(WELLNESS);
-  const alerts=entries.filter(([,w])=>w.calidad<=2||w.fatiga<=2||w.estres<=2||w.animo<=2);
-  return(
-    <>
-      <MR>
-        <MetCard label="Alertas" value={alerts.length} sub="Valor bajo" sc={alerts.length>1?T.red:T.amber}/>
-        <MetCard label="Calidad sueño" value={`${avg(entries.map(([,w])=>w.calidad)).toFixed(1)}/5`}/>
-        <MetCard label="Energía prom." value={`${avg(entries.map(([,w])=>w.fatiga)).toFixed(1)}/5`}/>
-        <MetCard label="Ánimo prom." value={`${avg(entries.map(([,w])=>w.animo)).toFixed(1)}/5`}/>
-      </MR>
-      {alerts.map(([n,w])=>(
-        <div key={n} style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:6,fontSize:12,color:T.red}}>
-          ⚠ <strong>{n}</strong> — {[w.calidad<=2?`Cal:${w.calidad}`:"",w.fatiga<=2?`Ene:${w.fatiga}`:"",w.estres<=2?`Est:${w.estres}`:"",w.animo<=2?`Áni:${w.animo}`:""].filter(Boolean).join(" | ")}
-        </div>
-      ))}
-      <Card>
-        <CT text="Wellness plantel (1=rojo · 5=verde)"/>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse"}}>
-            <TH cols={["Jugadora","Hs Sueño","Calidad","Energía","Dolor","Estrés","Ánimo","Zona"]}/>
-            <tbody>{entries.map(([n,w])=>(
-              <tr key={n}>
-                <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.text,fontSize:11,whiteSpace:"nowrap"}}>{n}</td>
-                <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",textAlign:"center",color:T.muted,fontSize:11}}>{w.horas}</td>
-                {["calidad","fatiga","dolor","estres","animo"].map(k=>(
-                  <td key={k} style={{padding:"6px 8px",borderBottom:"1px solid #141824",textAlign:"center"}}>
-                    <WCircle val={w[k]}/>
-                  </td>
-                ))}
-                <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.muted,fontSize:11}}>{w.nota}</td>
+            <TH cols={["Jugadora","Partidos","Dist.","HSR","18-21","Spr","ACC","DSC","V.máx"]}/>
+            <tbody>{sel.jugadoras.map(j=>(
+              <tr key={j.n} onClick={()=>setJugSel(jugSel===j.n?null:j.n)}
+                style={{cursor:"pointer",background:jugSel===j.n?T.amber+"11":"transparent"}}>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:jugSel===j.n?T.amber:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{j.n}</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",textAlign:"center"}}><Chip text={`${j.partidos}P`}/></td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.blue}}>{j.dist.toLocaleString()}m</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.text}}>{j.hsr.toLocaleString()}m</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.amber}}>{j.ai18}m</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.red}}>{j.spr}m</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.purple,fontWeight:500}}>{j.acc}</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.cyan}}>{j.dsc}</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
               </tr>
             ))}</tbody>
           </table>
-        </div>
-      </Card>
-    </>
-  );
-}
-
-// ─── RADAR CHART — comparación jugadora vs equipo vs puesto ──────────────────
-function RadarChart({player,sesion,allSessions}){
-  // Métricas: dist, mxm, hsr, acc, vmax
-  const labels=["Dist","m/min","HSR","ACC","Vmáx"];
-  const jd=sesion.jugadoras.find(j=>j.n===player);
-  if(!jd)return null;
-  // Promedios del equipo en esa sesión
-  const teamAvg=(key)=>sesion.jugadoras.reduce((a,j)=>a+(j[key]||0),0)/sesion.jugadoras.length;
-  const vals=[jd.dist,jd.mxm,jd.hsr||jd.ai15||0,jd.acc,jd.vmax];
-  const team=[teamAvg("dist"),teamAvg("mxm"),teamAvg("ai15")||teamAvg("hsr")||0,teamAvg("acc"),teamAvg("vmax")];
-  // Normalizar (0-1) respecto al máximo del equipo
-  const maxV=vals.map((v,i)=>Math.max(v,team[i],0.1));
-  const norm=(arr)=>arr.map((v,i)=>Math.min(v/maxV[i],1.5));
-  const jNorm=norm(vals);
-  const tNorm=norm(team);
-  // SVG radar
-  const cx=100,cy=100,r=70,n=5;
-  const angle=(i)=>(Math.PI*2*i/n)-Math.PI/2;
-  const pt=(norm,i)=>`${cx+norm*r*Math.cos(angle(i))},${cy+norm*r*Math.sin(angle(i))}`;
-  const poly=(norms,col)=>`<polygon points="${norms.map((v,i)=>pt(v,i)).join(" ")}" fill="${col}33" stroke="${col}" stroke-width="1.5"/>`;
-  const spokes=Array.from({length:n},(_,i)=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(angle(i))}" y2="${cy+r*Math.sin(angle(i))}" stroke="#2a3550" stroke-width="1"/>`).join("");
-  const rings=[0.33,0.67,1].map(v=>`<polygon points="${Array.from({length:n},(_,i)=>pt(v,i)).join(" ")}" fill="none" stroke="#1e2535" stroke-width="1"/>`).join("");
-  const lbl=labels.map((l,i)=>{
-    const x=cx+(r+14)*Math.cos(angle(i));
-    const y=cy+(r+14)*Math.sin(angle(i));
-    const isMe=jNorm[i]>tNorm[i];
-    return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="${isMe?"#3ecf7a":"#6a7490"}">${l}</text>`;
-  }).join("");
-  const dots=jNorm.map((v,i)=>`<circle cx="${cx+v*r*Math.cos(angle(i))}" cy="${cy+v*r*Math.sin(angle(i))}" r="3" fill="#3ecf7a"/>`).join("");
-  const svg=`<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${poly(tNorm,"#4a90e8")}${poly(jNorm,"#3ecf7a")}${dots}${lbl}</svg>`;
-  return(
-    <Card style={{marginBottom:10}}>
-      <CT text="Radar — yo vs equipo"/>
-      <div style={{display:"flex",alignItems:"center",gap:12}}>
-        <div style={{width:160,flexShrink:0}} dangerouslySetInnerHTML={{__html:svg}}/>
-        <div style={{fontSize:11}}>
-          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:6}}>
-            <div style={{width:12,height:3,background:"#3ecf7a",borderRadius:2}}/><span style={{color:T.muted2}}>{player.split(" ")[0]}</span>
-          </div>
-          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:10}}>
-            <div style={{width:12,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2}}>Promedio equipo</span>
-          </div>
-          {labels.map((l,i)=>{
-            const diff=Math.round((jNorm[i]-tNorm[i])*100);
-            return(
-              <div key={l} style={{marginBottom:3,display:"flex",justifyContent:"space-between",gap:8}}>
-                <span style={{color:T.muted,fontSize:10}}>{l}</span>
-                <span style={{color:diff>0?T.green:diff<0?T.red:T.muted,fontSize:10,fontWeight:500}}>{diff>0?"+":""}{diff}%</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-// ─── PLAYER GPS ────────────────────────────────────────────────────────────────
-function PlayerGPS({player}){
-  const [tipo,setTipo]=useState("todos");
-  const [sesionSel,setSesionSel]=useState(null);
-  const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess;
-  const sess=mySess(player,pool);
-  if(!sess.length)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos GPS en esta selección</div>;
-
-  // Sesión seleccionada para ver tabla del equipo
-  const sessDetalle=sesionSel?allSess.find(s=>s.id===sesionSel):null;
-
-  return(
-    <>
-      {fbtn(tipo,setTipo,[["partidos","🏑 Partidos"],["amistosos","⚡ Amistosos"],["entrenos","🏃 Entrenos"],["todos","Todo"]])}
-      <MR>
-        <MetCard label="Dist. prom." value={`${Math.round(avg(sess.map(s=>s.data.dist))).toLocaleString()}m`}/>
-        <MetCard label="Sesiones" value={sess.length}/>
-        <MetCard label="Vel. máx" value={`${Math.max(...sess.map(s=>s.data.vmax))} km/h`} sc={T.amber}/>
-      </MR>
-      <Card style={{marginBottom:10}}>
-        <CT text="Detalle por sesión — tocá una fila para ver el equipo"/>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={["Sesión","Fecha","Min","Dist.","m/min","HSR","V.máx",""]}/>
-            <tbody>{sess.map(s=>{
-              const isSelected=sesionSel===s.id;
-              return(
-                <tr key={s.id} onClick={()=>setSesionSel(isSelected?null:s.id)}
-                  style={{cursor:"pointer",background:isSelected?T.blue+"11":"transparent"}}>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.fecha}</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.data.min}'</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{s.data.dist.toLocaleString()}m</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{(s.data.hsr||s.data.ai15||0)}m</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isSelected?T.blue:T.muted,fontSize:10}}>{isSelected?"▲":"▼"}</td>
-                </tr>
-              );
-            })}</tbody>
-          </table>
-        </div>
-      </Card>
-
-      {/* Tabla del equipo para la sesión seleccionada */}
-      {sessDetalle&&(
-        <Card style={{marginBottom:10,border:`1px solid ${T.blue}44`}}>
-          <CT text={`Equipo — ${sessDetalle.label} ${sessDetalle.fecha}`}/>
-          <div style={{overflowX:"auto"}}>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-              <TH cols={["Jugadora","Dist.","HSR","18-21","Spr>21","ACC","V.máx"]}/>
-              <tbody>{[...(sessDetalle.jugadoras||[])].sort((a,b)=>b.dist-a.dist).map(j=>{
-                const isMe=j.n===player;
-                return(
-                  <tr key={j.n} style={{background:isMe?T.amber+"11":"transparent"}}>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",
-                      color:isMe?T.amber:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>
-                      {isMe?"▶ ":""}{j.n.split(" ")[0]}
-                    </td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.amber:T.blue,fontWeight:isMe?700:400}}>{Math.round(j.dist).toLocaleString()}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{(j.hsr||j.ai15||0)}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{(j.ai18||0)}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:j.spr>0?T.red:T.muted,fontWeight:j.spr>0?700:400}}>{j.spr||0}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc}</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
-                  </tr>
-                );
-              })}</tbody>
-            </table>
-          </div>
+          {jugSel&&sel.jugadoras.find(j=>j.n===jugSel)&&(
+            <RadarPuesto jug={sel.jugadoras.find(j=>j.n===jugSel)} puesto={sel}/>
+          )}
         </Card>
       )}
-
-      {/* Gráfico HSR por zonas */}
-      <Card>
-        <CT text="HSR por zonas — mis sesiones"/>
-        {hsrLegend}
-        {sess.map(s=>{
-          let h15=0,h18=0,spr=0;
-          if(s.zonas){
-            const zd=s.zonas.find(z=>z.n===player);
-            if(zd){h15=zd.h15;h18=zd.h18;spr=zd.spr;}
-          } else if(s.data.ai15!=null){
-            h18=s.data.ai18||0; spr=s.data.spr||0; h15=s.data.ai15-h18-spr;
-          }
-          const total=h15+h18+spr;
-          const mx=Math.max(...sess.map(s2=>{
-            if(s2.zonas){const z=s2.zonas.find(z=>z.n===player);return z?z.h15+z.h18+z.spr:0;}
-            return s2.data.ai15||0;
-          }),1);
-          return(
-            <div key={s.id} style={{marginBottom:8}}>
-              <div style={{display:"flex",justifyContent:"space-between",marginBottom:3,fontSize:11}}>
-                <span style={{color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
-                <div style={{display:"flex",gap:8}}>
-                  <span style={{color:T.green,fontSize:10}}>{h15}m</span>
-                  <span style={{color:T.amber,fontSize:10}}>{h18}m</span>
-                  <span style={{color:spr>0?T.red:T.muted,fontSize:10,fontWeight:spr>0?700:400}}>{spr}m</span>
-                  <span style={{color:T.muted,fontSize:10}}>{total}m</span>
-                </div>
-              </div>
-              <HsrBar h15={h15} h18={h18} spr={spr} mx={mx}/>
-            </div>
-          );
-        })}
-      </Card>
-    </>
-  );
-}
-
-// ─── PLAYER YO-YO ─────────────────────────────────────────────────────────────
-function PlayerYoyo({player}){
-  const d=YOYO.find(p=>p.n===player);
-  const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
-  const myRank=d?sorted.findIndex(p=>p.n===player)+1:null;
-  if(!d)return(
-    <div style={{textAlign:"center",padding:30}}>
-      <div style={{fontSize:36,marginBottom:10}}>🏑</div>
-      <div style={{color:T.muted,fontSize:14}}>Sin registro Yo-Yo</div>
-    </div>
-  );
-  const col=yoyoColor(d.nivel);
-  return(
-    <>
-      <div style={{background:T.surf,border:`2px solid ${col}`,borderRadius:8,padding:"16px",marginBottom:14,textAlign:"center"}}>
-        <div style={{fontSize:11,color:T.muted,marginBottom:6}}>Yo-Yo IRT1 · 15/4/26</div>
-        <div style={{fontSize:32,fontWeight:700,color:col,marginBottom:4}}>Nivel {d.nivel}</div>
-        <div style={{fontSize:22,fontWeight:700,color:col,marginBottom:6}}>{d.ms} m/s</div>
-        <div style={{fontSize:14,color:T.text,marginBottom:4}}>{d.dist}m alcanzados</div>
-        <div style={{fontSize:11,color:T.muted2,marginBottom:10}}>VO2 Máx: {d.vo2} ml/kg/min · Vel: {d.kmh} km/h</div>
-        <span style={{background:col+"22",color:col,padding:"4px 16px",borderRadius:6,fontSize:12,fontWeight:600}}>{yoyoLabel(d.nivel)}</span>
-      </div>
-      <MR>
-        <MetCard label="Mi nivel" value={d.nivel} sc={col}/>
-        <MetCard label="VAM" value={`${d.ms} m/s`} sc={col}/>
-        <MetCard label="Distancia" value={`${d.dist}m`}/>
-        <MetCard label="Ranking" value={`#${myRank}`} sub={`de ${sorted.length}`}/>
-      </MR>
-      <Card>
-        <CT text="Mi posición en el ranking (por Nivel)"/>
-        {sorted.map((p,i)=>{const isMe=p.n===player;const gc=yoyoColor(p.nivel);return(
-          <div key={p.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5,background:isMe?T.amber+"11":"transparent",borderRadius:4,padding:isMe?"2px 4px":0}}>
-            {isMe&&<span style={{color:T.amber,fontSize:9}}>▶</span>}
-            <span style={{fontSize:11,color:isMe?T.amber:T.text,width:130,flexShrink:0,fontWeight:isMe?500:400}}>{i+1}. {p.n.split(" ")[0]}</span>
-            <div style={{flex:1,background:"#1e2535",borderRadius:3,height:7}}><div style={{width:`${Math.round((p.nivel-12)/(17-12)*100)}%`,height:7,borderRadius:3,background:isMe?T.amber:gc}}/></div>
-            <span style={{fontSize:11,color:isMe?T.amber:gc,width:60,textAlign:"right"}}>{p.nivel} ({p.ms})</span>
-          </div>
-        );})}
-      </Card>
-    </>
-  );
-}
-
-// ─── PLAYER ASISTENCIA ─────────────────────────────────────────────────────────
-function PlayerAsistencia({player}){
-  const d=ASISTENCIA[player];
-  if(!d)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos de asistencia</div>;
-  const pct=Math.round(d.dias.filter(x=>x===1).length/d.dias.length*100);
-  // Ranking del equipo por % total
-  const ranking=Object.entries(ASISTENCIA)
-    .map(([n,a])=>({n,pct:Math.round(a.dias.filter(x=>x===1).length/a.dias.length*100)}))
-    .sort((a,b)=>b.pct-a.pct);
-  const myRank=ranking.findIndex(r=>r.n===player)+1;
-  const medals=["🥇","🥈","🥉"];
-  return(
-    <>
-      <MR>
-        <MetCard label="Mi asistencia" value={`${pct}%`} sub={`${d.dias.filter(x=>x===1).length}/${d.dias.length} sesiones`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
-        <MetCard label="Mi ranking" value={`#${myRank}`} sub={`de ${ranking.length}`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
-        <MetCard label="%Feb" value={d.feb||"—"} sc={T.blue}/>
-        <MetCard label="%Mar" value={d.mar||"—"} sc={T.green}/>
-        <MetCard label="%Abr" value={d.abr||"—"} sc={T.amber}/>
-        <MetCard label="%May" value={d.may||"—"} sc={T.purple}/>
-      </MR>
-      {pct<60&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ Asistencia menor al 60%</div>}
-      {/* Podio del equipo */}
-      <div style={{marginBottom:6,fontSize:10,color:T.muted,textTransform:"uppercase",letterSpacing:".5px"}}>Podio equipo — Asistencia</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:12}}>
-        {ranking.slice(0,3).map((r,i)=>{
-          const isMe=r.n===player;
-          const col=r.pct>=80?T.green:r.pct>=60?T.amber:T.red;
-          return(
-            <div key={r.n} style={{background:isMe?T.amber+"11":T.surf,border:`2px solid ${isMe?T.amber:col}`,borderRadius:8,padding:10,textAlign:"center"}}>
-              <div style={{fontSize:20,marginBottom:2}}>{medals[i]}</div>
-              <div style={{fontSize:11,fontWeight:600,color:isMe?T.amber:T.text}}>{r.n.split(" ")[0]}</div>
-              <div style={{fontSize:18,fontWeight:700,color:col}}>{r.pct}%</div>
-            </div>
-          );
-        })}
-      </div>
-      {/* Ranking completo */}
-      <Card style={{marginBottom:10}}>
-        <CT text="Ranking equipo — mi posición"/>
-        {ranking.map((r,i)=>{
-          const isMe=r.n===player;
-          const col=r.pct>=80?T.green:r.pct>=60?T.amber:T.red;
-          return(
-            <div key={r.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5,background:isMe?T.amber+"11":"transparent",borderRadius:4,padding:isMe?"2px 4px":0}}>
-              {isMe&&<span style={{color:T.amber,fontSize:9}}>▶</span>}
-              <span style={{fontSize:11,color:isMe?T.amber:T.muted,width:18,textAlign:"right"}}>{i+1}.</span>
-              <span style={{fontSize:11,color:isMe?T.amber:T.text,width:110,flexShrink:0,fontWeight:isMe?500:400}}>{r.n.split(" ")[0]}</span>
-              <div style={{flex:1,background:"#1e2535",borderRadius:3,height:7}}><div style={{width:`${r.pct}%`,height:7,borderRadius:3,background:isMe?T.amber:col}}/></div>
-              <span style={{fontSize:11,color:isMe?T.amber:col,width:36,textAlign:"right",fontWeight:isMe?600:400}}>{r.pct}%</span>
-            </div>
-          );
-        })}
-      </Card>
-      {/* Mi calendario */}
-      <Card>
-        <CT text="Mi calendario de asistencia"/>
-        <div style={{overflowX:"auto"}}>
-          <div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:8}}>
-            {ATT_MESES.map((m,mi)=>(
-              <div key={mi} style={{flex:"0 0 auto"}}>
-                <div style={{fontSize:9,color:m.color,textAlign:"center",marginBottom:4,fontWeight:600}}>{m.label}</div>
-                <div style={{display:"flex",gap:2}}>
-                  {m.fechas.map((f,fi)=>{
-                    const idx=ATT_FECHAS.indexOf(f);
-                    const dia=d.dias[idx];
-                    return(
-                      <div key={fi} style={{textAlign:"center"}}>
-                        <div style={{fontSize:7,color:T.muted,marginBottom:2}}>{f.split("/")[0]}</div>
-                        <div style={{width:18,height:18,borderRadius:3,background:dia===1?"#0f2d1f":"#2d0f0f",
-                          display:"flex",alignItems:"center",justifyContent:"center",
-                          color:dia===1?T.green:T.red,fontSize:9}}>{dia===1?"✓":"✗"}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </Card>
     </>
   );
 }
 
 
-function PlayerRPE({player}){
-  const [rpe,setRpe]=useState(RPE_DATA[player]||5);
-  const [saved,setSaved]=useState(false);
-  return(
-    <>
-      {rpe>=8&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ RPE ≥8 — el cuerpo técnico recibirá alerta.</div>}
-      <Card>
-        <CT text="Mi RPE post-sesión (1-10)"/>
-        <div style={{textAlign:"center",fontSize:32,fontWeight:700,color:rpe>=8?T.red:rpe>=7?T.amber:T.green,marginBottom:10}}>{rpe}</div>
-        <div style={{display:"flex",gap:4,justifyContent:"center",flexWrap:"wrap",marginBottom:12}}>
-          {[1,2,3,4,5,6,7,8,9,10].map(n=>(
-            <button key={n} onClick={()=>{setRpe(n);setSaved(false);}} style={{width:34,height:34,borderRadius:6,border:rpe===n?`2px solid ${T.blue}`:`1px solid ${T.border}`,background:rpe===n?T.blue+"33":"transparent",color:rpe===n?T.blue:T.muted,fontSize:14,fontWeight:rpe===n?700:400,cursor:"pointer",fontFamily:"inherit"}}>{n}</button>
-          ))}
-        </div>
-        <button onClick={()=>setSaved(true)} style={{width:"100%",padding:10,background:T.blue,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Guardar RPE</button>
-        {saved&&<div style={{textAlign:"center",marginTop:8,fontSize:12,color:T.green}}>✓ RPE guardado</div>}
-      </Card>
-    </>
-  );
-}
-
-// ─── PLAYER WELLNESS ──────────────────────────────────────────────────────────
-function PlayerWellness({player}){
-  const base=WELLNESS[player]||{horas:"7hs",calidad:3,fatiga:3,dolor:3,estres:3,animo:3};
-  const [form,setForm]=useState({horas:base.horas,calidad:base.calidad,fatiga:base.fatiga,dolor:base.dolor,estres:base.estres,animo:base.animo,zonasDolor:[],otroZona:""});
-  const [saved,setSaved]=useState(false);
-  const upd=(k,v)=>{setForm(p=>({...p,[k]:v}));setSaved(false);};
-  const toggleZona=z=>{setForm(p=>({...p,zonasDolor:p.zonasDolor.includes(z)?p.zonasDolor.filter(x=>x!==z):[...p.zonasDolor,z]}));setSaved(false);};
-  const WRow=({field,label})=>(
-    <div style={{marginBottom:12}}>
-      <div style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:".4px",marginBottom:6}}>{label}</div>
-      <div style={{display:"flex",gap:6}}>
-        {[1,2,3,4,5].map(n=>(
-          <button key={n} onClick={()=>upd(field,n)} style={{flex:1,padding:"8px 0",borderRadius:8,border:form[field]===n?`2px solid ${wColor(n)}`:`1px solid ${T.border}`,background:form[field]===n?wBg(n):"transparent",cursor:"pointer",fontFamily:"inherit",display:"flex",justifyContent:"center"}}>
-            <WCircle val={n} size={26}/>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-  return(
-    <>
-      <Card style={{marginBottom:10}}>
-        <CT text="Horas de sueño"/>
-        <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
-          {["4hs","5hs","6hs","7hs","8hs","9hs"].map(h=>(
-            <button key={h} onClick={()=>upd("horas",h)} style={{padding:"6px 12px",borderRadius:6,border:form.horas===h?`2px solid ${T.blue}`:`1px solid ${T.border}`,background:form.horas===h?T.blue+"22":"transparent",color:form.horas===h?T.blue:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>{h}</button>
-          ))}
-        </div>
-      </Card>
-      <Card style={{marginBottom:10}}>
-        <CT text="Wellness diario (1=malo · 5=excelente)"/>
-        <WRow field="calidad" label="Calidad del sueño"/>
-        <WRow field="fatiga" label="Energía / Fatiga"/>
-        <div style={{marginBottom:12}}>
-          <div style={{fontSize:11,color:T.muted,textTransform:"uppercase",letterSpacing:".4px",marginBottom:6}}>Dolor muscular</div>
-          <div style={{display:"flex",gap:6,marginBottom:8}}>
-            {[1,2,3,4,5].map(n=>(
-              <button key={n} onClick={()=>upd("dolor",n)} style={{flex:1,padding:"8px 0",borderRadius:8,border:form.dolor===n?`2px solid ${wColor(n)}`:`1px solid ${T.border}`,background:form.dolor===n?wBg(n):"transparent",cursor:"pointer",fontFamily:"inherit",display:"flex",justifyContent:"center"}}>
-                <WCircle val={n} size={26}/>
-              </button>
-            ))}
-          </div>
-          {form.dolor<=4&&(
-            <div style={{background:"#0d1020",borderRadius:8,padding:10,border:`1px solid ${T.border2}`}}>
-              <div style={{fontSize:11,color:T.muted2,marginBottom:7}}>Zona con molestia:</div>
-              <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
-                {ZONAS_DOLOR.map(z=>(
-                  <button key={z} onClick={()=>toggleZona(z)} style={{padding:"4px 9px",borderRadius:20,border:form.zonasDolor.includes(z)?`2px solid ${T.red}`:`1px solid ${T.border}`,background:form.zonasDolor.includes(z)?T.red+"22":"transparent",color:form.zonasDolor.includes(z)?T.red:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>{z}</button>
-                ))}
-                <button onClick={()=>toggleZona("Otro")} style={{padding:"4px 9px",borderRadius:20,border:form.zonasDolor.includes("Otro")?`2px solid ${T.amber}`:`1px solid ${T.border}`,background:form.zonasDolor.includes("Otro")?T.amber+"22":"transparent",color:form.zonasDolor.includes("Otro")?T.amber:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>+ Otro</button>
-              </div>
-              {form.zonasDolor.includes("Otro")&&<input placeholder="Describí la zona..." value={form.otroZona} onChange={e=>{setForm(p=>({...p,otroZona:e.target.value}));setSaved(false);}} style={{width:"100%",background:"#1e2535",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"7px 10px",outline:"none",boxSizing:"border-box"}}/>}
-            </div>
-          )}
-        </div>
-        <WRow field="estres" label="Nivel de estrés"/>
-        <WRow field="animo" label="Estado anímico"/>
-        <button onClick={()=>setSaved(true)} style={{width:"100%",padding:10,background:T.maroon,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit",marginTop:4}}>Guardar Wellness</button>
-        {saved&&<div style={{textAlign:"center",marginTop:8,fontSize:12,color:T.green}}>✓ Wellness guardado</div>}
-      </Card>
-    </>
-  );
-}
-
-// ─── PLAYER EVOLUCIÓN GPS ─────────────────────────────────────────────────────
-function PlayerEvoGPS({player}){
-  const [metric,setMetric]=useState("dist");
-  const [tipo,setTipo]=useState("todos");
-  const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess;
-  const sess=mySess(player,pool);
-  if(!mySess(player,allSess).length)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos GPS</div>;
-  const METRICS=[
-    {k:"dist",label:"Distancia Total (m)", unit:"m",    color:T.blue},
-    {k:"h15", label:"HSR 15-18 km/h (m)",  unit:"m",    color:T.green},
-    {k:"h18", label:"HSR 18-21 km/h (m)",  unit:"m",    color:T.amber},
-    {k:"spr", label:"Sprint >21 km/h (m)", unit:"m",    color:T.red},
-    {k:"acc", label:"Nº ACC (+2.5)",        unit:"",     color:T.purple},
-    {k:"vmax",label:"Vel. Máx (km/h)",      unit:"km/h", color:T.cyan},
-  ];
-  const getVal=(s,mk)=>{
-    if(mk==="dist")return s.data.dist||0;
-    if(mk==="h15"){
-      if(s.zonas){const z=s.zonas.find(z=>z.n===player);return z?z.h15:0;}
-      return(s.data.hsr||s.data.ai15||0)-(s.data.ai18||0)-(s.data.spr||0);
-    }
-    if(mk==="h18"){
-      if(s.zonas){const z=s.zonas.find(z=>z.n===player);return z?z.h18:0;}
-      return s.data.ai18||0;
-    }
-    if(mk==="spr"){
-      if(s.zonas){const z=s.zonas.find(z=>z.n===player);return z?z.spr:0;}
-      return s.data.spr||0;
-    }
-    if(mk==="acc")return s.data.acc||0;
-    if(mk==="vmax")return s.data.vmax||0;
-    return 0;
-  };
-  const curMet=METRICS.find(m=>m.k===metric)||METRICS[0];
-  const vals=sess.map(s=>getVal(s,metric));
-  const maxVal=Math.max(...vals,1);
-  const firstVal=vals.find(v=>v>0)||0;
-  const lastVal=vals[vals.length-1]||0;
-  const mejora=firstVal>0?Math.round((lastVal-firstVal)/firstVal*100):0;
-  const mejoraColor=mejora>0?T.green:mejora<0?T.red:T.muted;
-  return(
-    <>
-      {fbtn(tipo,setTipo,[["partidos","🏑 Partidos"],["amistosos","⚡ Amistosos"],["entrenos","🏃 Entrenos"],["todos","Todo"]])}
-      <div style={{display:"flex",gap:2,background:T.surf2,borderRadius:6,padding:2,marginBottom:12,flexWrap:"wrap"}}>
-        {METRICS.map(m=><button key={m.k} onClick={()=>setMetric(m.k)} style={{padding:"4px 9px",borderRadius:5,border:"none",fontSize:10,fontWeight:500,cursor:"pointer",background:metric===m.k?m.color+"33":"transparent",color:metric===m.k?m.color:T.muted,fontFamily:"inherit"}}>{m.label.split(" (")[0]}</button>)}
-      </div>
-      {!sess.length?<div style={{color:T.muted,padding:16,textAlign:"center",fontSize:12}}>Sin sesiones en esta selección</div>:(
-      <><MR>
-        <MetCard label="Mejor sesión" value={`${Math.max(...vals).toLocaleString()}${curMet.unit}`} sc={curMet.color}/>
-        <MetCard label="Promedio" value={`${metric==="vmax"?avg(vals.filter(v=>v>0)).toFixed(1):Math.round(avg(vals.filter(v=>v>0))).toLocaleString()}${curMet.unit}`}/>
-        <MetCard label="Evolución" value={`${mejora>0?"+":""}${mejora}%`} sub="vs primera sesión" sc={mejoraColor}/>
-        <MetCard label="Sesiones" value={sess.length}/>
-      </MR>
-      <Card>
-        <CT text={`Mi evolución — ${curMet.label}`}/>
-        {sess.map((s,i)=>{
-          const v=getVal(s,metric);
-          const pct=Math.round(v/maxVal*100);
-          const col=s.tipo==="partido"?T.blue:s.tipo==="amistoso"?T.purple:T.green;
-          const prev=i>0?getVal(sess[i-1],metric):null;
-          const delta=prev!=null&&prev>0?Math.round((v-prev)/prev*100):null;
-          return(
-            <div key={s.id} style={{marginBottom:8}}>
-              <div style={{display:"flex",justifyContent:"space-between",marginBottom:2,fontSize:11}}>
-                <span style={{color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
-                <div style={{display:"flex",gap:8,alignItems:"center"}}>
-                  {delta!=null&&<span style={{fontSize:10,color:delta>0?T.green:delta<0?T.red:T.muted,fontWeight:500}}>{delta>0?"+":""}{delta}%</span>}
-                  <span style={{color:curMet.color,fontWeight:600}}>{v.toLocaleString()}{curMet.unit}</span>
-                </div>
-              </div>
-              <div style={{background:"#1e2535",borderRadius:3,height:10}}>
-                <div style={{width:`${pct}%`,height:10,borderRadius:3,background:curMet.color}}/>
-              </div>
-            </div>
-          );
-        })}
-        <div style={{marginTop:10,display:"flex",gap:10,fontSize:11,color:T.muted,flexWrap:"wrap"}}>
-          {[{c:T.blue,l:"🏑 Partido"},{c:T.purple,l:"⚡ Amistoso"},{c:T.green,l:"🏃 Entreno"}].map((x,i)=>(
-            <span key={i} style={{display:"flex",alignItems:"center",gap:5}}>
-              <span style={{width:10,height:10,borderRadius:2,background:x.c,display:"inline-block"}}/>
-              {x.l}
-            </span>
-          ))}
-        </div>
-      </Card>
-      </>)}
-    </>
-  );
-}
-
-// ─── PLAYER MINUTOS DE JUEGO ───────────────────────────────────────────────────
-function PlayerMinutos({player}){
-  const d=MINUTOS.find(m=>m.n===player);
-  if(!d)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin registro de minutos de juego</div>;
-  const partidos=[
-    {label:"vs COGS",fecha:"22/03",min:d.cogs},
-    {label:"vs PWCC",fecha:"05/04",min:d.pwcc},
-    {label:"vs MANQ A",fecha:"25/04",min:d.manq},
-    {label:"vs CAT B",fecha:"10/05",min:d.catb},
-    {label:"vs CAT B",fecha:"10/05",min:d.catb},
-  ];
-  const maxMin=70;
-  return(
-    <>
-      <MR>
-        <MetCard label="Minutos totales" value={`${d.tot}'`} sub="Temporada" sc={d.tot>=200?T.green:d.tot>=100?T.amber:T.muted}/>
-        <MetCard label="Prom. por partido" value={`${d.prom.toFixed(1)}'`} sub="Partidos jugados"/>
-        <MetCard label="Partidos" value={partidos.filter(p=>p.min!=null).length} sub="Con minutos"/>
-      </MR>
-      <Card>
-        <CT text="Minutos de juego por partido"/>
-        {partidos.map((p,i)=>{
-          const col=p.min!=null?T.blue:T.muted;
-          const pct=p.min!=null?Math.round(p.min/maxMin*100):0;
-          return(
-            <div key={i} style={{marginBottom:8}}>
-              <div style={{display:"flex",justifyContent:"space-between",marginBottom:3,fontSize:12}}>
-                <span style={{color:p.min!=null?T.text:T.muted}}>🏑 {p.label} <span style={{fontSize:10,color:T.muted}}>{p.fecha}</span></span>
-                <span style={{color:col,fontWeight:600}}>{p.min!=null?`${p.min}'`:"No jugó"}</span>
-              </div>
-              <div style={{background:"#1e2535",borderRadius:3,height:10}}>
-                {p.min!=null&&<div style={{width:`${pct}%`,height:10,borderRadius:3,background:col}}/>}
-              </div>
-            </div>
-          );
-        })}
-        <div style={{marginTop:10,padding:"8px 12px",background:"#0d1020",borderRadius:6,display:"flex",justifyContent:"space-between"}}>
-          <span style={{fontSize:11,color:T.muted}}>Total temporada</span>
-          <span style={{fontSize:14,fontWeight:700,color:d.tot>=200?T.green:d.tot>=100?T.amber:T.muted}}>{d.tot} min</span>
-        </div>
-      </Card>
-    </>
-  );
-}
-
-// ─── LOGIN ────────────────────────────────────────────────────────────────────
-function LoginScreen({onLogin}){
-  const [tipo,setTipo]=useState(null); // "staff" | "jugadora"
-  const [pass,setPass]=useState("");
-  const [player,setPlayer]=useState("");
-  const [error,setError]=useState("");
-
-  const handleLogin=()=>{
-    if(tipo==="staff"){
-      if(pass==="Staffoldgabs"){onLogin("staff",null)}
-      else{setError("Contraseña incorrecta");setPass("");}
-    } else {
-      if(pass==="1eraoldgabs"){
-        if(!player){setError("Seleccioná tu nombre");return;}
-        onLogin("jugadora",player)
-      } else {setError("Contraseña incorrecta");setPass("");}
-    }
-  };
-
-  return(
-    <div style={{background:T.bg,minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"system-ui,sans-serif",padding:20}}>
-      {/* Logo */}
-      <div style={{textAlign:"center",marginBottom:32}}>
-        <div style={{width:64,height:64,borderRadius:"50%",background:T.maroon,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,margin:"0 auto 12px"}}>🏑</div>
-        <div style={{fontSize:20,fontWeight:700,color:T.text,letterSpacing:1}}>OLD GABS 1ERA</div>
-        <div style={{fontSize:12,color:T.muted,marginTop:4}}>Dashboard GPS · Temporada 2026</div>
-      </div>
-
-      {!tipo?(
-        /* Selección de tipo de usuario */
-        <div style={{width:"100%",maxWidth:320}}>
-          <div style={{fontSize:12,color:T.muted,textAlign:"center",marginBottom:16,textTransform:"uppercase",letterSpacing:1}}>¿Quién sos?</div>
-          <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            <button onClick={()=>{setTipo("staff");setError("");}} style={{padding:"16px",borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12,transition:"border-color .15s"}}
-              onMouseEnter={e=>e.target.style.borderColor=T.blue} onMouseLeave={e=>e.target.style.borderColor=T.border2}>
-              <span style={{fontSize:24}}>👤</span>
-              <div style={{textAlign:"left"}}>
-                <div>Staff Técnico</div>
-                <div style={{fontSize:11,color:T.muted,fontWeight:400}}>Acceso completo al equipo</div>
-              </div>
-            </button>
-            <button onClick={()=>{setTipo("jugadora");setError("");}} style={{padding:"16px",borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12}}
-              onMouseEnter={e=>e.target.style.borderColor=T.green} onMouseLeave={e=>e.target.style.borderColor=T.border2}>
-              <span style={{fontSize:24}}>🏑</span>
-              <div style={{textAlign:"left"}}>
-                <div>Jugadora</div>
-                <div style={{fontSize:11,color:T.muted,fontWeight:400}}>Ver mis datos personales</div>
-              </div>
-            </button>
-          </div>
-        </div>
-      ):(
-        /* Formulario de login */
-        <div style={{width:"100%",maxWidth:320}}>
-          <button onClick={()=>{setTipo(null);setPass("");setPlayer("");setError("");}} style={{background:"transparent",border:"none",color:T.muted,fontSize:12,cursor:"pointer",marginBottom:20,padding:0,fontFamily:"inherit",display:"flex",alignItems:"center",gap:4}}>
-            ← Volver
-          </button>
-          <div style={{background:T.surf,borderRadius:12,padding:24,border:`1px solid ${T.border}`}}>
-            <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:4}}>
-              {tipo==="staff"?"Staff Técnico 👤":"Jugadora 🏑"}
-            </div>
-            <div style={{fontSize:11,color:T.muted,marginBottom:20}}>
-              {tipo==="staff"?"Acceso completo al equipo":"Solo verás tus datos personales"}
-            </div>
-
-            {/* Selector de nombre — solo para jugadoras */}
-            {tipo==="jugadora"&&(
-              <div style={{marginBottom:12}}>
-                <div style={{fontSize:11,color:T.muted,marginBottom:6,textTransform:"uppercase",letterSpacing:.5}}>Tu nombre</div>
-                <select value={player} onChange={e=>setPlayer(e.target.value)}
-                  style={{width:"100%",background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:player?T.text:T.muted,fontSize:13,padding:"10px 12px",outline:"none",boxSizing:"border-box"}}>
-                  <option value="">Seleccioná tu nombre...</option>
-                  {allNames().map(n=><option key={n} value={n}>{n}</option>)}
-                </select>
-              </div>
-            )}
-
-            {/* Contraseña */}
-            <div style={{marginBottom:16}}>
-              <div style={{fontSize:11,color:T.muted,marginBottom:6,textTransform:"uppercase",letterSpacing:.5}}>Contraseña</div>
-              <input type="password" value={pass} onChange={e=>{setPass(e.target.value);setError("");}}
-                onKeyDown={e=>e.key==="Enter"&&handleLogin()}
-                placeholder="••••••••••"
-                style={{width:"100%",background:"#0d1020",border:`1px solid ${error?T.red:T.border2}`,borderRadius:8,color:T.text,fontSize:14,padding:"10px 12px",outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
-              {error&&<div style={{fontSize:11,color:T.red,marginTop:6}}>{error}</div>}
-            </div>
-
-            <button onClick={handleLogin}
-              style={{width:"100%",padding:"12px",background:tipo==="staff"?T.blue:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-              Ingresar
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── ROOT ─────────────────────────────────────────────────────────────────────
-const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Yo-Yo","Minutos","Asistencia","RPE","Wellness"];
-const PLAYER_TABS=["Mi GPS","Evolución GPS","Yo-Yo","Minutos","Asistencia","Mi RPE","Mi Wellness"];
-
-export default function App(){
-  const [session,setSession]=useState(null); // null | {tipo:"staff"|"jugadora", player:string|null}
-  const [tab,setTab]=useState(0);
-  const [player,setPlayer]=useState(allNames()[0]);
-
-  const handleLogin=(tipo,playerName)=>{
-    setSession({tipo,player:playerName});
-    setTab(0);
-    if(playerName)setPlayer(playerName);
-  };
-
-  const handleLogout=()=>{setSession(null);setTab(0);};
-
-  if(!session)return<LoginScreen onLogin={handleLogin}/>;
-
-  const mode=session.tipo==="staff"?"staff":"player";
-  const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
-
-  return(
-    <div style={{background:T.bg,color:T.text,minHeight:"100vh",fontFamily:"system-ui,sans-serif"}}>
-      {/* HEADER — Título + logout */}
-      <div style={{background:"#080a0f",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 12px",height:46,position:"sticky",top:0,zIndex:100}}>
-        <div style={{display:"flex",alignItems:"center",gap:8}}>
-          <div style={{width:28,height:28,borderRadius:"50%",background:T.maroon,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>🏑</div>
-          <div>
-            <div style={{fontSize:11,fontWeight:700,color:T.text,letterSpacing:"1px",textTransform:"uppercase"}}>Old Gabs 1era</div>
-            <div style={{fontSize:9,color:T.muted}}>{mode==="staff"?"Staff Técnico":"Jugadora"}</div>
-          </div>
-        </div>
-        <button onClick={handleLogout} style={{padding:"4px 10px",borderRadius:5,border:`1px solid ${T.border}`,fontSize:10,cursor:"pointer",background:"transparent",color:T.muted,fontFamily:"inherit"}}>Salir</button>
-      </div>
-      {/* TABS HORIZONTALES — debajo del título */}
-      <div style={{background:T.surf,borderBottom:`1px solid ${T.border}`,overflowX:"auto",position:"sticky",top:46,zIndex:99}}>
-        <div style={{display:"flex",gap:0,padding:"0 4px"}}>
-          {tabs.map((t,i)=>(
-            <button key={t} onClick={()=>setTab(i)} style={{padding:"10px 10px",display:"flex",alignItems:"center",fontSize:10,fontWeight:500,cursor:"pointer",border:"none",background:"transparent",color:tab===i?T.blue:T.muted,textTransform:"uppercase",letterSpacing:".5px",borderBottom:`2px solid ${tab===i?T.blue:"transparent"}`,fontFamily:"inherit",whiteSpace:"nowrap"}}>{t}</button>
-          ))}
-        </div>
-      </div>
-      <div style={{padding:12}}>
-        {/* Jugadora: selector de nombre solo si es staff (jugadora ya viene fijada) */}
-        {mode==="player"&&!session.player&&(
-          <select value={player} onChange={e=>setPlayer(e.target.value)} style={{background:T.surf,border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"5px 10px",outline:"none",marginBottom:12,width:"100%"}}>
-            {allNames().map(n=><option key={n}>{n}</option>)}
-          </select>
-        )}
-        {mode==="player"&&session.player&&(
-          <div style={{background:T.surf,border:`1px solid ${T.border}`,borderRadius:8,padding:"8px 12px",marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:16}}>🏑</span>
-            <div>
-              <div style={{fontSize:12,fontWeight:600,color:T.text}}>{session.player}</div>
-              <div style={{fontSize:10,color:T.muted}}>Tus datos personales</div>
-            </div>
-          </div>
-        )}
-        {mode==="staff"?(
-          <>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffPuestos/>}{tab===3&&<StaffYoyo/>}{tab===4&&<StaffMinutos/>}{tab===5&&<StaffAsistencia/>}{tab===6&&<StaffRPE/>}{tab===7&&<StaffWellness/>}</>
-        ):(
-          <>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerYoyo player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</>
-        )}
-      </div>
-    </div>
-  );
-}
