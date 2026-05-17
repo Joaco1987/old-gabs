@@ -497,24 +497,26 @@ const ENTRENOS=[
 ];
 
 // ─── MINUTOS DE JUEGO — hoja "Minutos Juego" del Drive ──────────────────────
-// Datos EXACTOS del Drive. Partidos: COGS | PWCC | MANQ A | U CAT B
-// Solo jugadoras con minutos registrados
+// Partidos: COGS(22/3) | PWCC(5/4) | MANQ A(25/4) | U CAT B(10/5) | OLD REDS
+// Datos exactos del Drive — columnas: COGS,PWCC,MANQ,CATB,OLDREDS
 const MINUTOS=[
-  {n:"Alfaro Javiera",    div:"1era",cogs:null,pwcc:null,manq:22,  catb:23,  tot:61,  prom:20.3},
-  {n:"Arau María Paz",    div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  tot:300, prom:60.0},
-  {n:"Carrasco Sofia",    div:"1era",cogs:null,pwcc:null,manq:35,  catb:21,  tot:108, prom:36.0},
-  {n:"Gacitua Emilia",    div:"1era",cogs:null,pwcc:null,manq:60,  catb:60,  tot:177, prom:59.0},
-  {n:"Gomez Camila",      div:"1era",cogs:null,pwcc:null,manq:40,  catb:41,  tot:110, prom:36.7},
-  {n:"Gutierrez Renata",  div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  tot:300, prom:60.0},
-  {n:"Liu Macarena",      div:"1era",cogs:null,pwcc:null,manq:43,  catb:34,  tot:130, prom:43.3},
-  {n:"Mateluna Florencia",div:"1era",cogs:null,pwcc:null,manq:21,  catb:18,  tot:68,  prom:22.7},
-  {n:"Muñoz Constanza",   div:"1era",cogs:60,  pwcc:60,  manq:53,  catb:60,  tot:293, prom:58.6},
-  {n:"Pareja Camila",     div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  tot:300, prom:60.0},
-  {n:"Pollmann Marianne", div:"1era",cogs:null,pwcc:null,manq:60,  catb:58,  tot:173, prom:57.7},
-  {n:"Errazu Sofia",      div:"s16", cogs:null,pwcc:null,manq:35,  catb:38,  tot:73,  prom:36.5},
-  {n:"Sierra Julieta",    div:"s16", cogs:null,pwcc:null,manq:60,  catb:60,  tot:180, prom:60.0},
-  {n:"Silva Victoria",    div:"s16", cogs:null,pwcc:null,manq:60,  catb:60,  tot:180, prom:60.0},
+  {n:"Alfaro Javiera",    div:"1era",cogs:null,pwcc:null,manq:22,  catb:23,  reds:16,  tot:61,  prom:20.3},
+  {n:"Arau María Paz",    div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
+  {n:"Carrasco Sofia",    div:"1era",cogs:null,pwcc:null,manq:35,  catb:21,  reds:52,  tot:108, prom:36.0},
+  {n:"Gacitua Emilia",    div:"1era",cogs:null,pwcc:null,manq:60,  catb:60,  reds:57,  tot:177, prom:59.0},
+  {n:"Gomez Camila",      div:"1era",cogs:null,pwcc:null,manq:40,  catb:41,  reds:29,  tot:110, prom:36.7},
+  {n:"Gutierrez Renata",  div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
+  {n:"Liu Macarena",      div:"1era",cogs:null,pwcc:null,manq:43,  catb:34,  reds:53,  tot:130, prom:43.3},
+  {n:"Mateluna Florencia",div:"1era",cogs:null,pwcc:null,manq:21,  catb:18,  reds:29,  tot:68,  prom:22.7},
+  {n:"Muñoz Constanza",   div:"1era",cogs:60,  pwcc:60,  manq:53,  catb:60,  reds:60,  tot:293, prom:58.6},
+  {n:"Pareja Camila",     div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
+  {n:"Pollmann Marianne", div:"1era",cogs:null,pwcc:null,manq:60,  catb:58,  reds:55,  tot:173, prom:57.7},
+  {n:"Errazu Sofia",      div:"s16", cogs:null,pwcc:null,manq:35,  catb:38,  reds:null,tot:73,  prom:36.5},
+  {n:"Sierra Julieta",    div:"s16", cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
+  {n:"Silva Victoria",    div:"s16", cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
 ];
+// Labels de partidos para la tabla de minutos
+const MIN_PARTIDOS=["COGS","PWCC","MANQ","CAT B","OLD REDS"];
 
 // ─── YO-YO — hoja YOYO RIN1 del Drive "Old Gabs 1era" ────────────────────────
 // Bloque 1era: 5 jugadoras registradas
@@ -1032,56 +1034,63 @@ function StaffYoyo(){
 
 // ─── STAFF MINUTOS DE JUEGO ────────────────────────────────────────────────────
 function StaffMinutos(){
-  const partidos=["COGS","PWCC","MANQ A","UC B"];
   const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
+  const sorted=[...MINUTOS].sort((a,b)=>b.tot-a.tot);
   return(
     <>
       <MR>
         <MetCard label="Jugadoras" value={MINUTOS.length}/>
         <MetCard label="Máx. minutos" value={`${Math.max(...MINUTOS.map(m=>m.tot))} min`} sub="Arau/Gutierrez/Pareja" sc={T.green}/>
         <MetCard label="Prom. equipo" value={`${Math.round(avg(MINUTOS.map(m=>m.tot)))} min`} sub="Total temporada"/>
-        <MetCard label="Partidos" value={4} sub="COGS · PWCC · MANQ · UC B"/>
+        <MetCard label="Partidos" value={5} sub="COGS,PWCC,MANQ,CAT B,OLD REDS"/>
       </MR>
       <Card>
-        <CT text="Minutos de juego por jugadora — hoja Minutos de Juego"/>
+        <CT text="Minutos por partido — temporada 2026"/>
         <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Jugadora","Div","COGS","PWCC","MANQ A","UC B","Total","Prom."]}/>
-            <tbody>{[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
-              const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
-              return(
-                <tr key={m.n}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{m.n}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}><Chip text={m.div} color={m.div==="S16"?T.purple:T.blue}/></td>
-                  {[m.cogs,m.pwcc,m.manq,m.ucb].map((v,i)=>(
-                    <td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v!=null?`${v}'`:"—"}</td>
-                  ))}
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700}}>{m.tot}'</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{m.prom.toFixed(1)}'</td>
-                </tr>
-              );
-            })}</tbody>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+            <TH cols={["Jugadora","Div","COGS","PWCC","MANQ","CAT B","OLD REDS","Total","Prom"]}/>
+            <tbody>{sorted.map(m=>(
+              <tr key={m.n}>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{m.n}</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.muted,fontSize:9}}>{m.div}</td>
+                {[m.cogs,m.pwcc,m.manq,m.catb,m.reds].map((v,i)=>(
+                  <td key={i} style={{padding:"5px 8px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:11,color:v>=60?T.green:v>0?T.amber:"#2a3550"}}>{v||"—"}</td>
+                ))}
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:700,textAlign:"center"}}>{m.tot}</td>
+                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{m.prom}</td>
+              </tr>
+            ))}</tbody>
           </table>
         </div>
+        {/* Barras */}
         <div style={{marginTop:12}}>
-          <CT text="Minutos totales — barra"/>
-          {[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
-            const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
-            return(
-              <div key={m.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}>
-                <span style={{fontSize:11,color:T.text,width:130,flexShrink:0,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.n.split(" ")[0]}</span>
-                <div style={{flex:1,background:"#1e2535",borderRadius:3,height:8}}><div style={{width:`${Math.round(m.tot/maxTot*100)}%`,height:8,borderRadius:3,background:col}}/></div>
-                <span style={{fontSize:11,color:col,width:40,textAlign:"right",fontWeight:500}}>{m.tot}'</span>
+          {sorted.map(m=>(
+            <div key={m.n} style={{marginBottom:6}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
+                <span style={{fontSize:10,color:T.muted2}}>{m.n.split(" ")[0]}</span>
+                <span style={{fontSize:10,color:T.blue,fontWeight:600}}>{m.tot} min</span>
               </div>
-            );
-          })}
+              <div style={{display:"flex",gap:1,height:8,borderRadius:4,overflow:"hidden",background:"#1a1e2a"}}>
+                {[{v:m.cogs,c:T.blue},{v:m.pwcc,c:T.green},{v:m.manq,c:T.amber},{v:m.catb,c:T.red},{v:m.reds,c:T.purple}].map((p,i)=>
+                  p.v?<div key={i} style={{width:`${(p.v/maxTot)*100}%`,background:p.c,minWidth:2}}/>:null
+                )}
+              </div>
+            </div>
+          ))}
+          <div style={{display:"flex",gap:12,marginTop:6,flexWrap:"wrap"}}>
+            {["COGS","PWCC","MANQ","CAT B","OLD REDS"].map((l,i)=>(
+              <div key={l} style={{display:"flex",gap:4,alignItems:"center"}}>
+                <div style={{width:10,height:10,borderRadius:2,background:[T.blue,T.green,T.amber,T.red,T.purple][i]}}/>
+                <span style={{fontSize:9,color:T.muted}}>{l}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </Card>
     </>
   );
 }
 
-// ─── STAFF ASISTENCIA ──────────────────────────────────────────────────────────
 function StaffAsistencia(){
   const rows=Object.entries(ASISTENCIA).map(([n,d])=>({
     n,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
@@ -1210,6 +1219,43 @@ function StaffWellness(){
 }
 
 // ─── PLAYER GPS ────────────────────────────────────────────────────────────────
+
+// ─── RADAR CHART ──────────────────────────────────────────────────────────────
+function RadarChart({player,sesion}){
+  if(!sesion||sesion.jugadoras.length<2)return null;
+  const jd=sesion.jugadoras.find(j=>j.n===player);
+  if(!jd)return null;
+  const labels=["Dist","m/min","HSR","ACC","Vmáx"];
+  const jVals=[jd.dist||0,jd.mxm||0,jd.hsr||jd.ai15||0,jd.acc||0,jd.vmax||0];
+  const getAvg=k=>sesion.jugadoras.reduce((s,j)=>s+(j[k]||0),0)/sesion.jugadoras.length;
+  const tVals=[getAvg("dist"),getAvg("mxm"),getAvg("hsr")||getAvg("ai15")||0,getAvg("acc"),getAvg("vmax")];
+  const maxV=jVals.map((v,i)=>Math.max(v,tVals[i],0.1));
+  const norm=arr=>arr.map((v,i)=>Math.min(v/maxV[i],1.4));
+  const jN=norm(jVals);const tN=norm(tVals);
+  const cx=90,cy=90,r=65,n=5;
+  const ang=i=>(Math.PI*2*i/n)-Math.PI/2;
+  const pt=(v,i)=>`${cx+v*r*Math.cos(ang(i))},${cy+v*r*Math.sin(ang(i))}`;
+  const poly=(nrm,col)=>`<polygon points="${nrm.map((v,i)=>pt(v,i)).join(" ")}" fill="${col}33" stroke="${col}" stroke-width="1.5"/>`;
+  const spokes=Array.from({length:n},(_,i)=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(ang(i))}" y2="${cy+r*Math.sin(ang(i))}" stroke="#2a3550" stroke-width="1"/>`).join("");
+  const rings=[.33,.67,1].map(v=>`<polygon points="${Array.from({length:n},(_,i)=>pt(v,i)).join(" ")}" fill="none" stroke="#1e2535" stroke-width="1"/>`).join("");
+  const lbl=labels.map((l,i)=>{const x=cx+(r+14)*Math.cos(ang(i));const y=cy+(r+14)*Math.sin(ang(i));return`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="${jN[i]>tN[i]?"#3ecf7a":"#6a7490"}">${l}</text>`;}).join("");
+  const dots=jN.map((v,i)=>`<circle cx="${cx+v*r*Math.cos(ang(i))}" cy="${cy+v*r*Math.sin(ang(i))}" r="3" fill="#3ecf7a"/>`).join("");
+  const svg=`<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${poly(tN,"#4a90e8")}${poly(jN,"#3ecf7a")}${dots}${lbl}</svg>`;
+  return(
+    <Card style={{marginBottom:10}}>
+      <CT text={`Radar — ${player.split(" ")[0]} vs equipo`}/>
+      <div style={{display:"flex",alignItems:"center",gap:12}}>
+        <div style={{width:150,flexShrink:0}} dangerouslySetInnerHTML={{__html:svg}}/>
+        <div style={{fontSize:11}}>
+          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}><div style={{width:10,height:3,background:"#3ecf7a",borderRadius:2}}/><span style={{color:T.muted2}}>{player.split(" ")[0]}</span></div>
+          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:8}}><div style={{width:10,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2}}>Prom. equipo</span></div>
+          {labels.map((l,i)=>{const diff=Math.round((jN[i]-tN[i])*100);return(<div key={l} style={{display:"flex",justifyContent:"space-between",gap:8,marginBottom:2}}><span style={{color:T.muted,fontSize:10}}>{l}</span><span style={{color:diff>0?T.green:diff<0?T.red:T.muted,fontSize:10,fontWeight:500}}>{diff>0?"+":""}{diff}%</span></div>);})}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 function PlayerGPS({player}){
   const [tipo,setTipo]=useState("todos");
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess;
@@ -1223,11 +1269,15 @@ function PlayerGPS({player}){
         <MetCard label="Sesiones" value={sess.length}/>
         <MetCard label="Vel. máx" value={`${Math.max(...sess.map(s=>s.data.vmax))} km/h`} sc={T.amber}/>
       </MR>
+      {/* Radar — solo para partidos y amistosos */}
+      {sess.length>0&&(sess[0].tipo==="partido"||sess[0].tipo==="amistoso")&&(
+        <RadarChart player={player} sesion={sess[0]}/>
+      )}
       <Card style={{marginBottom:10}}>
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={["Sesión","Fecha","Min","Dist.","m/min","HSR","V.máx"]}/>
+            <TH cols={["Sesión","Fecha","Min","Dist.","m/min","HSR","ACC","V.máx"]}/>
             <tbody>{sess.map(s=>(
               <tr key={s.id}>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
@@ -1236,6 +1286,7 @@ function PlayerGPS({player}){
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{s.data.dist.toLocaleString()}m</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{(s.data.hsr||s.data.ai15||0)}m</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{s.data.acc||0}</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
               </tr>
             ))}</tbody>
@@ -1513,9 +1564,6 @@ function LoginScreen({onLogin}){
   );
 }
 
-const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Yo-Yo","Minutos","Asistencia","RPE","Wellness"];
-const PLAYER_TABS=["Mi GPS","Yo-Yo","Minutos","Mi Asistencia","Mi RPE","Mi Wellness"];
-
 export default function App(){
   const [session,setSession]=useState(null);
   const [tab,setTab]=useState(0);
@@ -1558,5 +1606,40 @@ export default function App(){
         )}
       </div>
     </div>
+  );
+}function PlayerMinutos({player}){
+  const m=MINUTOS.find(x=>x.n===player);
+  if(!m)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos de minutos para {player}</div>;
+  const maxV=Math.max(m.cogs||0,m.pwcc||0,m.manq||0,m.catb||0,m.reds||0,1);
+  const partidos=[
+    {l:"COGS",   v:m.cogs, c:T.blue},
+    {l:"PWCC",   v:m.pwcc, c:T.green},
+    {l:"MANQ",   v:m.manq, c:T.amber},
+    {l:"CAT B",  v:m.catb, c:T.red},
+    {l:"OLD REDS",v:m.reds,c:T.purple},
+  ].filter(p=>p.v);
+  return(
+    <>
+      <MR>
+        <MetCard label="Total minutos" value={`${m.tot} min`} sc={T.blue}/>
+        <MetCard label="Prom. x partido" value={`${m.prom} min`}/>
+        <MetCard label="Partidos jugados" value={partidos.length}/>
+      </MR>
+      <Card>
+        <CT text="Mis minutos por partido"/>
+        {partidos.map(p=>(
+          <div key={p.l} style={{marginBottom:10}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+              <span style={{fontSize:12,color:T.text,fontWeight:500}}>{p.l}</span>
+              <span style={{fontSize:12,color:p.c,fontWeight:600}}>{p.v} min</span>
+            </div>
+            <div style={{background:"#1a1e2a",borderRadius:4,height:10}}>
+              <div style={{width:`${(p.v/60)*100}%`,height:10,borderRadius:4,background:p.c,maxWidth:"100%"}}/>
+            </div>
+          </div>
+        ))}
+        {partidos.length===0&&<div style={{color:T.muted,textAlign:"center",padding:12}}>No registra minutos en partidos oficiales</div>}
+      </Card>
+    </>
   );
 }
