@@ -537,11 +537,17 @@ const hsrLegend=(
 // ─── GRÁFICO HSR POR ZONAS — PROMEDIO EQUIPO ──────────────────────────────────
 function GraficoHSR({sesiones,titulo}){
   if(!sesiones.length)return null;
-  const maxVal=Math.max(...sesiones.map(s=>{
+  const getTot=s=>{
+    if(s.zonas&&s.zonas.length){
+      const h15=Math.round(s.zonas.reduce((a,z)=>a+(z.h15||0),0)/s.zonas.length);
+      const h18=Math.round(s.zonas.reduce((a,z)=>a+(z.h18||0),0)/s.zonas.length);
+      const spr=s.prom_spr!==undefined?s.prom_spr:Math.round(s.zonas.reduce((a,z)=>a+(z.spr||0),0)/s.zonas.length);
+      return h15+h18+spr;
+    }
     if(s.prom)return(s.prom.hsr||0);
-    if(s.zonas)return Math.max(...s.zonas.map(z=>z.h15+z.h18+z.spr));
     return 0;
-  }),1);
+  };
+  const maxVal=Math.max(...sesiones.map(getTot),1);
 
   return(
     <Card style={{marginBottom:10}}>
@@ -1223,8 +1229,7 @@ function PlayerWellness({player}){
 }
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
-const STAFF_TABS=["GPS","Puestos","Yo-Yo","Minutos","Asistencia","RPE","Wellness"];
-const PLAYER_TABS=["Mi GPS","Yo-Yo","Asistencia","Mi RPE","Mi Wellness"];
+// tabs defined inside App()
 
 
 // ─── LOGIN ────────────────────────────────────────────────────────────────────
