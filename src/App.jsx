@@ -16,7 +16,6 @@ const T={bg:"#0d0f14",surf:"#111520",surf2:"#161b28",border:"#1e2535",border2:"#
 // Las filas de promedio vienen del CSV del Drive (fila 14/30/47)
 const PARTIDOS=[
   {id:"cogs",label:"vs COGS",fecha:"22/03",tipo:"partido",
-   // Sin sub-tabla zonas en el sheet → h18 calculado: AI(>18) - sprint por jugadora
    prom:{dist:5900,mxm:104.2,hsr:609,h18:149,spr:25,acc:14,dsc:23,vmax:22.36},
    jugadoras:[
     {n:"Gomez Camila",     min:48,dist:4630,mxm:96, ai15:317, ai18:16,  spr:0,  acc:5, dsc:10,vmax:20.2},
@@ -31,7 +30,6 @@ const PARTIDOS=[
     {n:"Gutierrez Renata", min:63,dist:6808,mxm:107,ai15:582, ai18:106, spr:0,  acc:9, dsc:17,vmax:20.1},
   ]},
   {id:"pwcc",label:"vs PWCC",fecha:"05/04",tipo:"partido",
-   // Sin sub-tabla zonas en el sheet → h18 calculado: AI(>18) - sprint por jugadora
    prom:{dist:5797,mxm:102.2,hsr:774,h18:217,spr:37,acc:18,dsc:21,vmax:22.4},
    jugadoras:[
     {n:"Gomez Camila",     min:41,dist:3996,mxm:95, ai15:569, ai18:130, spr:2,  acc:9, dsc:13,vmax:21.0},
@@ -60,24 +58,27 @@ const PARTIDOS=[
     {n:"Sierra Julieta",   min:71,dist:7929,mxm:112,ai15:1086,ai18:318, spr:11, acc:39,dsc:61,vmax:24.6},
     {n:"Silva Victoria",   min:71,dist:8142,mxm:115,ai15:1469,ai18:570, spr:16, acc:45,dsc:52,vmax:24.7},
   ]},
-  {id:"catb",label:"vs CAT B",fecha:"10/05",tipo:"partido",
-   prom:{dist:5603,mxm:105,hsr:611,h18:202,spr:2,acc:18,dsc:25,vmax:22.9},
+
+  // ── vs OLD REDS ──────────────────────────────────────────────────────────────
+  {id:"oldreds",label:"vs OLD REDS",fecha:"OLD REDS",tipo:"partido",
+   prom:{dist:6258,mxm:105,hsr:778,h18:218,spr:5,acc:19,dsc:27,vmax:23.4},
    jugadoras:[
-    {n:"Alfaro Javiera",   min:27,dist:2917,mxm:108,ai15:296, ai18:73,  spr:0,  acc:4, dsc:15,vmax:21.6},
-    {n:"Carrasco Sofia",   min:26,dist:3006,mxm:116,ai15:610, ai18:220, spr:0,  acc:20,dsc:40,vmax:22.7},
-    {n:"Gomez Camila",     min:40,dist:3879,mxm:98, ai15:372, ai18:82,  spr:0,  acc:6, dsc:13,vmax:20.8},
-    {n:"Errazu Sofia",     min:44,dist:5031,mxm:114,ai15:935, ai18:345, spr:5,  acc:23,dsc:18,vmax:24.3},
-    {n:"Pollmann Marianne",min:64,dist:5874,mxm:92, ai15:567, ai18:169, spr:0,  acc:17,dsc:19,vmax:22.9},
-    {n:"Pareja Camila",    min:65,dist:6121,mxm:94, ai15:355, ai18:87,  spr:0,  acc:15,dsc:16,vmax:22.4},
-    {n:"Muñoz Constanza",  min:65,dist:6258,mxm:96, ai15:390, ai18:125, spr:0,  acc:6, dsc:12,vmax:22.6},
-    {n:"Sierra Julieta",   min:65,dist:6676,mxm:102,ai15:594, ai18:225, spr:0,  acc:27,dsc:40,vmax:23.1},
-    {n:"Gutierrez Renata", min:65,dist:6806,mxm:104,ai15:551, ai18:112, spr:0,  acc:19,dsc:18,vmax:21.1},
-    {n:"Gacitua Emilia",   min:65,dist:7339,mxm:112,ai15:958, ai18:364, spr:9,  acc:29,dsc:35,vmax:25.1},
-    {n:"Silva Victoria",   min:65,dist:7723,mxm:118,ai15:1096,ai18:419, spr:7,  acc:31,dsc:44,vmax:24.8},
+    {n:"Alfaro Javiera",   min:28,dist:3190,mxm:112,hsr:449,ai18:159,spr:0, acc:9, dsc:16,vmax:22.8},
+    {n:"Carrasco Sofia",   min:32,dist:3964,mxm:124,hsr:929,ai18:289,spr:0, acc:26,dsc:42,vmax:22.9},
+    {n:"Gomez Camila",     min:49,dist:4744,mxm:96, hsr:484,ai18:63, spr:0, acc:5, dsc:18,vmax:20.3},
+    {n:"Muñoz Constanza",  min:63,dist:5384,mxm:85, hsr:397,ai18:82, spr:0, acc:12,dsc:17,vmax:21.6},
+    {n:"Liu Macarena",     min:48,dist:5532,mxm:116,hsr:883,ai18:266,spr:0, acc:22,dsc:26,vmax:22.5},
+    {n:"Pareja Camila",    min:71,dist:6123,mxm:86, hsr:281,ai18:62, spr:0, acc:11,dsc:20,vmax:21.2},
+    {n:"Gutierrez Renata", min:71,dist:6822,mxm:96, hsr:715,ai18:280,spr:0, acc:14,dsc:24,vmax:22.9},
+    {n:"Pollmann Marianne",min:71,dist:6952,mxm:98, hsr:653,ai18:123,spr:0, acc:27,dsc:14,vmax:21.9},
+    {n:"Gacitua Emilia",   min:71,dist:7854,mxm:111,hsr:1137,ai18:319,spr:0,acc:38,dsc:48,vmax:23.4},
+    {n:"Sierra Julieta",   min:71,dist:7929,mxm:112,hsr:1086,ai18:318,spr:11,acc:39,dsc:61,vmax:24.6},
+    {n:"Silva Victoria",   min:71,dist:8142,mxm:115,hsr:1469,ai18:570,spr:16,acc:45,dsc:52,vmax:24.7},
    ]},
 ];
 
 // ─── AMISTOSOS ────────────────────────────────────────────────────────────────
+// Promedios de las filas del CSV (mismas filas 14/30/47 pero columnas de la derecha)
 const AMISTOSOS=[
   {id:"pwccb1",label:"vs PWCC B",fecha:"22/03",tipo:"amistoso",
    prom:{dist:4678,mxm:101.4,hsr:468,h18:127,spr:8,acc:10,dsc:17,vmax:22.02},
@@ -125,28 +126,29 @@ const AMISTOSOS=[
 ];
 
 // ─── ENTRENAMIENTOS — hoja Entrenamientos del Drive ───────────────────────────
-// Zonas EXACTAS del Drive: h15=AI(15-18) | h18=AI(18-21) | spr=Sprint(>21)
-// TODOS son datos directos de la sub-tabla de zonas del Drive
+// Orden del sheet: 6-abr (tabla GRAL + sub-tabla zonas al lado), luego 8-abr...
+// La sub-tabla de zonas da: 15-18 / 18-21 / >21
+// h15 = zona 15-18 (de sub-tabla), h18 = zona 18-21, spr = >21
+// 10-abr: NO hay sub-tabla zonas (la única sin ella)
+// Promedio >21: de fila Promedio si existe, sino calculado
 
 const ENTRENOS=[
-  // ── 6-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (exacta):
-  // Pareja:1088/22/0 Alfaro:1015/144/0 Carrasco:735/571/0 Pollmann:1087/341/0
-  // Gomez:553/38/0 Errazu:739/707/0 Gutierrez:1345/206/0 Mateluna:1222/318/0 Gacitua:849/722/32
-  // Sierra (de tabla gral): 372/142/0
+  // ── 6-abr ──────────────────────────────────────────────────────────────────
+  // Tabla GRAL: Gomez/Sierra/Alfaro/Carrasco/Mateluna/Pareja/Pollmann/Gutierrez/Errazu/Gacitua
+  // Fila Promedio del sheet: dist=6706, mxm=108, HSR=1631, spr=0.7 ≈ promedio=1
+  // Sub-tabla zonas del sheet (al lado de la tabla GRAL):
   {id:"e01",label:"6/04",fecha:"6/04",tipo:"entreno",
-   prom_hsr:1631,prom_h18:434,prom_spr:11,
+   prom_spr:1, // fila promedio del sheet redondeada
    zonas:[
-    {n:"Pareja Camila",    h15:1088,h18:22,  spr:0},
-    {n:"Alfaro Javiera",   h15:1015,h18:144, spr:0},
-    {n:"Carrasco Sofia",   h15:735, h18:571, spr:0},
-    {n:"Pollmann Marianne",h15:1087,h18:341, spr:0},
-    {n:"Gomez Camila",     h15:553, h18:38,  spr:0},
-    {n:"Errazu Sofia",     h15:739, h18:707, spr:0},
-    {n:"Gutierrez Renata", h15:1345,h18:206, spr:0},
+    {n:"Pareja Camila",    h15:1088,h18:22, spr:0},
+    {n:"Alfaro Javiera",   h15:1015,h18:144,spr:0},
+    {n:"Carrasco Sofia",   h15:735, h18:571,spr:0},
+    {n:"Pollmann Marianne",h15:1087,h18:341,spr:0},
+    {n:"Gomez Camila",     h15:553, h18:38, spr:0},
+    {n:"Errazu Sofia",     h15:739, h18:707,spr:0},
+    {n:"Gutierrez Renata", h15:1345,h18:206,spr:0},
     {n:"Mateluna Florencia",h15:1222,h18:318,spr:0},
-    {n:"Gacitua Emilia",   h15:849, h18:722, spr:32},
-    {n:"Sierra Julieta",   h15:372, h18:142, spr:0},
+    {n:"Gacitua Emilia",   h15:849, h18:722,spr:32},
    ],
    jugadoras:[
     {n:"Gomez Camila",     min:51,dist:5161,mxm:100,hsr:782, acc:2, dsc:9, vmax:20.1},
@@ -161,62 +163,21 @@ const ENTRENOS=[
     {n:"Gacitua Emilia",   min:71,dist:7916,mxm:110,hsr:2253,acc:29,dsc:33,vmax:24.5},
    ]},
 
-  // ── 8-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive:
-  // Pareja:440/195/0 Carrasco:244/614/0 Gomez:563/120/2 Alfaro:472/300/0
-  // Pollmann:481/213/0 Gutierrez:401/421/0 Mateluna:450/364/3 Gacitua:285/503/67
+  // ── 8-abr ──────────────────────────────────────────────────────────────────
+  // Sub-tabla zonas del sheet:
   {id:"e02",label:"8/04",fecha:"8/04",tipo:"entreno",
-   prom_hsr:731,prom_h18:317,prom_spr:9,
+   prom_spr:0,
    zonas:[
-    {n:"Pareja Camila",    h15:440, h18:195,spr:0},
-    {n:"Carrasco Sofia",   h15:244, h18:614,spr:0},
-    {n:"Gomez Camila",     h15:563, h18:120,spr:2},
-    {n:"Alfaro Javiera",   h15:472, h18:300,spr:0},
-    {n:"Pollmann Marianne",h15:481, h18:213,spr:0},
-    {n:"Gutierrez Renata", h15:401, h18:421,spr:0},
-    {n:"Mateluna Florencia",h15:450,h18:364,spr:3},
-    {n:"Gacitua Emilia",   h15:285, h18:503,spr:67},
-   ],
-   jugadoras:[
-    {n:"Pareja Camila",    min:21,dist:1365,mxm:64, hsr:635, acc:44,dsc:23,vmax:20.6},
-    {n:"Carrasco Sofia",   min:21,dist:1428,mxm:67, hsr:858, acc:47,dsc:40,vmax:23.5},
-    {n:"Gomez Camila",     min:21,dist:1433,mxm:67, hsr:685, acc:35,dsc:25,vmax:21.0},
-    {n:"Alfaro Javiera",   min:21,dist:1464,mxm:69, hsr:772, acc:42,dsc:28,vmax:21.1},
-    {n:"Pollmann Marianne",min:21,dist:1487,mxm:70, hsr:694, acc:38,dsc:21,vmax:20.6},
-    {n:"Gutierrez Renata", min:21,dist:1545,mxm:72, hsr:823, acc:44,dsc:30,vmax:21.6},
-    {n:"Mateluna Florencia",min:21,dist:1582,mxm:74,hsr:816, acc:50,dsc:25,vmax:21.1},
-    {n:"Gacitua Emilia",   min:21,dist:1594,mxm:75, hsr:856, acc:46,dsc:27,vmax:22.9},
-   ]},
-
-  // ── 10-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive: Muñoz:859/913/0
-  {id:"e03",label:"10/04",fecha:"10/04",tipo:"entreno",
-   prom_hsr:1772,prom_h18:913,prom_spr:0,
-   zonas:[
-    {n:"Muñoz Constanza",h15:859,h18:913,spr:0},
-   ],
-   jugadoras:[
-    {n:"Muñoz Constanza",min:33,dist:2667,mxm:82,hsr:1772,acc:8,dsc:1,vmax:20.9},
-   ]},
-
-  // ── 13-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive:
-  // Arau:19/4/0 Gomez:281/10/0 Gacitua:565/725/124 Pareja:674/265/15
-  // Alfaro:661/506/42 Retamal:807/474/82 Gutierrez:668/331/9 Carrasco:631/841/119
-  // Mateluna:691/434/71 Sepulveda:606/768/35
-  {id:"e04",label:"13/04",fecha:"13/04",tipo:"entreno",
-   prom_hsr:1029,prom_h18:538,prom_spr:50,
-   zonas:[
-    {n:"Arau Maria",        h15:19, h18:4,   spr:0},
-    {n:"Gomez Camila",      h15:281,h18:10,  spr:0},
-    {n:"Gacitua Emilia",    h15:565,h18:725, spr:124},
-    {n:"Pareja Camila",     h15:674,h18:265, spr:15},
-    {n:"Alfaro Javiera",    h15:661,h18:506, spr:42},
-    {n:"Retamal Antonia",   h15:807,h18:474, spr:82},
-    {n:"Gutierrez Renata",  h15:668,h18:331, spr:9},
-    {n:"Carrasco Sofia",    h15:631,h18:841, spr:119},
-    {n:"Mateluna Florencia",h15:691,h18:434, spr:71},
-    {n:"Sepulveda Eileen",  h15:606,h18:768, spr:35},
+    {n:"Arau Maria",       h15:19, h18:4,  spr:0},
+    {n:"Gomez Camila",     h15:281,h18:10, spr:0},
+    {n:"Gacitua Emilia",   h15:565,h18:725,spr:124},
+    {n:"Pareja Camila",    h15:674,h18:265,spr:15},
+    {n:"Alfaro Javiera",   h15:661,h18:506,spr:42},
+    {n:"Retamal Antonia",  h15:807,h18:474,spr:82},
+    {n:"Gutierrez Renata", h15:668,h18:331,spr:9},
+    {n:"Carrasco Sofia",   h15:631,h18:841,spr:119},
+    {n:"Mateluna Florencia",h15:691,h18:434,spr:71},
+    {n:"Sepulveda Eileen", h15:606,h18:768,spr:35},
    ],
    jugadoras:[
     {n:"Arau Maria",        min:68,dist:1710,mxm:25, hsr:23,  acc:9, dsc:0, vmax:18.6},
@@ -231,25 +192,59 @@ const ENTRENOS=[
     {n:"Sepulveda Eileen",  min:72,dist:6197,mxm:86, hsr:1409,acc:47,dsc:44,vmax:25.1},
    ]},
 
-  // ── 15-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive:
-  // Errazu:192/66/0 Sierra:296/112/0 Gomez:256/65/0 Pollmann:351/92/0
-  // Alfaro:197/35/5 Muñoz:305/46/0 Silva:606/207/0 Carrasco:637/382/0
-  // Pareja:284/112/0 Gutierrez:450/146/0 Gacitua:618/434/13
-  {id:"e05",label:"15/04",fecha:"15/04",tipo:"entreno",
-   prom_hsr:553,prom_h18:145,prom_spr:2,
+  // ── 10-abr ─────────────────────────────────────────────────────────────────
+  // SIN sub-tabla de zonas (la única sin ella)
+  // Solo Muñoz Constanza tiene GPS. Fila promedio dist=2.667, mxm=82, HSR=1772, spr=0
+  {id:"e03",label:"10/04",fecha:"10/04",tipo:"entreno",
+   prom_spr:0,
+   zonas:null, // no hay sub-tabla de zonas
+   jugadoras:[
+    {n:"Muñoz Constanza",min:33,dist:2667,mxm:82,hsr:1772,acc:8,dsc:1,vmax:20.9},
+   ]},
+
+  // ── 13-abr ─────────────────────────────────────────────────────────────────
+  // Sub-tabla zonas del sheet:
+  {id:"e04",label:"13/04",fecha:"13/04",tipo:"entreno",
+   prom_spr:Math.round((0+0+0+0+0+0+0+0+0)/9),
    zonas:[
-    {n:"Errazu Sofia",     h15:192,h18:66,  spr:0},
-    {n:"Sierra Julieta",   h15:296,h18:112, spr:0},
-    {n:"Gomez Camila",     h15:256,h18:65,  spr:0},
-    {n:"Pollmann Marianne",h15:351,h18:92,  spr:0},
-    {n:"Alfaro Javiera",   h15:197,h18:35,  spr:5},
-    {n:"Muñoz Constanza",  h15:305,h18:46,  spr:0},
-    {n:"Silva Victoria",   h15:606,h18:207, spr:0},
-    {n:"Carrasco Sofia",   h15:637,h18:382, spr:0},
-    {n:"Pareja Camila",    h15:284,h18:112, spr:0},
-    {n:"Gutierrez Renata", h15:450,h18:146, spr:0},
-    {n:"Gacitua Emilia",   h15:618,h18:434, spr:13},
+    {n:"Arau Maria",       h15:0,  h18:0,  spr:0},
+    {n:"Gomez Camila",     h15:99, h18:14, spr:0},
+    {n:"Alfaro Javiera",   h15:77, h18:68, spr:0},
+    {n:"Gutierrez Renata", h15:80, h18:59, spr:0},
+    {n:"Pareja Camila",    h15:76, h18:40, spr:0},
+    {n:"Carrasco Sofia",   h15:91, h18:98, spr:0},
+    {n:"Gacitua Emilia",   h15:81, h18:120,spr:0},
+    {n:"Errazu Sofia",     h15:83, h18:105,spr:0},
+    {n:"Mateluna Florencia",h15:96,h18:89, spr:0},
+   ],
+   jugadoras:[
+    {n:"Arau Maria",        min:9, dist:384, mxm:42,hsr:3,  acc:7, dsc:2, vmax:15.6},
+    {n:"Gomez Camila",      min:25,dist:987, mxm:39,hsr:113,acc:27,dsc:8, vmax:18.5},
+    {n:"Alfaro Javiera",    min:25,dist:993, mxm:39,hsr:145,acc:28,dsc:10,vmax:21.1},
+    {n:"Gutierrez Renata",  min:25,dist:994, mxm:40,hsr:139,acc:30,dsc:9, vmax:20.4},
+    {n:"Pareja Camila",     min:25,dist:1028,mxm:41,hsr:116,acc:26,dsc:7, vmax:19.4},
+    {n:"Carrasco Sofia",    min:25,dist:1035,mxm:41,hsr:189,acc:33,dsc:13,vmax:21.0},
+    {n:"Gacitua Emilia",    min:25,dist:1095,mxm:44,hsr:201,acc:29,dsc:8, vmax:22.0},
+    {n:"Errazu Sofia",      min:25,dist:1133,mxm:45,hsr:188,acc:30,dsc:10,vmax:20.7},
+    {n:"Mateluna Florencia",min:25,dist:1146,mxm:46,hsr:185,acc:37,dsc:6, vmax:20.8},
+   ]},
+
+  // ── 15-abr ─────────────────────────────────────────────────────────────────
+  // Sub-tabla zonas del sheet:
+  {id:"e05",label:"15/04",fecha:"15/04",tipo:"entreno",
+   prom_spr:Math.round((0+0+0+0+5+0+0+0+0+0+13)/11),
+   zonas:[
+    {n:"Errazu Sofia",     h15:192,h18:66, spr:0},
+    {n:"Sierra Julieta",   h15:296,h18:112,spr:0},
+    {n:"Gomez Camila",     h15:256,h18:65, spr:0},
+    {n:"Pollmann Marianne",h15:351,h18:92, spr:0},
+    {n:"Alfaro Javiera",   h15:197,h18:35, spr:5},
+    {n:"Muñoz Constanza",  h15:305,h18:46, spr:0},
+    {n:"Silva Victoria",   h15:606,h18:207,spr:0},
+    {n:"Carrasco Sofia",   h15:637,h18:382,spr:0},
+    {n:"Pareja Camila",    h15:284,h18:112,spr:0},
+    {n:"Gutierrez Renata", h15:450,h18:146,spr:0},
+    {n:"Gacitua Emilia",   h15:618,h18:434,spr:13},
    ],
    jugadoras:[
     {n:"Errazu Sofia",     min:16,dist:1558,mxm:95, hsr:258, acc:9, dsc:7, vmax:20.9},
@@ -266,94 +261,85 @@ const ENTRENOS=[
    ]},
 
   // ── 17-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive. Promedio: h15=76, h18=66, spr=0
-  // Arau:0/0/0 Gomez:99/14/0 Alfaro:77/68/0 Gutierrez:80/59/0
-  // Pareja:76/40/0 Carrasco:91/98/0 Gacitua:81/120/0 Errazu:83/105/0 Mateluna:96/89/0
+  // Sub-tabla zonas del sheet. Fila Promedio: h15=76, h18=66, spr=0
   {id:"e06",label:"17/04",fecha:"17/04",tipo:"entreno",
-   prom_hsr:139,prom_h18:66,prom_spr:0,
+   prom_spr:0,
    zonas:[
-    {n:"Arau Maria",        h15:0,  h18:0,  spr:0},
-    {n:"Gomez Camila",      h15:99, h18:14, spr:0},
-    {n:"Alfaro Javiera",    h15:77, h18:68, spr:0},
-    {n:"Gutierrez Renata",  h15:80, h18:59, spr:0},
-    {n:"Pareja Camila",     h15:76, h18:40, spr:0},
-    {n:"Carrasco Sofia",    h15:91, h18:98, spr:0},
-    {n:"Gacitua Emilia",    h15:81, h18:120,spr:0},
-    {n:"Errazu Sofia",      h15:83, h18:105,spr:0},
-    {n:"Mateluna Florencia",h15:96, h18:89, spr:0},
+    {n:"Pareja Camila",    h15:440,h18:195,spr:0},
+    {n:"Carrasco Sofia",   h15:244,h18:614,spr:0},
+    {n:"Gomez Camila",     h15:563,h18:120,spr:2},
+    {n:"Alfaro Javiera",   h15:472,h18:300,spr:0},
+    {n:"Pollmann Marianne",h15:481,h18:213,spr:0},
+    {n:"Gutierrez Renata", h15:401,h18:421,spr:0},
+    {n:"Mateluna Florencia",h15:450,h18:364,spr:3},
+    {n:"Gacitua Emilia",   h15:285,h18:503,spr:67},
    ],
    jugadoras:[
-    {n:"Arau Maria",        min:9, dist:384, mxm:42,hsr:3,  acc:7, dsc:2, vmax:15.6},
-    {n:"Gomez Camila",      min:25,dist:987, mxm:39,hsr:113,acc:27,dsc:8, vmax:18.5},
-    {n:"Alfaro Javiera",    min:25,dist:993, mxm:39,hsr:145,acc:28,dsc:10,vmax:21.1},
-    {n:"Gutierrez Renata",  min:25,dist:994, mxm:40,hsr:139,acc:30,dsc:9, vmax:20.4},
-    {n:"Pareja Camila",     min:25,dist:1028,mxm:41,hsr:116,acc:26,dsc:7, vmax:19.4},
-    {n:"Carrasco Sofia",    min:25,dist:1035,mxm:41,hsr:189,acc:33,dsc:13,vmax:21.0},
-    {n:"Gacitua Emilia",    min:25,dist:1095,mxm:44,hsr:201,acc:29,dsc:8, vmax:22.0},
-    {n:"Errazu Sofia",      min:25,dist:1133,mxm:45,hsr:188,acc:30,dsc:10,vmax:20.7},
-    {n:"Mateluna Florencia",min:25,dist:1146,mxm:46,hsr:185,acc:37,dsc:6, vmax:20.8},
+    {n:"Pareja Camila",    min:13,dist:2059,mxm:152,hsr:1110,acc:2, dsc:0, vmax:19.9},
+    {n:"Alfaro Javiera",   min:17,dist:2060,mxm:118,hsr:1159,acc:4, dsc:1, vmax:20.6},
+    {n:"Carrasco Sofia",   min:18,dist:2173,mxm:115,hsr:1306,acc:8, dsc:0, vmax:22.6},
+    {n:"Pollmann Marianne",min:15,dist:2189,mxm:141,hsr:1428,acc:2, dsc:1, vmax:20.9},
+    {n:"Gomez Camila",     min:19,dist:2263,mxm:118,hsr:591, acc:0, dsc:3, vmax:19.1},
+    {n:"Errazu Sofia",     min:18,dist:2271,mxm:121,hsr:1446,acc:27,dsc:1, vmax:21.7},
+    {n:"Gutierrez Renata", min:17,dist:2311,mxm:134,hsr:1551,acc:10,dsc:0, vmax:20.2},
+    {n:"Mateluna Florencia",min:19,dist:2377,mxm:124,hsr:1440,acc:19,dsc:1, vmax:20.6},
+    {n:"Gacitua Emilia",   min:19,dist:2571,mxm:135,hsr:1604,acc:7, dsc:4, vmax:21.4},
    ]},
 
   // ── 20-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive:
-  // Pollmann:237/32/0 Pareja:328/5/0 Alfaro:298/2/0 Retamal:446/7/0
-  // Gomez:268/0/0 Gacitua:637/20/0 Sepulveda:621/69/0 Carrasco:747/118/0
+  // Sub-tabla zonas del sheet:
   {id:"e07",label:"20/04",fecha:"20/04",tipo:"entreno",
-   prom_hsr:462,prom_h18:32,prom_spr:0,
+   prom_spr:0,
    zonas:[
-    {n:"Pollmann Marianne", h15:237,h18:32, spr:0},
-    {n:"Pareja Camila",     h15:328,h18:5,  spr:0},
-    {n:"Alfaro Javiera",    h15:298,h18:2,  spr:0},
-    {n:"Retamal Antonia",   h15:446,h18:7,  spr:0},
-    {n:"Gomez Camila",      h15:268,h18:0,  spr:0},
-    {n:"Gacitua Emilia",    h15:637,h18:20, spr:0},
-    {n:"Sepulveda Eileen",  h15:621,h18:69, spr:0},
-    {n:"Carrasco Sofia",    h15:747,h18:118,spr:0},
+    {n:"Pollmann Marianne",h15:237,h18:32, spr:0},
+    {n:"Pareja Camila",    h15:328,h18:5,  spr:0},
+    {n:"Alfaro Javiera",   h15:298,h18:2,  spr:0},
+    {n:"Retamal Antonia",  h15:446,h18:7,  spr:0},
+    {n:"Gomez Camila",     h15:268,h18:0,  spr:0},
+    {n:"Gacitua Emilia",   h15:637,h18:20, spr:0},
+    {n:"Sepulveda Eileen", h15:621,h18:69, spr:0},
+    {n:"Carrasco Sofia",   h15:747,h18:118,spr:0},
    ],
    jugadoras:[
-    {n:"Pollmann Marianne", min:7, dist:863, mxm:120,hsr:268,acc:26,dsc:2, vmax:19.9},
-    {n:"Pareja Camila",     min:7, dist:993, mxm:131,hsr:333,acc:28,dsc:15,vmax:18.6},
-    {n:"Alfaro Javiera",    min:7, dist:994, mxm:132,hsr:301,acc:12,dsc:14,vmax:18.4},
-    {n:"Retamal Antonia",   min:7, dist:1012,mxm:134,hsr:453,acc:35,dsc:12,vmax:18.2},
-    {n:"Gomez Camila",      min:7, dist:1033,mxm:136,hsr:268,acc:15,dsc:18,vmax:17.3},
-    {n:"Gacitua Emilia",    min:13,dist:1727,mxm:133,hsr:657,acc:46,dsc:28,vmax:18.7},
-    {n:"Sepulveda Eileen",  min:13,dist:1737,mxm:133,hsr:690,acc:44,dsc:28,vmax:19.2},
-    {n:"Carrasco Sofia",    min:13,dist:1844,mxm:142,hsr:866,acc:52,dsc:37,vmax:21.1},
+    {n:"Pollmann Marianne",min:7, dist:863, mxm:120,hsr:268,acc:26,dsc:2, vmax:19.9},
+    {n:"Pareja Camila",    min:7, dist:993, mxm:131,hsr:333,acc:28,dsc:15,vmax:18.6},
+    {n:"Alfaro Javiera",   min:7, dist:994, mxm:132,hsr:301,acc:12,dsc:14,vmax:18.4},
+    {n:"Retamal Antonia",  min:7, dist:1012,mxm:134,hsr:453,acc:35,dsc:12,vmax:18.2},
+    {n:"Gomez Camila",     min:7, dist:1033,mxm:136,hsr:268,acc:15,dsc:18,vmax:17.3},
+    {n:"Gacitua Emilia",   min:13,dist:1727,mxm:133,hsr:657,acc:46,dsc:28,vmax:18.7},
+    {n:"Sepulveda Eileen", min:13,dist:1737,mxm:133,hsr:690,acc:44,dsc:28,vmax:19.2},
+    {n:"Carrasco Sofia",   min:13,dist:1844,mxm:142,hsr:866,acc:52,dsc:37,vmax:21.1},
    ]},
 
   // ── 22-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive:
-  // Sepulveda:29/47/5 Alfaro:100/244/22 Retamal:207/603/29 Pareja:566/348/1
-  // Gutierrez:637/400/38 Carrasco:337/818/59 Mateluna:496/638/26 Gacitua:307/763/138
+  // Sub-tabla zonas del sheet:
   {id:"e08",label:"22/04",fecha:"22/04",tipo:"entreno",
-   prom_hsr:983,prom_h18:477,prom_spr:40,
+   prom_spr:Math.round((5+22+29+1+38+59+26+138)/8),
    zonas:[
-    {n:"Sepulveda Eileen",  h15:29, h18:47,  spr:5},
-    {n:"Alfaro Javiera",    h15:100,h18:244, spr:22},
-    {n:"Retamal Antonia",   h15:207,h18:603, spr:29},
-    {n:"Pareja Camila",     h15:566,h18:348, spr:1},
-    {n:"Gutierrez Renata",  h15:637,h18:400, spr:38},
-    {n:"Carrasco Sofia",    h15:337,h18:818, spr:59},
-    {n:"Mateluna Florencia",h15:496,h18:638, spr:26},
-    {n:"Gacitua Emilia",    h15:307,h18:763, spr:138},
+    {n:"Sepulveda Eileen", h15:29, h18:47, spr:5},
+    {n:"Alfaro Javiera",   h15:100,h18:244,spr:22},
+    {n:"Retamal Antonia",  h15:207,h18:603,spr:29},
+    {n:"Pareja Camila",    h15:566,h18:348,spr:1},
+    {n:"Gutierrez Renata", h15:637,h18:400,spr:38},
+    {n:"Carrasco Sofia",   h15:337,h18:818,spr:59},
+    {n:"Mateluna Florencia",h15:496,h18:638,spr:26},
+    {n:"Gacitua Emilia",   h15:307,h18:763,spr:138},
    ],
    jugadoras:[
-    {n:"Sepulveda Eileen",  min:5, dist:396, mxm:71, hsr:82,  acc:5, dsc:0, vmax:24.5},
-    {n:"Alfaro Javiera",    min:7, dist:720, mxm:98, hsr:366, acc:15,dsc:3, vmax:25.5},
-    {n:"Retamal Antonia",   min:11,dist:1288,mxm:111,hsr:839, acc:29,dsc:28,vmax:25.4},
-    {n:"Pareja Camila",     min:16,dist:1828,mxm:111,hsr:915, acc:35,dsc:5, vmax:24.1},
-    {n:"Gutierrez Renata",  min:16,dist:1883,mxm:114,hsr:1076,acc:31,dsc:19,vmax:25.4},
-    {n:"Carrasco Sofia",    min:16,dist:1902,mxm:116,hsr:1215,acc:44,dsc:15,vmax:25.5},
+    {n:"Sepulveda Eileen", min:5, dist:396, mxm:71, hsr:82,  acc:5, dsc:0, vmax:24.5},
+    {n:"Alfaro Javiera",   min:7, dist:720, mxm:98, hsr:366, acc:15,dsc:3, vmax:25.5},
+    {n:"Retamal Antonia",  min:11,dist:1288,mxm:111,hsr:839, acc:29,dsc:28,vmax:25.4},
+    {n:"Pareja Camila",    min:16,dist:1828,mxm:111,hsr:915, acc:35,dsc:5, vmax:24.1},
+    {n:"Gutierrez Renata", min:16,dist:1883,mxm:114,hsr:1076,acc:31,dsc:19,vmax:25.4},
+    {n:"Carrasco Sofia",   min:16,dist:1902,mxm:116,hsr:1215,acc:44,dsc:15,vmax:25.5},
     {n:"Mateluna Florencia",min:16,dist:1956,mxm:119,hsr:1160,acc:47,dsc:11,vmax:25.1},
-    {n:"Gacitua Emilia",    min:16,dist:1976,mxm:120,hsr:1207,acc:40,dsc:14,vmax:27.1},
+    {n:"Gacitua Emilia",   min:16,dist:1976,mxm:120,hsr:1207,acc:40,dsc:14,vmax:27.1},
    ]},
 
   // ── 29-abr ─────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive (todos spr=0):
-  // Arau:39/0/0 Pollmann:389/52/0 Gomez:317/8/0 Pareja:430/22/0
-  // Alfaro:393/24/0 Retamal:579/43/0 Gacitua:792/112/0 Carrasco:983/238/0 Sepulveda:747/86/0
+  // Sub-tabla zonas del sheet:
   {id:"e09",label:"29/04",fecha:"29/04",tipo:"entreno",
-   prom_hsr:589,prom_h18:62,prom_spr:0,
+   prom_spr:0,
    zonas:[
     {n:"Arau Maria",       h15:39, h18:0,  spr:0},
     {n:"Pollmann Marianne",h15:389,h18:52, spr:0},
@@ -378,11 +364,9 @@ const ENTRENOS=[
    ]},
 
   // ── 4-may ──────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive:
-  // Errazu:307/332/3 Pollmann:414/232/0 Gutierrez:655/54/0 Gomez:459/52/0
-  // Pastenes:317/101/0 Carrasco:437/525/0 Mateluna:705/297/0 Gacitua:394/501/0 Sepulveda:383/564/0
+  // Sub-tabla zonas del sheet:
   {id:"e10",label:"4/05",fecha:"4/05",tipo:"entreno",
-   prom_hsr:757,prom_h18:295,prom_spr:0,
+   prom_spr:Math.round(3/9),
    zonas:[
     {n:"Errazu Sofia",     h15:307,h18:332,spr:3},
     {n:"Pollmann Marianne",h15:414,h18:232,spr:0},
@@ -405,345 +389,98 @@ const ENTRENOS=[
     {n:"Gacitua Emilia",   min:15,dist:1693,mxm:109,hsr:895, acc:16,dsc:9, vmax:23.7},
     {n:"Sepulveda Eileen", min:15,dist:1714,mxm:115,hsr:947, acc:23,dsc:11,vmax:23.6},
    ]},
-
-  // ── 11/05 ──────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive:
-  // Arau:26/0/0 Pollmann:288/210/8 Pareja:280/411/4 Gutierrez:296/530/14
-  // Gacitua:300/632/125 Retamal:399/416/86 Mateluna:352/508/120 Silva:382/585/117
-  // Carrasco:390/689/13 Sierra:287/538/168
-  {id:"e12",label:"11/05",fecha:"11/05",tipo:"entreno",
-   prom_hsr:826,prom_h18:452,prom_spr:66,
-   zonas:[
-    {n:"Arau Maria",        h15:26,  h18:0,   spr:0},
-    {n:"Pollmann Marianne", h15:288, h18:210, spr:8},
-    {n:"Pareja Camila",     h15:280, h18:411, spr:4},
-    {n:"Gutierrez Renata",  h15:296, h18:530, spr:14},
-    {n:"Gacitua Emilia",    h15:300, h18:632, spr:125},
-    {n:"Retamal Antonia",   h15:399, h18:416, spr:86},
-    {n:"Mateluna Florencia",h15:352, h18:508, spr:120},
-    {n:"Silva Victoria",    h15:382, h18:585, spr:117},
-    {n:"Carrasco Sofia",    h15:390, h18:689, spr:13},
-    {n:"Sierra Julieta",    h15:287, h18:538, spr:168},
-   ],
-   jugadoras:[
-    {n:"Arau Maria",        min:54,dist:1514,mxm:28, hsr:26,  acc:16,dsc:2, vmax:17.0},
-    {n:"Pollmann Marianne", min:51,dist:3107,mxm:60, hsr:506, acc:15,dsc:8, vmax:24.9},
-    {n:"Pareja Camila",     min:50,dist:3666,mxm:73, hsr:695, acc:35,dsc:16,vmax:24.5},
-    {n:"Gutierrez Renata",  min:50,dist:3736,mxm:74, hsr:841, acc:27,dsc:21,vmax:25.8},
-    {n:"Gacitua Emilia",    min:51,dist:4106,mxm:79, hsr:1058,acc:48,dsc:33,vmax:28.0},
-    {n:"Retamal Antonia",   min:50,dist:4194,mxm:83, hsr:901, acc:28,dsc:23,vmax:25.4},
-    {n:"Mateluna Florencia",min:50,dist:4293,mxm:85, hsr:980, acc:51,dsc:37,vmax:25.9},
-    {n:"Silva Victoria",    min:51,dist:4311,mxm:83, hsr:1084,acc:49,dsc:46,vmax:26.4},
-    {n:"Carrasco Sofia",    min:51,dist:4341,mxm:84, hsr:1092,acc:45,dsc:53,vmax:26.1},
-    {n:"Sierra Julieta",    min:50,dist:4359,mxm:86, hsr:993, acc:47,dsc:49,vmax:26.7},
-   ]},
-
-  // ── 13/05 ──────────────────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive: Gomez:151/109/52 Gutierrez:126/187/37 Pollmann:133/213/0
-  // Carrasco:100/304/30 Alfaro:141/211/4 Gacitua:85/138/187 Mateluna:134/157/101
-  {id:"e13",label:"13/05",fecha:"13/05",tipo:"entreno",
-   prom_hsr:400,prom_h18:188,prom_spr:59,
-   zonas:[
-    {n:"Gomez Camila",      h15:151,h18:109,spr:52},
-    {n:"Gutierrez Renata",  h15:126,h18:187,spr:37},
-    {n:"Pollmann Marianne", h15:133,h18:213,spr:0},
-    {n:"Carrasco Sofia",    h15:100,h18:304,spr:30},
-    {n:"Alfaro Javiera",    h15:141,h18:211,spr:4},
-    {n:"Gacitua Emilia",    h15:85, h18:138,spr:187},
-    {n:"Mateluna Florencia",h15:134,h18:157,spr:101},
-   ],
-   jugadoras:[
-    {n:"Gomez Camila",      min:20,dist:1161,mxm:58, hsr:312, acc:30,dsc:7, vmax:23.2},
-    {n:"Gutierrez Renata",  min:20,dist:1221,mxm:61, hsr:351, acc:30,dsc:7, vmax:26.9},
-    {n:"Pollmann Marianne", min:20,dist:1275,mxm:64, hsr:346, acc:30,dsc:2, vmax:24.7},
-    {n:"Carrasco Sofia",    min:20,dist:1310,mxm:66, hsr:434, acc:30,dsc:17,vmax:26.5},
-    {n:"Alfaro Javiera",    min:20,dist:1322,mxm:66, hsr:357, acc:30,dsc:0, vmax:25.3},
-    {n:"Gacitua Emilia",    min:20,dist:1408,mxm:71, hsr:410, acc:31,dsc:17,vmax:28.5},
-    {n:"Mateluna Florencia",min:20,dist:1412,mxm:71, hsr:392, acc:30,dsc:1, vmax:26.2},
-   ]},
-  // ── post 11/05 (Hevia) ─────────────────────────────────────────────────────
-  // Sub-tabla zonas del Drive:
-  // Arau:32/0/0 Gomez:127/17/0 Gutierrez:180/51/0 Carrasco:327/84/0
-  // Mateluna:175/34/0 Pareja:260/26/0 Alfaro:161/46/0 Hevia:190/26/0
-  // Gacitua:206/184/0 Errazu:284/68/0 Retamal:243/62/0
-  {id:"e11",label:"post 11/05",fecha:"post 11/05",tipo:"entreno",
-   prom_hsr:252,prom_h18:47,prom_spr:0,
-   zonas:[
-    {n:"Arau Maria",        h15:32,  h18:0,   spr:0},
-    {n:"Gomez Camila",      h15:127, h18:17,  spr:0},
-    {n:"Gutierrez Renata",  h15:180, h18:51,  spr:0},
-    {n:"Carrasco Sofia",    h15:327, h18:84,  spr:0},
-    {n:"Mateluna Florencia",h15:175, h18:34,  spr:0},
-    {n:"Pareja Camila",     h15:260, h18:26,  spr:0},
-    {n:"Alfaro Javiera",    h15:161, h18:46,  spr:0},
-    {n:"Hevia Valentina",   h15:190, h18:26,  spr:0},
-    {n:"Gacitua Emilia",    h15:206, h18:184, spr:0},
-    {n:"Errazu Sofia",      h15:284, h18:68,  spr:0},
-    {n:"Retamal Antonia",   h15:243, h18:62,  spr:0},
-   ],
-   jugadoras:[
-    {n:"Arau Maria",        min:65,dist:1935,mxm:30, hsr:32,  acc:8, dsc:6, vmax:17.4},
-    {n:"Gomez Camila",      min:65,dist:3262,mxm:50, hsr:139, acc:16,dsc:22,vmax:19.3},
-    {n:"Gutierrez Renata",  min:65,dist:3604,mxm:55, hsr:231, acc:33,dsc:24,vmax:21.1},
-    {n:"Carrasco Sofia",    min:65,dist:3628,mxm:56, hsr:411, acc:46,dsc:66,vmax:20.4},
-    {n:"Mateluna Florencia",min:65,dist:3660,mxm:56, hsr:209, acc:39,dsc:31,vmax:21.0},
-    {n:"Pareja Camila",     min:65,dist:3773,mxm:58, hsr:286, acc:29,dsc:22,vmax:21.8},
-    {n:"Alfaro Javiera",    min:65,dist:3820,mxm:59, hsr:207, acc:26,dsc:33,vmax:20.6},
-    {n:"Hevia Valentina",   min:65,dist:3892,mxm:60, hsr:216, acc:30,dsc:28,vmax:19.4},
-    {n:"Gacitua Emilia",    min:65,dist:4008,mxm:62, hsr:390, acc:41,dsc:45,vmax:23.3},
-    {n:"Errazu Sofia",      min:65,dist:4020,mxm:62, hsr:352, acc:39,dsc:38,vmax:21.7},
-    {n:"Retamal Antonia",   min:65,dist:4083,mxm:63, hsr:305, acc:36,dsc:50,vmax:20.7},
-   ]},
 ];
 
 // ─── MINUTOS DE JUEGO — hoja "Minutos Juego" del Drive ──────────────────────
-// Partidos: COGS(22/3) | PWCC(5/4) | MANQ A(25/4) | U CAT B(10/5) | OLD REDS
-// Datos exactos del Drive — columnas: COGS,PWCC,MANQ,CATB,OLDREDS
+// Partidos: COGS(22/3) | PWCC(5/4) | MANQ A(25/4) | UC B=CAT B(10/5) | OLD REDS
 const MINUTOS=[
-  {n:"Alfaro Javiera",    div:"1era",cogs:null,pwcc:null,manq:22,  catb:23,  reds:16,  tot:61,  prom:20.3},
-  {n:"Arau María Paz",    div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Carrasco Sofia",    div:"1era",cogs:null,pwcc:null,manq:35,  catb:21,  reds:52,  tot:108, prom:36.0},
-  {n:"Gacitua Emilia",    div:"1era",cogs:null,pwcc:null,manq:60,  catb:60,  reds:57,  tot:177, prom:59.0},
-  {n:"Gomez Camila",      div:"1era",cogs:null,pwcc:null,manq:40,  catb:41,  reds:29,  tot:110, prom:36.7},
-  {n:"Gutierrez Renata",  div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Liu Macarena",      div:"1era",cogs:null,pwcc:null,manq:43,  catb:34,  reds:53,  tot:130, prom:43.3},
-  {n:"Mateluna Florencia",div:"1era",cogs:null,pwcc:null,manq:21,  catb:18,  reds:29,  tot:68,  prom:22.7},
-  {n:"Muñoz Constanza",   div:"1era",cogs:60,  pwcc:60,  manq:53,  catb:60,  reds:60,  tot:293, prom:58.6},
-  {n:"Pareja Camila",     div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Pollmann Marianne", div:"1era",cogs:null,pwcc:null,manq:60,  catb:58,  reds:55,  tot:173, prom:57.7},
-  {n:"Errazu Sofia",      div:"s16", cogs:null,pwcc:null,manq:35,  catb:38,  reds:null,tot:73,  prom:36.5},
-  {n:"Sierra Julieta",    div:"s16", cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
-  {n:"Silva Victoria",    div:"s16", cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
+  {n:"Alfaro Javiera",    div:"1era",cogs:45,  pwcc:null,manq:22,  catb:27,  reds:28,  tot:122, prom:30.5},
+  {n:"Arau María Paz",    div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:null,tot:240, prom:60.0},
+  {n:"Carrasco Sofia",    div:"1era",cogs:null,pwcc:46,  manq:32,  catb:26,  reds:32,  tot:136, prom:34.0},
+  {n:"Gacitua Emilia",    div:"1era",cogs:52,  pwcc:63,  manq:71,  catb:65,  reds:71,  tot:322, prom:64.4},
+  {n:"Gomez Camila",      div:"1era",cogs:48,  pwcc:42,  manq:49,  catb:40,  reds:49,  tot:228, prom:45.6},
+  {n:"Gutierrez Renata",  div:"1era",cogs:63,  pwcc:63,  manq:71,  catb:65,  reds:71,  tot:333, prom:66.6},
+  {n:"Liu Macarena",      div:"1era",cogs:null,pwcc:null,manq:48,  catb:null,reds:48,  tot:96,  prom:48.0},
+  {n:"Mateluna Florencia",div:"1era",cogs:null,pwcc:42,  manq:null,catb:null,reds:null,tot:42,  prom:42.0},
+  {n:"Muñoz Constanza",   div:"1era",cogs:62,  pwcc:66,  manq:63,  catb:65,  reds:63,  tot:319, prom:63.8},
+  {n:"Pareja Camila",     div:"1era",cogs:64,  pwcc:63,  manq:71,  catb:65,  reds:71,  tot:334, prom:66.8},
+  {n:"Pollmann Marianne", div:"1era",cogs:60,  pwcc:58,  manq:71,  catb:64,  reds:71,  tot:324, prom:64.8},
+  {n:"Errazu Sofia",      div:"1era",cogs:57,  pwcc:51,  manq:null,catb:44,  reds:null,tot:152, prom:50.7},
+  {n:"Sierra Julieta",    div:"1era",cogs:59,  pwcc:62,  manq:71,  catb:65,  reds:71,  tot:328, prom:65.6},
+  {n:"Silva Victoria",    div:"1era",cogs:57,  pwcc:50,  manq:71,  catb:65,  reds:71,  tot:314, prom:62.8},
 ];
-// Labels de partidos para la tabla de minutos
-const MIN_PARTIDOS=["COGS","PWCC","MANQ","CAT B","OLD REDS"];
 
 // ─── YO-YO — hoja YOYO RIN1 del Drive "Old Gabs 1era" ────────────────────────
 // Bloque 1era: 5 jugadoras registradas
 // Clasificación: >16.5 verde | 14.6-16.4 amarillo | <14.6 rojo
 // Podio por NIVEL ALCANZADO
-// ─── YO-YO — hoja YOYO RIN1, 15/4/26 ────────────────────────────────────────
-// Columnas: Nº | JUGADORA | PUESTO | Nivel-Subnivel | Distancia Alcanzada |
-//   Vel. Alcanzada km/h | Vel. Alcanzada m/s | VO2 Máx (ml/kg/min) | VAM
-// Clasificación nivel: >17 verde | 15.5-17 amarillo | <15.5 rojo
-// Podio por NIVEL ALCANZADO
 const YOYO=[
-  {n:"Alfaro Javiera",  puesto:"WG",nivel:15.1,dist:800, kmh:15.0,ms:4.2,vo2:43.1,vam:3.4},
-  {n:"Carrasco Sofia",  puesto:"VL",nivel:17.1,dist:1440,kmh:16.0,ms:4.4,vo2:48.5,vam:3.8},
-  {n:"Gacitua Emilia",  puesto:"VL",nivel:16.7,dist:1360,kmh:15.5,ms:4.3,vo2:47.8,vam:3.8},
-  {n:"Gomez Camila",    puesto:"LT",nivel:15.2,dist:840, kmh:15.0,ms:4.2,vo2:43.5,vam:3.4},
-  {n:"Liu Macarena",    puesto:"WG",nivel:15.7,dist:1040,kmh:15.0,ms:4.2,vo2:45.1,vam:3.6},
-  {n:"Pareja Camila",   puesto:"DC",nivel:15.1,dist:800, kmh:15.0,ms:4.2,vo2:43.1,vam:3.4},
-  {n:"Pollmann Marianne",puesto:"DL",nivel:15.1,dist:800,kmh:15.0,ms:4.2,vo2:43.1,vam:3.4},
-  {n:"Retamal Antonia", puesto:"LT",nivel:15.1,dist:800, kmh:15.0,ms:4.2,vo2:43.1,vam:3.4},
-  {n:"Sepulveda Eileen",puesto:"DL",nivel:16.7,dist:1360,kmh:15.5,ms:4.3,vo2:47.8,vam:3.8},
+  {n:"Alfaro Javiera",  nivel:14.8,vamKmh:14.5,vam:4.0,fecha:"21-04"},
+  {n:"Arau María Paz",  nivel:13.1,vamKmh:14.0,vam:3.9,fecha:"21-04"},
+  {n:"Gacitua Emilia",  nivel:16.3,vamKmh:15.5,vam:4.3,fecha:"24-04"},
+  {n:"Gomez Camila",    nivel:15.5,vamKmh:15.0,vam:4.2,fecha:"24-04"},
+  {n:"Gutierrez Renata",nivel:16.4,vamKmh:15.5,vam:4.3,fecha:"21-04"},
 ];
-// Promedio/Máx/Mín del sheet: prom=15.8/1027/15.2/4.2/41.9/3.6 max=17.1/1440/16.0/4.4/48.5/3.8
-const yoyoColor=v=>v>=17?"#3ecf7a":v>=15.5?"#e09020":"#e05555";
-const yoyoLabel=v=>v>=17?"Verde (≥17)":v>=15.5?"Amarillo (15.5–16.9)":"Rojo (<15.5)";
-const yoyoGrupo=ms=>ms>=4.3?"Grupo 1 ≥4.3 m/s":ms>=4.2?"Grupo 2 — 4.2 m/s":"Grupo 3 <4.2 m/s";
+// Distancia estándar Yo-Yo IRT1 por nivel
+const yoyoDist={13.1:120,14.8:560,15.5:920,16.3:1400,16.4:1480};
+const yoyoColor=v=>v>16.5?"#3ecf7a":v>=14.6?"#e09020":"#e05555";
+const yoyoLabel=v=>v>16.5?"Verde (>16.5)":v>=14.6?"Amarillo (14.6–16.4)":"Rojo (<14.6)";
+const yoyoGrupo=vam=>vam>=4.3?"Grupo 1 ≥4.3 m/s":vam>=4.0?"Grupo 2 — 4.0–4.2 m/s":"Grupo 3 <4.0 m/s";
 
-// ─── PERFIL PUESTOS — solo partidos oficiales, solo ≥45 minutos ──────────────
-// Calculado desde datos individuales de PARTIDOS (COGS + PWCC + MANQ + CAT B)
-// Solo filas con min ≥ 45
-
-const PERFIL_PUESTOS=[
-  {
-    p:"DC", nombre:"Def. Central",
-    jugadoras:["Pareja Camila","Muñoz Constanza"],
-    // Pareja: COGS(64),PWCC(66),MANQ(71),CATB(65) | Muñoz: COGS(61),PWCC(66),MANQ(63),CATB(65)
-    filas:[
-      {n:"Pareja Camila", min:64,dist:5617,hsr:255,h18:57,spr:0,acc:5,dsc:10,vmax:23.0},
-      {n:"Pareja Camila", min:66,dist:5308,hsr:339,h18:73,spr:0,acc:6,dsc:9, vmax:22.7},
-      {n:"Pareja Camila", min:71,dist:6123,hsr:281,h18:62,spr:0,acc:11,dsc:20,vmax:21.2},
-      {n:"Pareja Camila", min:65,dist:6121,hsr:355,h18:87,spr:0,acc:15,dsc:16,vmax:22.4},
-      {n:"Muñoz Constanza",min:61,dist:5702,hsr:575,h18:198,spr:0,acc:7,dsc:20,vmax:23.9},
-      {n:"Muñoz Constanza",min:66,dist:5406,hsr:462,h18:224,spr:0,acc:19,dsc:18,vmax:22.5},
-      {n:"Muñoz Constanza",min:63,dist:5384,hsr:397,h18:82,spr:0,acc:12,dsc:17,vmax:21.6},
-      {n:"Muñoz Constanza",min:65,dist:6258,hsr:390,h18:125,spr:0,acc:6,dsc:12,vmax:22.6},
-    ]
-  },
-  {
-    p:"LT", nombre:"Lateral",
-    jugadoras:["Gomez Camila","Gutierrez Renata"],
-    // Gomez: COGS(48),PWCC(41<45→excl),MANQ(49),CATB(40<45→excl)
-    // Gutierrez: COGS(63),PWCC(66),MANQ(71),CATB(65)
-    filas:[
-      {n:"Gomez Camila",    min:48,dist:4630,hsr:317,h18:16,spr:0,acc:5,dsc:10,vmax:20.2},
-      {n:"Gomez Camila",    min:49,dist:4744,hsr:484,h18:63,spr:0,acc:5,dsc:18,vmax:20.3},
-      {n:"Gutierrez Renata",min:63,dist:6808,hsr:582,h18:106,spr:0,acc:9,dsc:17,vmax:20.1},
-      {n:"Gutierrez Renata",min:66,dist:6754,hsr:603,h18:113,spr:0,acc:8,dsc:15,vmax:21.3},
-      {n:"Gutierrez Renata",min:71,dist:6822,hsr:715,h18:280,spr:0,acc:14,dsc:24,vmax:22.9},
-      {n:"Gutierrez Renata",min:65,dist:6806,hsr:551,h18:112,spr:0,acc:19,dsc:18,vmax:21.1},
-    ]
-  },
-  {
-    p:"MC", nombre:"Med. Central",
-    jugadoras:["Sierra Julieta"],
-    // Sierra: COGS(58),PWCC(61),MANQ(71),CATB(65)
-    filas:[
-      {n:"Sierra Julieta",min:58,dist:6558,hsr:871,h18:275,spr:0, acc:13,dsc:30,vmax:23.9},
-      {n:"Sierra Julieta",min:61,dist:6632,hsr:1061,h18:357,spr:0,acc:28,dsc:39,vmax:22.6},
-      {n:"Sierra Julieta",min:71,dist:7929,hsr:1086,h18:318,spr:11,acc:39,dsc:61,vmax:24.6},
-      {n:"Sierra Julieta",min:65,dist:6676,hsr:594,h18:225,spr:0, acc:27,dsc:40,vmax:23.1},
-    ]
-  },
-  {
-    p:"VL", nombre:"Volante",
-    jugadoras:["Silva Victoria","Gacitua Emilia","Carrasco Sofia"],
-    // Silva: COGS(57),PWCC(49→excl),MANQ(71),CATB(65) | Gacitua: COGS(52),PWCC(66),MANQ(71),CATB(65)
-    // Carrasco: COGS(excl<45),PWCC(46),MANQ(32→excl),CATB(26→excl)
-    filas:[
-      {n:"Silva Victoria", min:57,dist:6681,hsr:1191,h18:310,spr:108,acc:25,dsc:45,vmax:23.4},
-      {n:"Silva Victoria", min:71,dist:8142,hsr:1469,h18:570,spr:16, acc:45,dsc:52,vmax:24.7},
-      {n:"Silva Victoria", min:65,dist:7723,hsr:1096,h18:419,spr:7,  acc:31,dsc:44,vmax:24.8},
-      {n:"Gacitua Emilia", min:52,dist:5578,hsr:840, h18:235,spr:137,acc:32,dsc:40,vmax:25.2},
-      {n:"Gacitua Emilia", min:66,dist:6960,hsr:1055,h18:263,spr:157,acc:28,dsc:31,vmax:24.1},
-      {n:"Gacitua Emilia", min:71,dist:7854,hsr:1137,h18:319,spr:0,  acc:38,dsc:48,vmax:23.4},
-      {n:"Gacitua Emilia", min:65,dist:7339,hsr:958, h18:364,spr:9,  acc:29,dsc:35,vmax:25.1},
-      {n:"Carrasco Sofia", min:46,dist:5631,hsr:1121,h18:378,spr:0,  acc:17,dsc:22,vmax:22.9},
-    ]
-  },
-  {
-    p:"WG", nombre:"Wing",
-    jugadoras:["Alfaro Javiera","Errazu Sofia","Liu Macarena"],
-    // Alfaro: COGS(45),PWCC(excl),MANQ(28<45→excl),CATB(27<45→excl)
-    // Errazu: COGS(56),PWCC(50),MANQ(excl),CATB(44<45→excl)
-    // Liu: MANQ(47<45→excl)
-    filas:[
-      {n:"Alfaro Javiera",min:45,dist:4961,hsr:351,h18:42,spr:0,acc:6,dsc:15,vmax:20.8},
-      {n:"Errazu Sofia",  min:56,dist:6298,hsr:434,h18:69,spr:0,acc:24,dsc:21,vmax:20.7},
-      {n:"Errazu Sofia",  min:50,dist:5528,hsr:622,h18:159,spr:0,acc:22,dsc:17,vmax:21.8},
-    ]
-  },
-  {
-    p:"DL", nombre:"Del. Central",
-    jugadoras:["Pollmann Marianne"],
-    // Pollmann: COGS(60),PWCC(57),MANQ(71),CATB(64)
-    filas:[
-      {n:"Pollmann Marianne",min:60,dist:6162,hsr:677,h18:179,spr:0,acc:12,dsc:17,vmax:22.4},
-      {n:"Pollmann Marianne",min:57,dist:5945,hsr:487,h18:90, spr:0,acc:15,dsc:14,vmax:20.3},
-      {n:"Pollmann Marianne",min:71,dist:6952,hsr:653,h18:123,spr:0,acc:27,dsc:14,vmax:21.9},
-      {n:"Pollmann Marianne",min:64,dist:5874,hsr:567,h18:169,spr:0,acc:17,dsc:19,vmax:22.9},
-    ]
-  },
-];
-
-// Helper para calcular promedio de un campo en filas
-const pProm=(p,k)=>{const v=p.filas.map(f=>f[k]).filter(x=>x!=null&&x>=0);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0;};
-const pPromF=(p,k)=>{const v=p.filas.map(f=>f[k]).filter(x=>x!=null&&x>=0);return v.length?parseFloat((v.reduce((a,b)=>a+b,0)/v.length).toFixed(1)):0;};
-
-// ─── PERFIL PUESTOS — calculado de partidos oficiales, solo ≥45 min ──────────
-// Datos del Drive (tabla Demandas Físicas), recalculado con nuevo partido UC B
-// h15 = hsr - ai18 - spr | h18 = ai18 directo del Drive
+// ─── PUESTOS — tabla resumen del Drive ────────────────────────────────────────
 const PUESTOS=[
-  // DC: Pareja (4P) + Muñoz (4P) — todos ≥45 min
-  {p:"DC",n:"Def. Central",
-   jugadoras:[
-     {n:"Pareja Camila",   partidos:4, dist:5792,hsr:307,ai18:70, spr:0,acc:9, dsc:14,vmax:23.0},
-     {n:"Muñoz Constanza", partidos:4, dist:5688,hsr:456,ai18:157,spr:0,acc:11,dsc:17,vmax:23.9},
-   ],
-   dist:5740,hsr:382,ai18:114,spr:0,acc:10,dsc:16,vmax:23.5},
-
-  // LT: Gomez (3P ≥45) + Gutierrez (4P ≥45)
-  {p:"LT",n:"Lateral",
-   jugadoras:[
-     {n:"Gomez Camila",    partidos:3, dist:4457,hsr:457,ai18:70, spr:1,acc:6, dsc:14,vmax:21.0},
-     {n:"Gutierrez Renata",partidos:4, dist:6798,hsr:613,ai18:153,spr:0,acc:13,dsc:19,vmax:22.9},
-   ],
-   dist:5628,hsr:535,ai18:112,spr:0,acc:10,dsc:17,vmax:22.0},
-
-  // MC: Sierra (4P ≥45)
-  {p:"MC",n:"Med. Central",
-   jugadoras:[
-     {n:"Sierra Julieta",  partidos:4, dist:6949,hsr:903,ai18:294,spr:3,acc:27,dsc:43,vmax:24.6},
-   ],
-   dist:6949,hsr:903,ai18:294,spr:3,acc:27,dsc:43,vmax:24.6},
-
-  // VL: Silva (4P) + Carrasco (1P ≥45) + Gacitua (4P)
-  {p:"VL",n:"Volante",
-   jugadoras:[
-     {n:"Silva Victoria",  partidos:4, dist:7088,hsr:1294,ai18:420,spr:84,acc:33,dsc:44,vmax:24.8},
-     {n:"Carrasco Sofia",  partidos:1, dist:5631,hsr:1121,ai18:378,spr:0, acc:17,dsc:22,vmax:22.9},
-     {n:"Gacitua Emilia",  partidos:4, dist:6933,hsr:998, ai18:295,spr:42,acc:32,dsc:39,vmax:25.2},
-   ],
-   dist:6551,hsr:1138,ai18:364,spr:42,acc:27,dsc:35,vmax:25.2},
-
-  // WG: Alfaro (1P ≥45) + Errazu (2P ≥45) + Liu (1P ≥45)
-  {p:"WG",n:"Wing",
-   jugadoras:[
-     {n:"Alfaro Javiera",  partidos:1, dist:4961,hsr:351,ai18:42, spr:0,acc:6, dsc:15,vmax:20.8},
-     {n:"Errazu Sofia",    partidos:2, dist:5913,hsr:528,ai18:114,spr:0,acc:23,dsc:19,vmax:21.3},
-     {n:"Liu Macarena",    partidos:1, dist:5532,hsr:883,ai18:266,spr:0,acc:22,dsc:26,vmax:22.5},
-   ],
-   dist:5469,hsr:587,ai18:141,spr:0,acc:17,dsc:20,vmax:22.5},
-
-  // DL: Pollmann (4P ≥45)
-  {p:"DL",n:"Del. Central",
-   jugadoras:[
-     {n:"Pollmann Marianne",partidos:4,dist:6233,hsr:596,ai18:140,spr:0,acc:18,dsc:16,vmax:22.4},
-   ],
-   dist:6233,hsr:596,ai18:140,spr:0,acc:18,dsc:16,vmax:22.4},
+  {p:"DC",n:"Def. Central", dist:5590,hsr:385,acc:10,dsc:16,sprN:0,vmax:22.7},
+  {p:"LT",n:"Lateral",      dist:6781,hsr:592,acc:9, dsc:16,sprN:0,vmax:20.7},
+  {p:"MC",n:"Med. Central", dist:7040,hsr:1006,acc:27,dsc:43,sprN:0,vmax:23.7},
+  {p:"VL",n:"Volante",      dist:7043,hsr:1138,acc:34,dsc:43,sprN:5,vmax:24.2},
+  {p:"DL",n:"Del. Central", dist:6353,hsr:606,acc:18,dsc:15,sprN:0,vmax:21.5},
+  {p:"WG",n:"Wing",         dist:5913,hsr:528,acc:23,dsc:19,sprN:0,vmax:21.3},
+  {p:"PROM",n:"Promedio",   dist:6111,hsr:690,acc:16,dsc:22,sprN:1,vmax:22.2},
 ];
-// Promedio general (todos los puestos)
-const PROM_PUESTO={
-  dist:Math.round([5740,5628,6949,6551,5469,6233].reduce((a,b)=>a+b,0)/6),
-  hsr: Math.round([382,535,903,1138,587,596].reduce((a,b)=>a+b,0)/6),
-  ai18:Math.round([114,112,294,364,141,140].reduce((a,b)=>a+b,0)/6),
-  acc: Math.round([10,10,27,27,17,18].reduce((a,b)=>a+b,0)/6),
-  dsc: Math.round([16,17,43,35,20,16].reduce((a,b)=>a+b,0)/6),
-  vmax:((23.5+22.0+24.6+25.2+22.5+22.4)/6).toFixed(1),
-};
 
 // ─── ASISTENCIA — hoja PF Old Gabs (datos previos del Drive) ─────────────────
-// Fechas de asistencia — hoja Asistencias del Drive "Old Gabs 1era"
-// FEB: 13,18,20,23,25,27 | MAR: 2,4,6,9,11,13,16,18,20,23,25,27,30
-// ABR: 16,21,23,25,28,30 | MAY: 2,5,7,9,12,14,16
-const ATT_MESES=[
-  {label:"FEB", color:"#4a90e8", fechas:["13/2","18/2","20/2","23/2","25/2","27/2"]},
-  {label:"MAR", color:"#3ecf7a", fechas:["2/3","4/3","6/3","9/3","11/3","13/3","16/3","18/3","20/3","23/3","25/3","27/3","30/3"]},
-  {label:"ABR", color:"#e09020", fechas:["16/4","21/4","23/4","25/4","28/4","30/4"]},
-  {label:"MAY", color:"#8b6fe8", fechas:["2/5","5/5","7/5","9/5","12/5","14/5","16/5"]},
-];
-const ATT_FECHAS=ATT_MESES.flatMap(m=>m.fechas);
-// FEB(6) + MAR(13) + ABR(6) + MAY(7) = 32 fechas
-// dias[] = 1 presente, 0 ausente
+const ATT_FECHAS=["10/3","12/3","17/3","19/3","21/3","24/3","26/3","28/3","31/3","16/4","21/4","23/4","25/4","28/4","30/4","2/5"];
 const ASISTENCIA={
-  "Alfaro Javiera":    {feb:"100%",mar:"89%",abr:"83%",may:"100%",tot:"93%",
-    dias:[1,1,1,1,1,1, 1,0,0,1,1,1,1,1,1,0,0,0,0, 1,1,1,1,0,1, 1,1,1,1,1,1,1]},
-  "Arau María Paz":    {feb:"83%",mar:"100%",abr:"100%",may:"67%",tot:"89%",
-    dias:[1,1,1,1,0,1, 1,1,0,1,1,1,0,1,1,0,0,0,0, 1,1,1,1,1,1, 0,0,1,1,0,1,1]},
-  "Carrasco Sofia":    {feb:"67%",mar:"100%",abr:"100%",may:"100%",tot:"93%",
-    dias:[0,0,1,1,1,1, 1,1,0,1,1,1,1,1,1,0,0,0,0, 1,1,1,1,1,1, 1,1,1,1,1,1,1]},
-  "Errazu Sofia":      {feb:"83%",mar:"56%",abr:"50%",may:"80%",tot:"68%",
-    dias:[1,1,1,1,1,0, 1,0,0,1,0,0,0,1,1,0,0,0,0, 1,0,0,1,0,1, 1,1,0,1,1,0,1]},
-  "Gacitua Emilia":    {feb:"33%",mar:"44%",abr:"67%",may:"100%",tot:"64%",
-    dias:[0,0,0,1,1,0, 1,1,0,0,1,0,0,1,1,0,0,0,0, 1,0,1,0,1,1, 1,0,1,1,1,1,1]},
-  "Gomez Camila":      {feb:"100%",mar:"100%",abr:"83%",may:"44%",tot:"82%",
-    dias:[1,1,1,1,1,1, 1,1,0,1,1,1,1,1,1,0,0,0,0, 1,0,1,1,1,1, 1,1,1,1,0,0,0]},
-  "Gutierrez Renata":  {feb:"100%",mar:"100%",abr:"83%",may:"44%",tot:"82%",
-    dias:[1,1,1,1,1,1, 1,1,0,1,1,1,1,1,1,0,0,0,0, 1,1,0,1,1,1, 1,1,1,1,0,0,0]},
-  "Hevia Valentina":   {feb:"50%",mar:"100%",abr:"50%",may:"100%",tot:"77%",
-    dias:[1,0,0,1,1,0, 1,1,0,1,1,1,1,1,1,0,0,0,0, 1,0,0,0,1,1, 1,1,0,1,1,1,1]},
-  "Liu Macarena":      {feb:"0%",mar:"56%",abr:"33%",may:"33%",tot:"34%",
-    dias:[0,0,0,0,0,0, 1,1,0,1,1,1,0,0,0,0,0,0,0, 1,0,0,1,0,0, 1,1,0,1,0,0,0]},
-  "Mateluna Florencia":{feb:"0%",mar:"0%",abr:"0%",may:"100%",tot:"25%",
-    dias:[0,0,0,0,0,0, 0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 1,1,1,1,1,1,1]},
-  "Muñoz Constanza":   {feb:"0%",mar:"44%",abr:"0%",may:"29%",tot:"21%",
-    dias:[0,0,0,0,0,0, 1,1,0,0,1,0,1,1,1,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,1,1]},
-  "Pareja Camila":     {feb:"83%",mar:"89%",abr:"50%",may:"100%",tot:"83%",
-    dias:[0,1,1,1,1,1, 1,1,0,1,1,0,0,1,1,0,0,0,0, 0,0,1,0,1,1, 1,0,0,0,1,1,1]},
-  "Pollmann Marianne": {feb:"100%",mar:"67%",abr:"50%",may:"71%",tot:"73%",
-    dias:[1,1,1,1,1,1, 0,0,0,1,1,0,1,1,1,0,0,0,0, 1,0,1,0,1,0, 0,0,0,0,1,1,1]},
-  "Retamal Antonia":   {feb:"50%",mar:"0%",abr:"0%",may:"100%",tot:"38%",
-    dias:[0,0,0,1,1,1, 0,0,0,0,0,0,0,0,0,0,0,0,0, 0,0,0,0,0,0, 1,0,1,1,1,1,1]},
-  "Sepulveda Eileen":  {feb:"83%",mar:"44%",abr:"0%",may:"0%",tot:"34%",
-    dias:[1,1,0,1,1,1, 0,0,0,1,1,1,1,0,0,0,0,0,0, 0,0,0,0,0,0, 0,0,0,0,0,0,0]},
-  "Sierra Julieta":    {feb:"0%",mar:"67%",abr:"0%",may:"29%",tot:"27%",
-    dias:[0,0,0,0,0,0, 1,1,0,0,1,1,1,1,1,0,0,0,0, 0,0,0,0,0,0, 0,1,0,0,0,0,1]},
-  "Silva Victoria":    {feb:"50%",mar:"22%",abr:"0%",may:"29%",tot:"27%",
-    dias:[1,0,0,1,1,0, 0,0,0,0,1,0,0,0,1,0,0,0,0, 0,0,0,0,0,0, 0,1,0,0,0,0,1]},
+  "Alfaro Javiera":    {mar:"89%",abr:"83%",may:"—",tot:"85%",dias:[1,1,1,1,1,1,1,1,0,1,1,1,1,0,1,1]},
+  "Arau María Paz":    {mar:"100%",abr:"100%",may:"—",tot:"100%",dias:[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]},
+  "Carrasco Sofia":    {mar:"—",abr:"100%",may:"—",tot:"100%",dias:[0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1]},
+  "Gacitua Emilia":    {mar:"44%",abr:"67%",may:"—",tot:"58%",dias:[1,1,1,0,1,0,0,0,0,1,0,1,0,1,1,1]},
+  "Gomez Camila":      {mar:"100%",abr:"83%",may:"—",tot:"94%",dias:[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1]},
+  "Gutierrez Renata":  {mar:"100%",abr:"83%",may:"—",tot:"94%",dias:[1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,1]},
+  "Mateluna Florencia":{mar:"—",abr:"100%",may:"—",tot:"100%",dias:[0,0,0,0,0,1,0,0,0,0,1,0,0,1,0,0]},
+  "Muñoz Constanza":   {mar:"44%",abr:"0%",may:"—",tot:"25%",dias:[1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0]},
+  "Pareja Camila":     {mar:"89%",abr:"50%",may:"—",tot:"75%",dias:[1,0,1,1,1,1,1,1,1,0,0,1,0,1,1,1]},
+  "Pollmann Marianne": {mar:"67%",abr:"50%",may:"—",tot:"60%",dias:[0,0,1,1,1,1,1,0,1,1,0,1,0,1,0,0]},
+  "Retamal Antonia":   {mar:"—",abr:"—",may:"—",tot:"—",dias:[0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1]},
+  "Sepulveda Eileen":  {mar:"44%",abr:"0%",may:"—",tot:"25%",dias:[0,0,1,0,1,1,1,0,0,0,0,0,0,0,0,0]},
+  "Sierra Julieta":    {mar:"100%",abr:"0%",may:"—",tot:"56%",dias:[1,1,1,1,1,0,0,0,0,0,0,1,0,0,0,0]},
+  "Silva Victoria":    {mar:"67%",abr:"50%",may:"—",tot:"60%",dias:[1,1,0,0,1,0,0,0,0,0,0,1,0,0,0,0]},
+  "Liu Macarena":      {mar:"56%",abr:"33%",may:"—",tot:"44%",dias:[1,1,1,1,1,0,0,0,0,1,0,0,1,0,0,0]},
+  "Errazu Sofia":      {mar:"—",abr:"—",may:"—",tot:"—",dias:[0,0,0,0,0,0,0,0,0,1,0,1,1,0,0,0]},
 };
+
+// ─── WELLNESS & RPE (formulario — mantener de versión anterior) ───────────────
+const WELLNESS={
+  "Alfaro Javiera":    {horas:"6hs",calidad:4,fatiga:3,dolor:4,estres:2,animo:3,nota:"Periostitis"},
+  "Gomez Camila":      {horas:"7hs",calidad:5,fatiga:4,dolor:4,estres:2,animo:4,nota:"Lumbar"},
+  "Pollmann Marianne": {horas:"8hs",calidad:4,fatiga:3,dolor:4,estres:2,animo:4,nota:"Gemelo/Sóleo"},
+  "Errazu Sofia":      {horas:"6hs",calidad:4,fatiga:5,dolor:5,estres:3,animo:4,nota:"Sin dolor"},
+  "Gutierrez Renata":  {horas:"7hs",calidad:4,fatiga:3,dolor:4,estres:3,animo:4,nota:"Lumbar"},
+  "Silva Victoria":    {horas:"6hs",calidad:4,fatiga:3,dolor:5,estres:3,animo:5,nota:"Sin dolor"},
+  "Mateluna Florencia":{horas:"6hs",calidad:4,fatiga:3,dolor:4,estres:2,animo:4,nota:"Gemelo/Sóleo"},
+  "Sierra Julieta":    {horas:"5hs",calidad:5,fatiga:5,dolor:5,estres:4,animo:5,nota:"Sin dolor"},
+  "Gacitua Emilia":    {horas:"8hs",calidad:4,fatiga:4,dolor:4,estres:4,animo:3,nota:"Gemelo/Sóleo"},
+  "Carrasco Sofia":    {horas:"7hs",calidad:3,fatiga:4,dolor:4,estres:1,animo:4,nota:"Resfrío"},
+  "Pareja Camila":     {horas:"6hs",calidad:4,fatiga:3,dolor:4,estres:2,animo:3,nota:"Rodilla/Lumbar"},
+  "Muñoz Constanza":   {horas:"4hs",calidad:2,fatiga:2,dolor:4,estres:4,animo:2,nota:"Cuello/Rodilla"},
+};
+const RPE_DATA={
+  "Alfaro Javiera":6,"Gomez Camila":9,"Pollmann Marianne":6,
+  "Errazu Sofia":9,"Gutierrez Renata":6,"Silva Victoria":7,
+  "Mateluna Florencia":7,"Sierra Julieta":7,"Gacitua Emilia":8,
+  "Carrasco Sofia":9,"Pareja Camila":8,"Muñoz Constanza":6,
+};
+const ZONAS_DOLOR=["Gemelo/Sóleo","Cuádriceps","Isquiotibial","Rodilla","Aductor","Flexor cadera","Glúteo","Lumbar","Cuello","Otro"];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 const avg=arr=>{const v=arr.filter(x=>x!=null&&x>0);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;};
@@ -1034,63 +771,56 @@ function StaffYoyo(){
 
 // ─── STAFF MINUTOS DE JUEGO ────────────────────────────────────────────────────
 function StaffMinutos(){
+  const partidos=["COGS","PWCC","MANQ A","UC B"];
   const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
-  const sorted=[...MINUTOS].sort((a,b)=>b.tot-a.tot);
   return(
     <>
       <MR>
         <MetCard label="Jugadoras" value={MINUTOS.length}/>
         <MetCard label="Máx. minutos" value={`${Math.max(...MINUTOS.map(m=>m.tot))} min`} sub="Arau/Gutierrez/Pareja" sc={T.green}/>
         <MetCard label="Prom. equipo" value={`${Math.round(avg(MINUTOS.map(m=>m.tot)))} min`} sub="Total temporada"/>
-        <MetCard label="Partidos" value={5} sub="COGS,PWCC,MANQ,CAT B,OLD REDS"/>
+        <MetCard label="Partidos" value={4} sub="COGS · PWCC · MANQ · UC B"/>
       </MR>
       <Card>
-        <CT text="Minutos por partido — temporada 2026"/>
+        <CT text="Minutos de juego por jugadora — hoja Minutos de Juego"/>
         <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={["Jugadora","Div","COGS","PWCC","MANQ","CAT B","OLD REDS","Total","Prom"]}/>
-            <tbody>{sorted.map(m=>(
-              <tr key={m.n}>
-                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{m.n}</td>
-                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.muted,fontSize:9}}>{m.div}</td>
-                {[m.cogs,m.pwcc,m.manq,m.catb,m.reds].map((v,i)=>(
-                  <td key={i} style={{padding:"5px 8px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:11,color:v>=60?T.green:v>0?T.amber:"#2a3550"}}>{v||"—"}</td>
-                ))}
-                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:700,textAlign:"center"}}>{m.tot}</td>
-                <td style={{padding:"5px 8px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{m.prom}</td>
-              </tr>
-            ))}</tbody>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <TH cols={["Jugadora","Div","COGS","PWCC","MANQ A","UC B","Total","Prom."]}/>
+            <tbody>{[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
+              const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
+              return(
+                <tr key={m.n}>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{m.n}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}><Chip text={m.div} color={m.div==="S16"?T.purple:T.blue}/></td>
+                  {[m.cogs,m.pwcc,m.manq,m.ucb].map((v,i)=>(
+                    <td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v!=null?`${v}'`:"—"}</td>
+                  ))}
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700}}>{m.tot}'</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{m.prom.toFixed(1)}'</td>
+                </tr>
+              );
+            })}</tbody>
           </table>
         </div>
-        {/* Barras */}
         <div style={{marginTop:12}}>
-          {sorted.map(m=>(
-            <div key={m.n} style={{marginBottom:6}}>
-              <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
-                <span style={{fontSize:10,color:T.muted2}}>{m.n.split(" ")[0]}</span>
-                <span style={{fontSize:10,color:T.blue,fontWeight:600}}>{m.tot} min</span>
+          <CT text="Minutos totales — barra"/>
+          {[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
+            const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
+            return(
+              <div key={m.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}>
+                <span style={{fontSize:11,color:T.text,width:130,flexShrink:0,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.n.split(" ")[0]}</span>
+                <div style={{flex:1,background:"#1e2535",borderRadius:3,height:8}}><div style={{width:`${Math.round(m.tot/maxTot*100)}%`,height:8,borderRadius:3,background:col}}/></div>
+                <span style={{fontSize:11,color:col,width:40,textAlign:"right",fontWeight:500}}>{m.tot}'</span>
               </div>
-              <div style={{display:"flex",gap:1,height:8,borderRadius:4,overflow:"hidden",background:"#1a1e2a"}}>
-                {[{v:m.cogs,c:T.blue},{v:m.pwcc,c:T.green},{v:m.manq,c:T.amber},{v:m.catb,c:T.red},{v:m.reds,c:T.purple}].map((p,i)=>
-                  p.v?<div key={i} style={{width:`${(p.v/maxTot)*100}%`,background:p.c,minWidth:2}}/>:null
-                )}
-              </div>
-            </div>
-          ))}
-          <div style={{display:"flex",gap:12,marginTop:6,flexWrap:"wrap"}}>
-            {["COGS","PWCC","MANQ","CAT B","OLD REDS"].map((l,i)=>(
-              <div key={l} style={{display:"flex",gap:4,alignItems:"center"}}>
-                <div style={{width:10,height:10,borderRadius:2,background:[T.blue,T.green,T.amber,T.red,T.purple][i]}}/>
-                <span style={{fontSize:9,color:T.muted}}>{l}</span>
-              </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </Card>
     </>
   );
 }
 
+// ─── STAFF ASISTENCIA ──────────────────────────────────────────────────────────
 function StaffAsistencia(){
   const rows=Object.entries(ASISTENCIA).map(([n,d])=>({
     n,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
@@ -1225,31 +955,31 @@ function RadarChart({player,sesion}){
   if(!sesion||sesion.jugadoras.length<2)return null;
   const jd=sesion.jugadoras.find(j=>j.n===player);
   if(!jd)return null;
-  const labels=["Dist","m/min","HSR","ACC","Vmáx"];
-  const jVals=[jd.dist||0,jd.mxm||0,jd.hsr||jd.ai15||0,jd.acc||0,jd.vmax||0];
-  const getAvg=k=>sesion.jugadoras.reduce((s,j)=>s+(j[k]||0),0)/sesion.jugadoras.length;
-  const tVals=[getAvg("dist"),getAvg("mxm"),getAvg("hsr")||getAvg("ai15")||0,getAvg("acc"),getAvg("vmax")];
-  const maxV=jVals.map((v,i)=>Math.max(v,tVals[i],0.1));
-  const norm=arr=>arr.map((v,i)=>Math.min(v/maxV[i],1.4));
-  const jN=norm(jVals);const tN=norm(tVals);
-  const cx=90,cy=90,r=65,n=5;
-  const ang=i=>(Math.PI*2*i/n)-Math.PI/2;
-  const pt=(v,i)=>`${cx+v*r*Math.cos(ang(i))},${cy+v*r*Math.sin(ang(i))}`;
-  const poly=(nrm,col)=>`<polygon points="${nrm.map((v,i)=>pt(v,i)).join(" ")}" fill="${col}33" stroke="${col}" stroke-width="1.5"/>`;
-  const spokes=Array.from({length:n},(_,i)=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(ang(i))}" y2="${cy+r*Math.sin(ang(i))}" stroke="#2a3550" stroke-width="1"/>`).join("");
+  const labs=["Dist","m/min","HSR","ACC","Vmáx"];
+  const jV=[jd.dist,jd.mxm,jd.hsr||jd.ai15||0,jd.acc||0,jd.vmax];
+  const gA=k=>sesion.jugadoras.reduce((s,j)=>s+(j[k]||0),0)/sesion.jugadoras.length;
+  const tV=[gA("dist"),gA("mxm"),gA("hsr")||gA("ai15")||0,gA("acc"),gA("vmax")];
+  const mx=jV.map((v,i)=>Math.max(v,tV[i],0.1));
+  const nr=arr=>arr.map((v,i)=>Math.min(v/mx[i],1.4));
+  const jN=nr(jV);const tN=nr(tV);
+  const cx=110,cy=110,r=85,n=5;
+  const ag=i=>(Math.PI*2*i/n)-Math.PI/2;
+  const pt=(v,i)=>`${cx+v*r*Math.cos(ag(i))},${cy+v*r*Math.sin(ag(i))}`;
+  const poly=(nm,col)=>`<polygon points="${nm.map((v,i)=>pt(v,i)).join(" ")}" fill="${col}33" stroke="${col}" stroke-width="2"/>`;
+  const spokes=Array.from({length:n},(_,i)=>`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(ag(i))}" y2="${cy+r*Math.sin(ag(i))}" stroke="#2a3550" stroke-width="1"/>`).join("");
   const rings=[.33,.67,1].map(v=>`<polygon points="${Array.from({length:n},(_,i)=>pt(v,i)).join(" ")}" fill="none" stroke="#1e2535" stroke-width="1"/>`).join("");
-  const lbl=labels.map((l,i)=>{const x=cx+(r+14)*Math.cos(ang(i));const y=cy+(r+14)*Math.sin(ang(i));return`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="${jN[i]>tN[i]?"#3ecf7a":"#6a7490"}">${l}</text>`;}).join("");
-  const dots=jN.map((v,i)=>`<circle cx="${cx+v*r*Math.cos(ang(i))}" cy="${cy+v*r*Math.sin(ang(i))}" r="3" fill="#3ecf7a"/>`).join("");
-  const svg=`<svg viewBox="0 0 180 180" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${poly(tN,"#4a90e8")}${poly(jN,"#3ecf7a")}${dots}${lbl}</svg>`;
+  const lbl=labs.map((l,i)=>{const x=cx+(r+16)*Math.cos(ag(i));const y=cy+(r+16)*Math.sin(ag(i));return`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="${jN[i]>=tN[i]?"#3ecf7a":"#6a7490"}">${l}</text>`;}).join("");
+  const dots=jN.map((v,i)=>`<circle cx="${cx+v*r*Math.cos(ag(i))}" cy="${cy+v*r*Math.sin(ag(i))}" r="4" fill="#3ecf7a"/>`).join("");
+  const svg=`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${poly(tN,"#4a90e8")}${poly(jN,"#3ecf7a")}${dots}${lbl}</svg>`;
   return(
-    <Card style={{marginBottom:10}}>
-      <CT text={`Radar — ${player.split(" ")[0]} vs equipo`}/>
-      <div style={{display:"flex",alignItems:"center",gap:12}}>
-        <div style={{width:150,flexShrink:0}} dangerouslySetInnerHTML={{__html:svg}}/>
-        <div style={{fontSize:11}}>
-          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:4}}><div style={{width:10,height:3,background:"#3ecf7a",borderRadius:2}}/><span style={{color:T.muted2}}>{player.split(" ")[0]}</span></div>
-          <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:8}}><div style={{width:10,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2}}>Prom. equipo</span></div>
-          {labels.map((l,i)=>{const diff=Math.round((jN[i]-tN[i])*100);return(<div key={l} style={{display:"flex",justifyContent:"space-between",gap:8,marginBottom:2}}><span style={{color:T.muted,fontSize:10}}>{l}</span><span style={{color:diff>0?T.green:diff<0?T.red:T.muted,fontSize:10,fontWeight:500}}>{diff>0?"+":""}{diff}%</span></div>);})}
+    <Card style={{marginBottom:12}}>
+      <CT text={`Radar — ${player.split(" ")[0]} vs promedio equipo`}/>
+      <div style={{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
+        <div style={{width:200,flexShrink:0}} dangerouslySetInnerHTML={{__html:svg}}/>
+        <div>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:6}}><div style={{width:14,height:3,background:"#3ecf7a",borderRadius:2}}/><span style={{color:T.muted2,fontSize:12}}>{player.split(" ")[0]}</span></div>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:12}}><div style={{width:14,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2,fontSize:12}}>Promedio equipo</span></div>
+          {labs.map((l,i)=>{const d=Math.round((jN[i]-tN[i])*100);return(<div key={l} style={{display:"flex",justifyContent:"space-between",gap:12,marginBottom:4}}><span style={{color:T.muted,fontSize:11}}>{l}</span><span style={{color:d>0?T.green:d<0?T.red:T.muted,fontSize:11,fontWeight:600}}>{d>0?"+":""}{d}%</span></div>);})}
         </div>
       </div>
     </Card>
@@ -1269,8 +999,7 @@ function PlayerGPS({player}){
         <MetCard label="Sesiones" value={sess.length}/>
         <MetCard label="Vel. máx" value={`${Math.max(...sess.map(s=>s.data.vmax))} km/h`} sc={T.amber}/>
       </MR>
-      {/* Radar — solo para partidos y amistosos */}
-      {sess.length>0&&(sess[0].tipo==="partido"||sess[0].tipo==="amistoso")&&(
+      {(tipo==="partidos"||tipo==="amistosos")&&sess.length>0&&(
         <RadarChart player={player} sesion={sess[0]}/>
       )}
       <Card style={{marginBottom:10}}>
@@ -1508,11 +1237,11 @@ function LoginScreen({onLogin}){
     if(tipo==="staff"){
       if(pass==="Staffoldgabs"){onLogin("staff",null)}
       else{setError("Contraseña incorrecta");setPass("");}
-    } else {
+    }else{
       if(pass==="1eraoldgabs"){
         if(!player){setError("Seleccioná tu nombre");return;}
         onLogin("jugadora",player)
-      } else {setError("Contraseña incorrecta");setPass("");}
+      }else{setError("Contraseña incorrecta");setPass("");}
     }
   };
   return(
@@ -1524,15 +1253,13 @@ function LoginScreen({onLogin}){
       </div>
       {!tipo?(
         <div style={{width:"100%",maxWidth:320}}>
-          <div style={{fontSize:12,color:T.muted,textAlign:"center",marginBottom:16,textTransform:"uppercase",letterSpacing:1}}>¿Quién sos?</div>
+          <div style={{fontSize:12,color:T.muted,textAlign:"center",marginBottom:16}}>¿Quién sos?</div>
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            <button onClick={()=>{setTipo("staff");setError("");}} style={{padding:"16px",borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12}}>
-              <span style={{fontSize:24}}>👤</span>
-              <div style={{textAlign:"left"}}><div>Staff Técnico</div><div style={{fontSize:11,color:T.muted,fontWeight:400}}>Acceso completo al equipo</div></div>
+            <button onClick={()=>{setTipo("staff");setError("");}} style={{padding:16,borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12}}>
+              <span style={{fontSize:24}}>👤</span><div style={{textAlign:"left"}}><div>Staff Técnico</div><div style={{fontSize:11,color:T.muted,fontWeight:400}}>Acceso completo</div></div>
             </button>
-            <button onClick={()=>{setTipo("jugadora");setError("");}} style={{padding:"16px",borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12}}>
-              <span style={{fontSize:24}}>🏑</span>
-              <div style={{textAlign:"left"}}><div>Jugadora</div><div style={{fontSize:11,color:T.muted,fontWeight:400}}>Ver mis datos personales</div></div>
+            <button onClick={()=>{setTipo("jugadora");setError("");}} style={{padding:16,borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12}}>
+              <span style={{fontSize:24}}>🏑</span><div style={{textAlign:"left"}}><div>Jugadora</div><div style={{fontSize:11,color:T.muted,fontWeight:400}}>Mis datos personales</div></div>
             </button>
           </div>
         </div>
@@ -1540,11 +1267,10 @@ function LoginScreen({onLogin}){
         <div style={{width:"100%",maxWidth:320}}>
           <button onClick={()=>{setTipo(null);setPass("");setPlayer("");setError("");}} style={{background:"transparent",border:"none",color:T.muted,fontSize:12,cursor:"pointer",marginBottom:20,padding:0,fontFamily:"inherit"}}>← Volver</button>
           <div style={{background:T.surf,borderRadius:12,padding:24,border:`1px solid ${T.border}`}}>
-            <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:4}}>{tipo==="staff"?"Staff Técnico 👤":"Jugadora 🏑"}</div>
-            <div style={{fontSize:11,color:T.muted,marginBottom:20}}>{tipo==="staff"?"Acceso completo al equipo":"Solo verás tus datos personales"}</div>
+            <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:16}}>{tipo==="staff"?"Staff Técnico 👤":"Jugadora 🏑"}</div>
             {tipo==="jugadora"&&(
               <div style={{marginBottom:12}}>
-                <div style={{fontSize:11,color:T.muted,marginBottom:6,textTransform:"uppercase",letterSpacing:.5}}>Tu nombre</div>
+                <div style={{fontSize:11,color:T.muted,marginBottom:6}}>Tu nombre</div>
                 <select value={player} onChange={e=>setPlayer(e.target.value)} style={{width:"100%",background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:player?T.text:T.muted,fontSize:13,padding:"10px 12px",outline:"none",boxSizing:"border-box"}}>
                   <option value="">Seleccioná tu nombre...</option>
                   {allNames().map(n=><option key={n} value={n}>{n}</option>)}
@@ -1552,11 +1278,11 @@ function LoginScreen({onLogin}){
               </div>
             )}
             <div style={{marginBottom:16}}>
-              <div style={{fontSize:11,color:T.muted,marginBottom:6,textTransform:"uppercase",letterSpacing:.5}}>Contraseña</div>
-              <input type="password" value={pass} onChange={e=>{setPass(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••••••" style={{width:"100%",background:"#0d1020",border:`1px solid ${error?T.red:T.border2}`,borderRadius:8,color:T.text,fontSize:14,padding:"10px 12px",outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
+              <div style={{fontSize:11,color:T.muted,marginBottom:6}}>Contraseña</div>
+              <input type="password" value={pass} onChange={e=>{setPass(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••••" style={{width:"100%",background:"#0d1020",border:`1px solid ${error?T.red:T.border2}`,borderRadius:8,color:T.text,fontSize:14,padding:"10px 12px",outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
               {error&&<div style={{fontSize:11,color:T.red,marginTop:6}}>{error}</div>}
             </div>
-            <button onClick={handleLogin} style={{width:"100%",padding:"12px",background:tipo==="staff"?T.blue:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Ingresar</button>
+            <button onClick={handleLogin} style={{width:"100%",padding:12,background:tipo==="staff"?T.blue:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Ingresar</button>
           </div>
         </div>
       )}
@@ -1572,9 +1298,12 @@ export default function App(){
   const handleLogout=()=>{setSession(null);setTab(0);};
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
   const mode=session.tipo==="staff"?"staff":"player";
+  const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Yo-Yo","Minutos","Asistencia","RPE","Wellness"];
+  const PLAYER_TABS=["Mi GPS","Yo-Yo","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
     <div style={{background:T.bg,color:T.text,minHeight:"100vh",fontFamily:"system-ui,sans-serif"}}>
+      {/* Header */}
       <div style={{background:"#080a0f",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 12px",height:46,position:"sticky",top:0,zIndex:100}}>
         <div style={{display:"flex",alignItems:"center",gap:8}}>
           <div style={{width:28,height:28,borderRadius:"50%",background:T.maroon,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>🏑</div>
@@ -1585,17 +1314,18 @@ export default function App(){
         </div>
         <button onClick={handleLogout} style={{padding:"4px 10px",borderRadius:5,border:`1px solid ${T.border}`,fontSize:10,cursor:"pointer",background:"transparent",color:T.muted,fontFamily:"inherit"}}>Salir</button>
       </div>
+      {/* Tabs debajo del título */}
       <div style={{background:T.surf,borderBottom:`1px solid ${T.border}`,overflowX:"auto",position:"sticky",top:46,zIndex:99}}>
-        <div style={{display:"flex",gap:0,padding:"0 4px"}}>
+        <div style={{display:"flex",padding:"0 4px"}}>
           {tabs.map((t,i)=>(
-            <button key={t} onClick={()=>setTab(i)} style={{padding:"10px 10px",display:"flex",alignItems:"center",fontSize:10,fontWeight:500,cursor:"pointer",border:"none",background:"transparent",color:tab===i?T.blue:T.muted,textTransform:"uppercase",letterSpacing:".5px",borderBottom:`2px solid ${tab===i?T.blue:"transparent"}`,fontFamily:"inherit",whiteSpace:"nowrap"}}>{t}</button>
+            <button key={t} onClick={()=>setTab(i)} style={{padding:"10px 10px",fontSize:10,fontWeight:500,cursor:"pointer",border:"none",background:"transparent",color:tab===i?T.blue:T.muted,textTransform:"uppercase",letterSpacing:".5px",borderBottom:`2px solid ${tab===i?T.blue:"transparent"}`,fontFamily:"inherit",whiteSpace:"nowrap"}}>{t}</button>
           ))}
         </div>
       </div>
       <div style={{padding:12}}>
         {mode==="player"&&session.player&&(
           <div style={{background:T.surf,border:`1px solid ${T.border}`,borderRadius:8,padding:"8px 12px",marginBottom:12,display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:16}}>🏑</span>
+            <span>🏑</span>
             <div><div style={{fontSize:12,fontWeight:600,color:T.text}}>{session.player}</div><div style={{fontSize:10,color:T.muted}}>Tus datos personales</div></div>
           </div>
         )}
@@ -1606,40 +1336,5 @@ export default function App(){
         )}
       </div>
     </div>
-  );
-}function PlayerMinutos({player}){
-  const m=MINUTOS.find(x=>x.n===player);
-  if(!m)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos de minutos para {player}</div>;
-  const maxV=Math.max(m.cogs||0,m.pwcc||0,m.manq||0,m.catb||0,m.reds||0,1);
-  const partidos=[
-    {l:"COGS",   v:m.cogs, c:T.blue},
-    {l:"PWCC",   v:m.pwcc, c:T.green},
-    {l:"MANQ",   v:m.manq, c:T.amber},
-    {l:"CAT B",  v:m.catb, c:T.red},
-    {l:"OLD REDS",v:m.reds,c:T.purple},
-  ].filter(p=>p.v);
-  return(
-    <>
-      <MR>
-        <MetCard label="Total minutos" value={`${m.tot} min`} sc={T.blue}/>
-        <MetCard label="Prom. x partido" value={`${m.prom} min`}/>
-        <MetCard label="Partidos jugados" value={partidos.length}/>
-      </MR>
-      <Card>
-        <CT text="Mis minutos por partido"/>
-        {partidos.map(p=>(
-          <div key={p.l} style={{marginBottom:10}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-              <span style={{fontSize:12,color:T.text,fontWeight:500}}>{p.l}</span>
-              <span style={{fontSize:12,color:p.c,fontWeight:600}}>{p.v} min</span>
-            </div>
-            <div style={{background:"#1a1e2a",borderRadius:4,height:10}}>
-              <div style={{width:`${(p.v/60)*100}%`,height:10,borderRadius:4,background:p.c,maxWidth:"100%"}}/>
-            </div>
-          </div>
-        ))}
-        {partidos.length===0&&<div style={{color:T.muted,textAlign:"center",padding:12}}>No registra minutos en partidos oficiales</div>}
-      </Card>
-    </>
   );
 }
