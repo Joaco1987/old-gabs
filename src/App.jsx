@@ -59,6 +59,22 @@ const PARTIDOS=[
     {n:"Silva Victoria",   min:71,dist:8142,mxm:115,ai15:1469,ai18:570, spr:16, acc:45,dsc:52,vmax:24.7},
   ]},
 
+  // ── vs CAT B (Católica B) ────────────────────────────────────────────────────
+  {id:"catb",label:"vs CAT B",fecha:"CAT B",tipo:"partido",
+   prom:{dist:5603,mxm:105,hsr:611,h18:202,spr:2,acc:18,dsc:25,vmax:22.9},
+   jugadoras:[
+    {n:"Alfaro Javiera",   min:27, dist:2917, mxm:108,hsr:296, ai18:73,  spr:0, acc:4, dsc:15,vmax:21.6},
+    {n:"Carrasco Sofia",   min:26, dist:3006, mxm:116,hsr:610, ai18:220, spr:0, acc:20,dsc:40,vmax:22.7},
+    {n:"Gomez Camila",     min:40, dist:3879, mxm:98, hsr:372, ai18:82,  spr:0, acc:6, dsc:13,vmax:20.8},
+    {n:"Errazu Sofia",     min:44, dist:5031, mxm:114,hsr:935, ai18:345, spr:5, acc:23,dsc:18,vmax:24.3},
+    {n:"Pollmann Marianne",min:64, dist:5874, mxm:92, hsr:567, ai18:169, spr:0, acc:17,dsc:19,vmax:22.9},
+    {n:"Pareja Camila",    min:65, dist:6121, mxm:94, hsr:355, ai18:87,  spr:0, acc:15,dsc:16,vmax:22.4},
+    {n:"Muñoz Constanza",  min:65, dist:6258, mxm:96, hsr:390, ai18:125, spr:0, acc:6, dsc:12,vmax:22.6},
+    {n:"Sierra Julieta",   min:65, dist:6676, mxm:102,hsr:594, ai18:225, spr:0, acc:27,dsc:40,vmax:23.1},
+    {n:"Gutierrez Renata", min:65, dist:6806, mxm:104,hsr:551, ai18:112, spr:0, acc:19,dsc:18,vmax:21.1},
+    {n:"Gacitua Emilia",   min:65, dist:7339, mxm:112,hsr:958, ai18:364, spr:9, acc:29,dsc:35,vmax:25.1},
+    {n:"Silva Victoria",   min:65, dist:7723, mxm:118,hsr:1096,ai18:419, spr:7, acc:31,dsc:44,vmax:24.8},
+   ]},
   // ── vs OLD REDS ──────────────────────────────────────────────────────────────
   {id:"oldreds",label:"vs OLD REDS",fecha:"OLD REDS",tipo:"partido",
    prom:{dist:6258,mxm:105,hsr:778,h18:218,spr:5,acc:19,dsc:27,vmax:23.4},
@@ -415,28 +431,17 @@ const MINUTOS=[
 // Clasificación: >16.5 verde | 14.6-16.4 amarillo | <14.6 rojo
 // Podio por NIVEL ALCANZADO
 const YOYO=[
-  {n:"Alfaro Javiera",  nivel:14.8,vamKmh:14.5,vam:4.0,fecha:"21-04"},
-  {n:"Arau María Paz",  nivel:13.1,vamKmh:14.0,vam:3.9,fecha:"21-04"},
-  {n:"Gacitua Emilia",  nivel:16.3,vamKmh:15.5,vam:4.3,fecha:"24-04"},
-  {n:"Gomez Camila",    nivel:15.5,vamKmh:15.0,vam:4.2,fecha:"24-04"},
-  {n:"Gutierrez Renata",nivel:16.4,vamKmh:15.5,vam:4.3,fecha:"21-04"},
-];
-// Distancia estándar Yo-Yo IRT1 por nivel
-const yoyoDist={13.1:120,14.8:560,15.5:920,16.3:1400,16.4:1480};
-const yoyoColor=v=>v>16.5?"#3ecf7a":v>=14.6?"#e09020":"#e05555";
-const yoyoLabel=v=>v>16.5?"Verde (>16.5)":v>=14.6?"Amarillo (14.6–16.4)":"Rojo (<14.6)";
-const yoyoGrupo=vam=>vam>=4.3?"Grupo 1 ≥4.3 m/s":vam>=4.0?"Grupo 2 — 4.0–4.2 m/s":"Grupo 3 <4.0 m/s";
-
-// ─── PUESTOS — tabla resumen del Drive ────────────────────────────────────────
-const PUESTOS=[
-  {p:"DC",n:"Def. Central", dist:5590,hsr:385,acc:10,dsc:16,sprN:0,vmax:22.7},
-  {p:"LT",n:"Lateral",      dist:6781,hsr:592,acc:9, dsc:16,sprN:0,vmax:20.7},
-  {p:"MC",n:"Med. Central", dist:7040,hsr:1006,acc:27,dsc:43,sprN:0,vmax:23.7},
-  {p:"VL",n:"Volante",      dist:7043,hsr:1138,acc:34,dsc:43,sprN:5,vmax:24.2},
-  {p:"DL",n:"Del. Central", dist:6353,hsr:606,acc:18,dsc:15,sprN:0,vmax:21.5},
-  {p:"WG",n:"Wing",         dist:5913,hsr:528,acc:23,dsc:19,sprN:0,vmax:21.3},
-  {p:"PROM",n:"Promedio",   dist:6111,hsr:690,acc:16,dsc:22,sprN:1,vmax:22.2},
-];
+  // Datos exactos del Drive hoja "YOYO RIN1" — test 15/4/26
+  {n:"Alfaro Javiera",   puesto:"WG",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
+  {n:"Carrasco Sofia",   puesto:"VL",nivel:17.1,dist:1440,kmh:16.0,vam:4.44,vo2:48.5},
+  {n:"Gacitua Emilia",   puesto:"VL",nivel:16.7,dist:1360,kmh:15.7,vam:4.36,vo2:47.4},
+  {n:"Gomez Camila",     puesto:"LT",nivel:15.2,dist:840, kmh:15.1,vam:4.19,vo2:43.5},
+  {n:"Liu Macarena",     puesto:"WG",nivel:15.7,dist:1040,kmh:15.4,vam:4.28,vo2:45.1},
+  {n:"Pareja Camila",    puesto:"DC",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
+  {n:"Pollmann Marianne",puesto:"DL",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
+  {n:"Retamal Antonia",  puesto:"LT",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
+  {n:"Sepulveda Eileen", puesto:"DL",nivel:16.7,dist:1360,kmh:15.7,vam:4.36,vo2:47.4},
+];];
 
 // ─── ASISTENCIA — hoja PF Old Gabs (datos previos del Drive) ─────────────────
 const ATT_FECHAS=["10/3","12/3","17/3","19/3","21/3","24/3","26/3","28/3","31/3","16/4","21/4","23/4","25/4","28/4","30/4","2/5"];
@@ -702,6 +707,178 @@ function StaffPuestos(){
 }
 
 // ─── STAFF YO-YO ──────────────────────────────────────────────────────────────
+
+// ─── STAFF EVOLUCIÓN GPS ─────────────────────────────────────────────────────
+function StaffEvoGPS(){
+  const [tipo,setTipo]=useState("partidos"); // partidos|amistosos|entrenos|todo
+  const [metric,setMetric]=useState("dist");
+  const [vista,setVista]=useState("equipo"); // equipo|jugadora
+  const [jugSel,setJugSel]=useState(allNames()[0]);
+
+  const METRICS=[
+    {k:"dist",  label:"Dist. Total",  unit:"m",  color:T.blue},
+    {k:"mxm",   label:"m/min",        unit:"",   color:T.cyan},
+    {k:"hsr",   label:"HSR >15",      unit:"m",  color:T.green},
+    {k:"h18",   label:"18-21 km/h",   unit:"m",  color:T.amber},
+    {k:"spr",   label:"Sprint >21",   unit:"m",  color:T.red},
+    {k:"acc",   label:"ACC",          unit:"",   color:T.purple},
+  ];
+  const getSessions=()=>{
+    const p=PARTIDOS.map(s=>({...s,tipo:"partido"}));
+    const a=AMISTOSOS.map(s=>({...s,tipo:"amistoso"}));
+    const e=ENTRENOS.map(s=>({...s,tipo:"entreno"}));
+    if(tipo==="partidos")return p;
+    if(tipo==="amistosos")return a;
+    if(tipo==="entrenos")return e;
+    return[...p,...a,...e];
+  };
+  const sessions=getSessions();
+  const getVal=(s,k)=>{
+    if(s.prom){
+      if(k==="dist")return s.prom.dist||0;
+      if(k==="mxm")return s.prom.mxm||0;
+      if(k==="hsr")return s.prom.hsr||0;
+      if(k==="h18")return s.prom.h18||0;
+      if(k==="spr")return s.prom.spr||0;
+      if(k==="acc")return s.prom.acc||0;
+    }
+    if(s.prom_hsr!==undefined){
+      if(k==="hsr")return s.prom_hsr||0;
+      if(k==="h18")return s.prom_h18||0;
+      if(k==="spr")return s.prom_spr||0;
+    }
+    return 0;
+  };
+  const getJugVal=(s,k)=>{
+    const j=s.jugadoras?.find(x=>x.n===jugSel);
+    if(!j)return 0;
+    if(k==="dist")return j.dist||0;
+    if(k==="mxm")return j.mxm||0;
+    if(k==="hsr")return j.hsr||j.ai15||0;
+    if(k==="h18")return j.ai18||0;
+    if(k==="spr")return j.spr||0;
+    if(k==="acc")return j.acc||0;
+    return 0;
+  };
+  const curMetric=METRICS.find(m=>m.k===metric);
+  const vals=sessions.map(s=>vista==="equipo"?getVal(s,metric):getJugVal(s,metric));
+  const maxVal=Math.max(...vals,1);
+
+  return(
+    <>
+      <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
+        {["partidos","amistosos","entrenos","todo"].map(t=>(
+          <button key={t} onClick={()=>setTipo(t)} style={{padding:"4px 10px",borderRadius:6,border:`1px solid ${tipo===t?T.blue:T.border}`,background:tipo===t?"#1e3a5f":"transparent",color:tipo===t?T.blue:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit",textTransform:"capitalize"}}>{t}</button>
+        ))}
+        <div style={{display:"flex",gap:4,marginLeft:"auto"}}>
+          {["equipo","jugadora"].map(v=>(
+            <button key={v} onClick={()=>setVista(v)} style={{padding:"4px 10px",borderRadius:6,border:`1px solid ${vista===v?T.green:T.border}`,background:vista===v?"#0f2d1f":"transparent",color:vista===v?T.green:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit",textTransform:"capitalize"}}>{v}</button>
+          ))}
+        </div>
+      </div>
+      {vista==="jugadora"&&(
+        <select value={jugSel} onChange={e=>setJugSel(e.target.value)} style={{background:T.surf,border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"5px 10px",outline:"none",marginBottom:10,width:"100%"}}>
+          {allNames().map(n=><option key={n}>{n}</option>)}
+        </select>
+      )}
+      <div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:10}}>
+        {METRICS.map(m=>(
+          <button key={m.k} onClick={()=>setMetric(m.k)} style={{padding:"4px 9px",borderRadius:6,border:`1px solid ${metric===m.k?m.color:T.border}`,background:metric===m.k?m.color+"22":"transparent",color:metric===m.k?m.color:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>{m.label}</button>
+        ))}
+      </div>
+      <Card>
+        <CT text={`${curMetric?.label} — ${vista==="equipo"?"Promedio equipo":jugSel.split(" ")[0]}`}/>
+        {sessions.map((s,i)=>{
+          const v=vals[i];
+          const pct=(v/maxVal)*100;
+          return(
+            <div key={s.id} style={{marginBottom:8}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
+                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+                <span style={{fontSize:11,color:curMetric?.color,fontWeight:600}}>{v}{curMetric?.unit}</span>
+              </div>
+              <div style={{background:"#1a1e2a",borderRadius:3,height:8}}>
+                <div style={{width:`${pct}%`,height:8,borderRadius:3,background:curMetric?.color}}/>
+              </div>
+            </div>
+          );
+        })}
+      </Card>
+    </>
+  );
+}
+
+// ─── PLAYER EVOLUCIÓN GPS ─────────────────────────────────────────────────────
+function PlayerEvoGPS({player}){
+  const [tipo,setTipo]=useState("partidos");
+  const [metric,setMetric]=useState("dist");
+  const METRICS=[
+    {k:"dist",label:"Dist. Total",unit:"m",color:T.blue},
+    {k:"mxm", label:"m/min",     unit:"", color:T.cyan},
+    {k:"hsr", label:"HSR >15",   unit:"m",color:T.green},
+    {k:"h18", label:"18-21 km/h",unit:"m",color:T.amber},
+    {k:"spr", label:"Sprint >21",unit:"m",color:T.red},
+    {k:"acc", label:"ACC",       unit:"", color:T.purple},
+  ];
+  const getSessions=()=>{
+    const p=PARTIDOS.map(s=>({...s,tipo:"partido"}));
+    const a=AMISTOSOS.map(s=>({...s,tipo:"amistoso"}));
+    const e=ENTRENOS.map(s=>({...s,tipo:"entreno"}));
+    if(tipo==="partidos")return p;
+    if(tipo==="amistosos")return a;
+    if(tipo==="entrenos")return e;
+    return[...p,...a,...e];
+  };
+  const sessions=getSessions().filter(s=>s.jugadoras?.some(j=>j.n===player));
+  const getVal=(s,k)=>{
+    const j=s.jugadoras?.find(x=>x.n===player);
+    if(!j)return 0;
+    if(k==="dist")return j.dist||0;
+    if(k==="mxm")return j.mxm||0;
+    if(k==="hsr")return j.hsr||j.ai15||0;
+    if(k==="h18")return j.ai18||0;
+    if(k==="spr")return j.spr||0;
+    if(k==="acc")return j.acc||0;
+    return 0;
+  };
+  const curMetric=METRICS.find(m=>m.k===metric);
+  const vals=sessions.map(s=>getVal(s,metric));
+  const maxVal=Math.max(...vals,1);
+  return(
+    <>
+      <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:10}}>
+        {["partidos","amistosos","entrenos","todo"].map(t=>(
+          <button key={t} onClick={()=>setTipo(t)} style={{padding:"4px 10px",borderRadius:6,border:`1px solid ${tipo===t?T.blue:T.border}`,background:tipo===t?"#1e3a5f":"transparent",color:tipo===t?T.blue:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit",textTransform:"capitalize"}}>{t}</button>
+        ))}
+      </div>
+      <div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:10}}>
+        {METRICS.map(m=>(
+          <button key={m.k} onClick={()=>setMetric(m.k)} style={{padding:"4px 9px",borderRadius:6,border:`1px solid ${metric===m.k?m.color:T.border}`,background:metric===m.k?m.color+"22":"transparent",color:metric===m.k?m.color:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>{m.label}</button>
+        ))}
+      </div>
+      <Card>
+        <CT text={`${curMetric?.label} — ${player.split(" ")[0]}`}/>
+        {sessions.length===0&&<div style={{color:T.muted,textAlign:"center",padding:16,fontSize:12}}>Sin datos para {player.split(" ")[0]} en {tipo}</div>}
+        {sessions.map((s,i)=>{
+          const v=vals[i];
+          const pct=(v/maxVal)*100;
+          return(
+            <div key={s.id} style={{marginBottom:8}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
+                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+                <span style={{fontSize:11,color:curMetric?.color,fontWeight:600}}>{v}{curMetric?.unit}</span>
+              </div>
+              <div style={{background:"#1a1e2a",borderRadius:3,height:8}}>
+                <div style={{width:`${pct}%`,height:8,borderRadius:3,background:curMetric?.color}}/>
+              </div>
+            </div>
+          );
+        })}
+      </Card>
+    </>
+  );
+}
+
 function StaffYoyo(){
   const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
   const medals=["🥇","🥈","🥉"];
