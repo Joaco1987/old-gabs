@@ -957,17 +957,20 @@ function StaffWellness(){
 // ─── PLAYER GPS ────────────────────────────────────────────────────────────────
 
 // ─── RADAR CHART ──────────────────────────────────────────────────────────────
-function RadarChart({player,sesion}){
+function RadarChart({player,sesion,puesto}){
   if(!sesion||sesion.jugadoras.length<2)return null;
   const jd=sesion.jugadoras.find(j=>j.n===player);
   if(!jd)return null;
   const labs=["Dist","m/min","HSR","ACC","Vmáx"];
-  const jV=[jd.dist,jd.mxm,jd.hsr||jd.ai15||0,jd.acc||0,jd.vmax];
+  const jV=[jd.dist||0,jd.mxm||0,jd.hsr||jd.ai15||0,jd.acc||0,jd.vmax||0];
   const gA=k=>sesion.jugadoras.reduce((s,j)=>s+(j[k]||0),0)/sesion.jugadoras.length;
   const tV=[gA("dist"),gA("mxm"),gA("hsr")||gA("ai15")||0,gA("acc"),gA("vmax")];
-  const mx=jV.map((v,i)=>Math.max(v,tV[i],0.1));
+  // Promedio del puesto si existe
+  const puestoData=PUESTOS?PUESTOS.find(p=>p.jugadoras.some(j=>j.n===player)):null;
+  const pV=puestoData?[puestoData.dist,puestoData.hsr,puestoData.ai18,puestoData.acc,+puestoData.vmax]:null;
+  const mx=jV.map((v,i)=>Math.max(v,tV[i],pV?pV[i]:0,0.1));
   const nr=arr=>arr.map((v,i)=>Math.min(v/mx[i],1.4));
-  const jN=nr(jV);const tN=nr(tV);
+  const jN=nr(jV);const tN=nr(tV);const pN=pV?nr(pV):null;
   const cx=110,cy=110,r=85,n=5;
   const ag=i=>(Math.PI*2*i/n)-Math.PI/2;
   const pt=(v,i)=>`${cx+v*r*Math.cos(ag(i))},${cy+v*r*Math.sin(ag(i))}`;
@@ -976,16 +979,17 @@ function RadarChart({player,sesion}){
   const rings=[.33,.67,1].map(v=>`<polygon points="${Array.from({length:n},(_,i)=>pt(v,i)).join(" ")}" fill="none" stroke="#1e2535" stroke-width="1"/>`).join("");
   const lbl=labs.map((l,i)=>{const x=cx+(r+16)*Math.cos(ag(i));const y=cy+(r+16)*Math.sin(ag(i));return`<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="${jN[i]>=tN[i]?"#3ecf7a":"#6a7490"}">${l}</text>`;}).join("");
   const dots=jN.map((v,i)=>`<circle cx="${cx+v*r*Math.cos(ag(i))}" cy="${cy+v*r*Math.sin(ag(i))}" r="4" fill="#3ecf7a"/>`).join("");
-  const svg=`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${poly(tN,"#4a90e8")}${poly(jN,"#3ecf7a")}${dots}${lbl}</svg>`;
+  const svg=`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${pN?poly(pN,"#e09020"):""}${poly(tN,"#4a90e8")}${poly(jN,"#3ecf7a")}${dots}${lbl}</svg>`;
   return(
     <Card style={{marginBottom:12}}>
-      <CT text={`Radar — ${player.split(" ")[0]} vs promedio equipo`}/>
+      <CT text={`Radar — ${player.split(" ")[0]} vs equipo${puestoData?" vs puesto "+puestoData.p:""}`}/>
       <div style={{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
         <div style={{width:200,flexShrink:0}} dangerouslySetInnerHTML={{__html:svg}}/>
         <div>
-          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:6}}><div style={{width:14,height:3,background:"#3ecf7a",borderRadius:2}}/><span style={{color:T.muted2,fontSize:12}}>{player.split(" ")[0]}</span></div>
-          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:12}}><div style={{width:14,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2,fontSize:12}}>Promedio equipo</span></div>
-          {labs.map((l,i)=>{const d=Math.round((jN[i]-tN[i])*100);return(<div key={l} style={{display:"flex",justifyContent:"space-between",gap:12,marginBottom:4}}><span style={{color:T.muted,fontSize:11}}>{l}</span><span style={{color:d>0?T.green:d<0?T.red:T.muted,fontSize:11,fontWeight:600}}>{d>0?"+":""}{d}%</span></div>);})}
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:5}}><div style={{width:14,height:3,background:"#3ecf7a",borderRadius:2}}/><span style={{color:T.muted2,fontSize:11}}>{player.split(" ")[0]}</span></div>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:5}}><div style={{width:14,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2,fontSize:11}}>Prom. equipo</span></div>
+          {puestoData&&<div style={{display:"flex",gap:8,alignItems:"center",marginBottom:10}}><div style={{width:14,height:3,background:T.amber,borderRadius:2}}/><span style={{color:T.muted2,fontSize:11}}>Prom. {puestoData.p}</span></div>}
+          {labs.map((l,i)=>{const d=Math.round((jN[i]-tN[i])*100);return(<div key={l} style={{display:"flex",justifyContent:"space-between",gap:12,marginBottom:3}}><span style={{color:T.muted,fontSize:11}}>{l}</span><span style={{color:d>0?T.green:d<0?T.red:T.muted,fontSize:11,fontWeight:600}}>{d>0?"+":""}{d}%</span></div>);})}
         </div>
       </div>
     </Card>
@@ -1304,7 +1308,7 @@ export default function App(){
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
   const mode=session.tipo==="staff"?"staff":"player";
   const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Yo-Yo","Minutos","Asistencia","RPE","Wellness"];
-  const PLAYER_TABS=["Mi GPS","Yo-Yo","Minutos","Asistencia","Mi RPE","Mi Wellness"];
+  const PLAYER_TABS=["Mi GPS","Evolución GPS","Yo-Yo","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
     <div style={{background:T.bg,color:T.text,minHeight:"100vh",fontFamily:"system-ui,sans-serif"}}>
@@ -1337,7 +1341,7 @@ export default function App(){
         {mode==="staff"?(
           <>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffPuestos/>}{tab===3&&<StaffYoyo/>}{tab===4&&<StaffMinutos/>}{tab===5&&<StaffAsistencia/>}{tab===6&&<StaffRPE/>}{tab===7&&<StaffWellness/>}</>
         ):(
-          <>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerYoyo player={session.player||player}/>}{tab===2&&<PlayerMinutos player={session.player||player}/>}{tab===3&&<PlayerAsistencia player={session.player||player}/>}{tab===4&&<PlayerRPE player={session.player||player}/>}{tab===5&&<PlayerWellness player={session.player||player}/>}</>
+          <>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerYoyo player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</>
         )}
       </div>
     </div>
