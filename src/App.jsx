@@ -431,16 +431,15 @@ const MINUTOS=[
 // Clasificación: >16.5 verde | 14.6-16.4 amarillo | <14.6 rojo
 // Podio por NIVEL ALCANZADO
 const YOYO=[
-  // Datos exactos del Drive hoja "YOYO RIN1" — test 15/4/26
-  {n:"Alfaro Javiera",   puesto:"WG",nivel:15.1,dist:800, vamKmh:15.0,vam:4.17,vo2:43.1,fecha:"15/4"},
-  {n:"Carrasco Sofia",   puesto:"VL",nivel:17.1,dist:1440,vamKmh:16.0,vam:4.44,vo2:48.5,fecha:"15/4"},
-  {n:"Gacitua Emilia",   puesto:"VL",nivel:16.7,dist:1360,vamKmh:15.7,vam:4.36,vo2:47.4,fecha:"15/4"},
-  {n:"Gomez Camila",     puesto:"LT",nivel:15.2,dist:840, vamKmh:15.1,vam:4.19,vo2:43.5,fecha:"15/4"},
-  {n:"Liu Macarena",     puesto:"WG",nivel:15.7,dist:1040,vamKmh:15.4,vam:4.28,vo2:45.1,fecha:"15/4"},
-  {n:"Pareja Camila",    puesto:"DC",nivel:15.1,dist:800, vamKmh:15.0,vam:4.17,vo2:43.1,fecha:"15/4"},
-  {n:"Pollmann Marianne",puesto:"DL",nivel:15.1,dist:800, vamKmh:15.0,vam:4.17,vo2:43.1,fecha:"15/4"},
-  {n:"Retamal Antonia",  puesto:"LT",nivel:15.1,dist:800, vamKmh:15.0,vam:4.17,vo2:43.1,fecha:"15/4"},
-  {n:"Sepulveda Eileen", puesto:"DL",nivel:16.7,dist:1360,vamKmh:15.7,vam:4.36,vo2:47.4,fecha:"15/4"},
+  {n:"Alfaro Javiera",   puesto:"WG",nivel:15.1,dist:800, vamKmh:15.0,vam:4.2,vo2:43.1,fecha:"15/4"},
+  {n:"Carrasco Sofia",   puesto:"VL",nivel:17.1,dist:1440,vamKmh:16.0,vam:4.4,vo2:48.5,fecha:"15/4"},
+  {n:"Gacitua Emilia",   puesto:"VL",nivel:16.7,dist:1360,vamKmh:15.5,vam:4.3,vo2:47.8,fecha:"15/4"},
+  {n:"Gomez Camila",     puesto:"LT",nivel:15.2,dist:840, vamKmh:15.0,vam:4.2,vo2:43.5,fecha:"15/4"},
+  {n:"Liu Macarena",     puesto:"WG",nivel:15.7,dist:1040,vamKmh:15.0,vam:4.2,vo2:45.1,fecha:"15/4"},
+  {n:"Pareja Camila",    puesto:"DC",nivel:15.1,dist:800, vamKmh:15.0,vam:4.2,vo2:43.1,fecha:"15/4"},
+  {n:"Pollmann Marianne",puesto:"DL",nivel:15.1,dist:800, vamKmh:15.0,vam:4.2,vo2:43.1,fecha:"15/4"},
+  {n:"Retamal Antonia",  puesto:"LT",nivel:15.1,dist:800, vamKmh:15.0,vam:4.2,vo2:43.1,fecha:"15/4"},
+  {n:"Sepulveda Eileen", puesto:"DL",nivel:16.7,dist:1360,vamKmh:15.5,vam:4.3,vo2:47.8,fecha:"15/4"},
 ];
 
 // ─── PUESTOS — tabla resumen del Drive ────────────────────────────────────────
@@ -496,7 +495,7 @@ const RPE_DATA={
   "Mateluna Florencia":7,"Sierra Julieta":7,"Gacitua Emilia":8,
   "Carrasco Sofia":9,"Pareja Camila":8,"Muñoz Constanza":6,
 };
-const ZONAS_DOLOR=["Gemelo/Sóleo","Cuádriceps","Isquiotibial","Rodilla","Aductor","Flexor cadera","Glúteo","Lumbar","Cuello","Otro"];
+const ZONAS_DOLOR=["Gemelo/Sóleo","Cuádriceps","Isquiotibial","Rodilla","Aductor","Flexor cadera","Glúteo","Lumbar","Cuello"];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 const avg=arr=>{const v=arr.filter(x=>x!=null&&x>0);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;};
@@ -605,6 +604,7 @@ function GraficoHSR({sesiones,titulo}){
 function StaffGPS(){
   const [tipo,setTipo]=useState("partidos");
   const [sesion,setSesion]=useState(null);
+  const [jugSel,setJugSel]=useState(null);
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess;
   const sess=sesion?pool.find(s=>s.id===sesion):null;
 
@@ -680,6 +680,17 @@ function StaffGPS(){
           {(tipo==="entrenos"||tipo==="todos")&&<GraficoHSR sesiones={ENTRENOS} titulo="HSR por zonas — Entrenamientos (prom. equipo)"/>}
         </>
       )}
+      {/* Radar: staff selecciona jugadora para comparar */}
+      {sess&&sess.jugadoras&&(
+        <Card style={{marginBottom:10}}>
+          <CT text="Radar comparativo"/>
+          <select value={jugSel||""} onChange={e=>setJugSel(e.target.value)} style={{background:T.surf,border:`1px solid ${T.border2}`,borderRadius:6,color:jugSel?T.text:T.muted,fontSize:12,padding:"5px 10px",outline:"none",marginBottom:10,width:"100%"}}>
+            <option value="">Seleccioná una jugadora para ver radar...</option>
+            {sess.jugadoras.map(j=><option key={j.n} value={j.n}>{j.n}</option>)}
+          </select>
+          {jugSel&&<RadarChart player={jugSel} sesion={sess}/>}
+        </Card>
+      )}
     </>
   );
 }
@@ -727,12 +738,13 @@ function StaffEvoGPS(){
   const [jugSel,setJugSel]=useState(allNames()[0]);
 
   const METRICS=[
-    {k:"dist",  label:"Dist. Total",  unit:"m",  color:T.blue},
-    {k:"mxm",   label:"m/min",        unit:"",   color:T.cyan},
-    {k:"hsr",   label:"HSR >15",      unit:"m",  color:T.green},
-    {k:"h18",   label:"18-21 km/h",   unit:"m",  color:T.amber},
-    {k:"spr",   label:"Sprint >21",   unit:"m",  color:T.red},
-    {k:"acc",   label:"ACC",          unit:"",   color:T.purple},
+    {k:"dist",  label:"Dist. Total",  unit:"m",    color:T.blue},
+    {k:"mxm",   label:"m/min",        unit:"",     color:T.cyan},
+    {k:"hsr",   label:"HSR >15",      unit:"m",    color:T.green},
+    {k:"h18",   label:"18-21 km/h",   unit:"m",    color:T.amber},
+    {k:"spr",   label:"Sprint >21",   unit:"m",    color:T.red},
+    {k:"acc",   label:"ACC",          unit:"",     color:T.purple},
+    {k:"vmax",  label:"Vel. Máx",     unit:"km/h", color:T.pink||"#e879f9"},
   ];
   const getSessions=()=>{
     const p=PARTIDOS.map(s=>({...s,tipo:"partido"}));
@@ -752,6 +764,7 @@ function StaffEvoGPS(){
       if(k==="h18")return s.prom.h18||0;
       if(k==="spr")return s.prom.spr||0;
       if(k==="acc")return s.prom.acc||0;
+      if(k==="vmax")return s.prom.vmax||0;
     }
     if(s.prom_hsr!==undefined){
       if(k==="hsr")return s.prom_hsr||0;
@@ -806,7 +819,10 @@ function StaffEvoGPS(){
             <div key={s.id} style={{marginBottom:8}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
                 <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+                <div style={{display:"flex",gap:6,alignItems:"center"}}>
                 <span style={{fontSize:11,color:curMetric?.color,fontWeight:600}}>{v}{curMetric?.unit}</span>
+                {i>0&&vals[i-1]>0&&(()=>{const chg=Math.round(((v-vals[i-1])/vals[i-1])*100);return chg!==0?<span style={{fontSize:10,color:chg>0?T.green:T.red,fontWeight:600}}>{chg>0?"+":""}{chg}%</span>:null;})()}
+              </div>
               </div>
               <div style={{background:"#1a1e2a",borderRadius:3,height:8}}>
                 <div style={{width:`${pct}%`,height:8,borderRadius:3,background:curMetric?.color}}/>
@@ -830,6 +846,7 @@ function PlayerEvoGPS({player}){
     {k:"h18", label:"18-21 km/h",unit:"m",color:T.amber},
     {k:"spr", label:"Sprint >21",unit:"m",color:T.red},
     {k:"acc", label:"ACC",       unit:"", color:T.purple},
+    {k:"vmax",label:"Vel. Máx",  unit:"km/h",color:T.pink||"#e879f9"},
   ];
   const getSessions=()=>{
     const p=PARTIDOS.map(s=>({...s,tipo:"partido"}));
@@ -850,6 +867,7 @@ function PlayerEvoGPS({player}){
     if(k==="h18")return j.ai18||0;
     if(k==="spr")return j.spr||0;
     if(k==="acc")return j.acc||0;
+    if(k==="vmax")return j.vmax||0;
     return 0;
   };
   const curMetric=METRICS.find(m=>m.k===metric);
@@ -877,7 +895,10 @@ function PlayerEvoGPS({player}){
             <div key={s.id} style={{marginBottom:8}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
                 <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+                <div style={{display:"flex",gap:6,alignItems:"center"}}>
                 <span style={{fontSize:11,color:curMetric?.color,fontWeight:600}}>{v}{curMetric?.unit}</span>
+                {i>0&&vals[i-1]>0&&(()=>{const chg=Math.round(((v-vals[i-1])/vals[i-1])*100);return chg!==0?<span style={{fontSize:10,color:chg>0?T.green:T.red,fontWeight:600}}>{chg>0?"+":""}{chg}%</span>:null;})()}
+              </div>
               </div>
               <div style={{background:"#1a1e2a",borderRadius:3,height:8}}>
                 <div style={{width:`${pct}%`,height:8,borderRadius:3,background:curMetric?.color}}/>
@@ -1212,6 +1233,10 @@ function PlayerGPS({player}){
       </MR>
       {(tipo==="partidos"||tipo==="amistosos")&&sess.length>0&&(
         <RadarChart player={player} sesion={sess[0]}/>
+      )}
+      {/* Gráfico HSR por zonas */}
+      {sess.length>0&&sess[0].zonas&&(
+        <GraficoHSR sesiones={[sess[0]]} titulo={`HSR por zonas — ${sess[0].label}`}/>
       )}
       <Card style={{marginBottom:10}}>
         <CT text="Detalle por sesión"/>
