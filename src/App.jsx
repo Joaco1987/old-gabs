@@ -890,6 +890,18 @@ function PlayerEvoGPS({player}){
   );
 }
 
+// ─── YOYO HELPERS ─────────────────────────────────────────────────────────────
+const yoyoColor=nivel=>nivel>=16.5?"#3ecf7a":nivel>=14.6?"#e09020":"#e05555";
+const yoyoLabel=nivel=>nivel>=16.5?"Verde":nivel>=14.6?"Amarillo":"Rojo";
+const yoyoGrupo=vam=>vam>=4.44?"Verde":vam>=4.06?"Amarillo":"Rojo";
+const yoyoDist={
+  13.1:200,13.2:240,13.3:280,13.4:320,13.5:360,13.6:400,13.7:440,13.8:480,13.9:520,
+  14.0:560,14.1:600,14.2:640,14.3:680,14.4:720,14.5:760,14.6:800,14.7:840,14.8:880,14.9:920,
+  15.0:960,15.1:1000,15.2:1040,15.3:1080,15.4:1120,15.5:1160,15.6:1200,15.7:1240,15.8:1280,15.9:1320,
+  16.0:1360,16.1:1400,16.2:1440,16.3:1480,16.4:1520,16.5:1560,16.6:1600,16.7:1640,16.8:1680,16.9:1720,
+  17.0:1760,17.1:1800,17.2:1840,17.3:1880,17.4:1920,17.5:1960,
+};
+
 function StaffYoyo(){
   const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
   const medals=["🥇","🥈","🥉"];
@@ -1145,7 +1157,7 @@ function StaffWellness(){
 // ─── PLAYER GPS ────────────────────────────────────────────────────────────────
 
 // ─── RADAR CHART ──────────────────────────────────────────────────────────────
-function RadarChart({player,sesion,puesto}){
+function RadarChart({player,sesion}){
   if(!sesion||sesion.jugadoras.length<2)return null;
   const jd=sesion.jugadoras.find(j=>j.n===player);
   if(!jd)return null;
@@ -1153,9 +1165,10 @@ function RadarChart({player,sesion,puesto}){
   const jV=[jd.dist||0,jd.mxm||0,jd.hsr||jd.ai15||0,jd.acc||0,jd.vmax||0];
   const gA=k=>sesion.jugadoras.reduce((s,j)=>s+(j[k]||0),0)/sesion.jugadoras.length;
   const tV=[gA("dist"),gA("mxm"),gA("hsr")||gA("ai15")||0,gA("acc"),gA("vmax")];
-  // Promedio del puesto si existe
-  const puestoData=PUESTOS?PUESTOS.find(p=>p.jugadoras.some(j=>j.n===player)):null;
-  const pV=puestoData?[puestoData.dist,puestoData.hsr,puestoData.ai18,puestoData.acc,+puestoData.vmax]:null;
+  // Puesto de la jugadora
+  const yoyoData=YOYO.find(y=>y.n===player);
+  const puestoRow=yoyoData?PUESTOS.find(p=>p.p===yoyoData.puesto):null;
+  const pV=puestoRow?[puestoRow.dist,puestoRow.hsr,0,puestoRow.acc,+puestoRow.vmax]:null;
   const mx=jV.map((v,i)=>Math.max(v,tV[i],pV?pV[i]:0,0.1));
   const nr=arr=>arr.map((v,i)=>Math.min(v/mx[i],1.4));
   const jN=nr(jV);const tN=nr(tV);const pN=pV?nr(pV):null;
@@ -1170,13 +1183,13 @@ function RadarChart({player,sesion,puesto}){
   const svg=`<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">${rings}${spokes}${pN?poly(pN,"#e09020"):""}${poly(tN,"#4a90e8")}${poly(jN,"#3ecf7a")}${dots}${lbl}</svg>`;
   return(
     <Card style={{marginBottom:12}}>
-      <CT text={`Radar — ${player.split(" ")[0]} vs equipo${puestoData?" vs puesto "+puestoData.p:""}`}/>
+      <CT text={`Radar — ${player.split(" ")[0]} vs equipo${puestoRow?" vs "+puestoRow.p:""}`}/>
       <div style={{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}}>
         <div style={{width:200,flexShrink:0}} dangerouslySetInnerHTML={{__html:svg}}/>
         <div>
           <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:5}}><div style={{width:14,height:3,background:"#3ecf7a",borderRadius:2}}/><span style={{color:T.muted2,fontSize:11}}>{player.split(" ")[0]}</span></div>
           <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:5}}><div style={{width:14,height:3,background:T.blue,borderRadius:2}}/><span style={{color:T.muted2,fontSize:11}}>Prom. equipo</span></div>
-          {puestoData&&<div style={{display:"flex",gap:8,alignItems:"center",marginBottom:10}}><div style={{width:14,height:3,background:T.amber,borderRadius:2}}/><span style={{color:T.muted2,fontSize:11}}>Prom. {puestoData.p}</span></div>}
+          {puestoRow&&<div style={{display:"flex",gap:8,alignItems:"center",marginBottom:10}}><div style={{width:14,height:3,background:T.amber,borderRadius:2}}/><span style={{color:T.muted2,fontSize:11}}>Prom. {puestoRow.p}</span></div>}
           {labs.map((l,i)=>{const d=Math.round((jN[i]-tN[i])*100);return(<div key={l} style={{display:"flex",justifyContent:"space-between",gap:12,marginBottom:3}}><span style={{color:T.muted,fontSize:11}}>{l}</span><span style={{color:d>0?T.green:d<0?T.red:T.muted,fontSize:11,fontWeight:600}}>{d>0?"+":""}{d}%</span></div>);})}
         </div>
       </div>
