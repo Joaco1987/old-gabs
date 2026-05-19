@@ -432,15 +432,26 @@ const MINUTOS=[
 // Podio por NIVEL ALCANZADO
 const YOYO=[
   // Datos exactos del Drive hoja "YOYO RIN1" — test 15/4/26
-  {n:"Alfaro Javiera",   puesto:"WG",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
-  {n:"Carrasco Sofia",   puesto:"VL",nivel:17.1,dist:1440,kmh:16.0,vam:4.44,vo2:48.5},
-  {n:"Gacitua Emilia",   puesto:"VL",nivel:16.7,dist:1360,kmh:15.7,vam:4.36,vo2:47.4},
-  {n:"Gomez Camila",     puesto:"LT",nivel:15.2,dist:840, kmh:15.1,vam:4.19,vo2:43.5},
-  {n:"Liu Macarena",     puesto:"WG",nivel:15.7,dist:1040,kmh:15.4,vam:4.28,vo2:45.1},
-  {n:"Pareja Camila",    puesto:"DC",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
-  {n:"Pollmann Marianne",puesto:"DL",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
-  {n:"Retamal Antonia",  puesto:"LT",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
-  {n:"Sepulveda Eileen", puesto:"DL",nivel:16.7,dist:1360,kmh:15.7,vam:4.36,vo2:47.4},
+  {n:"Alfaro Javiera",   puesto:"WG",nivel:15.1,dist:800, vamKmh:15.0,vam:4.17,vo2:43.1,fecha:"15/4"},
+  {n:"Carrasco Sofia",   puesto:"VL",nivel:17.1,dist:1440,vamKmh:16.0,vam:4.44,vo2:48.5,fecha:"15/4"},
+  {n:"Gacitua Emilia",   puesto:"VL",nivel:16.7,dist:1360,vamKmh:15.7,vam:4.36,vo2:47.4,fecha:"15/4"},
+  {n:"Gomez Camila",     puesto:"LT",nivel:15.2,dist:840, vamKmh:15.1,vam:4.19,vo2:43.5,fecha:"15/4"},
+  {n:"Liu Macarena",     puesto:"WG",nivel:15.7,dist:1040,vamKmh:15.4,vam:4.28,vo2:45.1,fecha:"15/4"},
+  {n:"Pareja Camila",    puesto:"DC",nivel:15.1,dist:800, vamKmh:15.0,vam:4.17,vo2:43.1,fecha:"15/4"},
+  {n:"Pollmann Marianne",puesto:"DL",nivel:15.1,dist:800, vamKmh:15.0,vam:4.17,vo2:43.1,fecha:"15/4"},
+  {n:"Retamal Antonia",  puesto:"LT",nivel:15.1,dist:800, vamKmh:15.0,vam:4.17,vo2:43.1,fecha:"15/4"},
+  {n:"Sepulveda Eileen", puesto:"DL",nivel:16.7,dist:1360,vamKmh:15.7,vam:4.36,vo2:47.4,fecha:"15/4"},
+];
+
+// ─── PUESTOS — tabla resumen del Drive ────────────────────────────────────────
+const PUESTOS=[
+  {p:"DC",n:"Def. Central", dist:5590,hsr:385,acc:10,dsc:16,sprN:0,vmax:22.7},
+  {p:"LT",n:"Lateral",      dist:6781,hsr:592,acc:9, dsc:16,sprN:0,vmax:20.7},
+  {p:"MC",n:"Med. Central", dist:7040,hsr:1006,acc:27,dsc:43,sprN:0,vmax:23.7},
+  {p:"VL",n:"Volante",      dist:7043,hsr:1138,acc:34,dsc:43,sprN:5,vmax:24.2},
+  {p:"DL",n:"Del. Central", dist:6353,hsr:606,acc:18,dsc:15,sprN:0,vmax:21.5},
+  {p:"WG",n:"Wing",         dist:5913,hsr:528,acc:23,dsc:19,sprN:0,vmax:21.3},
+  {p:"PROM",n:"Promedio",   dist:6111,hsr:690,acc:16,dsc:22,sprN:1,vmax:22.2},
 ];
 
 // ─── ASISTENCIA — hoja PF Old Gabs (datos previos del Drive) ─────────────────
@@ -1275,6 +1286,49 @@ function PlayerYoyo({player}){
 }
 
 // ─── PLAYER ASISTENCIA ─────────────────────────────────────────────────────────
+
+// ─── PLAYER MINUTOS ───────────────────────────────────────────────────────────
+function PlayerMinutos({player}){
+  const m=MINUTOS.find(x=>x.n===player);
+  if(!m)return(
+    <div style={{color:T.muted,padding:20,textAlign:"center",fontSize:12}}>
+      Sin datos de minutos para {player}
+    </div>
+  );
+  const partidos=[
+    {l:"COGS",   v:m.cogs, c:T.blue},
+    {l:"PWCC",   v:m.pwcc, c:T.green},
+    {l:"MANQ",   v:m.manq, c:T.amber},
+    {l:"CAT B",  v:m.catb, c:T.red},
+    {l:"OLD REDS",v:m.reds,c:T.purple},
+  ];
+  const jugados=partidos.filter(p=>p.v);
+  return(
+    <>
+      <MR>
+        <MetCard label="Total minutos" value={`${m.tot} min`} sc={T.blue}/>
+        <MetCard label="Prom. x partido" value={`${m.prom} min`}/>
+        <MetCard label="Partidos jugados" value={jugados.length}/>
+      </MR>
+      <Card>
+        <CT text="Mis minutos por partido"/>
+        {jugados.map(p=>(
+          <div key={p.l} style={{marginBottom:12}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+              <span style={{fontSize:12,color:T.text,fontWeight:500}}>{p.l}</span>
+              <span style={{fontSize:12,color:p.c,fontWeight:600}}>{p.v} min</span>
+            </div>
+            <div style={{background:"#1a1e2a",borderRadius:4,height:10}}>
+              <div style={{width:`${Math.min((p.v/70)*100,100)}%`,height:10,borderRadius:4,background:p.c}}/>
+            </div>
+          </div>
+        ))}
+        {jugados.length===0&&<div style={{color:T.muted,textAlign:"center",padding:12}}>Sin minutos registrados</div>}
+      </Card>
+    </>
+  );
+}
+
 function PlayerAsistencia({player}){
   const d=ASISTENCIA[player];
   if(!d)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos de asistencia</div>;
