@@ -433,13 +433,13 @@ const MINUTOS=[
 const YOYO=[
   {n:"Alfaro Javiera",   puesto:"WG",nivel:15.1,dist:800, vamKmh:15.0,vam:4.2,vo2:43.1,fecha:"15/4"},
   {n:"Carrasco Sofia",   puesto:"VL",nivel:17.1,dist:1440,vamKmh:16.0,vam:4.4,vo2:48.5,fecha:"15/4"},
-  {n:"Gacitua Emilia",   puesto:"VL",nivel:16.7,dist:1360,vamKmh:15.5,vam:4.3,vo2:47.8,fecha:"15/4"},
+  {n:"Gacitua Emilia",   puesto:"VL",nivel:16.7,dist:1360,vamKmh:15.5,vam:3.8,vo2:47.8,fecha:"15/4"},
   {n:"Gomez Camila",     puesto:"LT",nivel:15.2,dist:840, vamKmh:15.0,vam:4.2,vo2:43.5,fecha:"15/4"},
   {n:"Liu Macarena",     puesto:"WG",nivel:15.7,dist:1040,vamKmh:15.0,vam:4.2,vo2:45.1,fecha:"15/4"},
   {n:"Pareja Camila",    puesto:"DC",nivel:15.1,dist:800, vamKmh:15.0,vam:4.2,vo2:43.1,fecha:"15/4"},
   {n:"Pollmann Marianne",puesto:"DL",nivel:15.1,dist:800, vamKmh:15.0,vam:4.2,vo2:43.1,fecha:"15/4"},
   {n:"Retamal Antonia",  puesto:"LT",nivel:15.1,dist:800, vamKmh:15.0,vam:4.2,vo2:43.1,fecha:"15/4"},
-  {n:"Sepulveda Eileen", puesto:"DL",nivel:16.7,dist:1360,vamKmh:15.5,vam:4.3,vo2:47.8,fecha:"15/4"},
+  {n:"Sepulveda Eileen", puesto:"DL",nivel:16.7,dist:1360,vamKmh:15.5,vam:3.8,vo2:47.8,fecha:"15/4"},
 ];
 
 // ─── PUESTOS — tabla resumen del Drive ────────────────────────────────────────
@@ -767,6 +767,10 @@ function StaffEvoGPS(){
       if(k==="vmax")return s.prom.vmax||0;
     }
     if(s.prom_hsr!==undefined){
+      if(k==="vmax"){
+        const vmaxArr=s.jugadoras?.map(j=>j.vmax||0)||[];
+        return vmaxArr.length?Math.round(vmaxArr.reduce((a,b)=>a+b,0)/vmaxArr.length*10)/10:0;
+      }
       if(k==="hsr")return s.prom_hsr||0;
       if(k==="h18")return s.prom_h18||0;
       if(k==="spr")return s.prom_spr||0;
@@ -782,6 +786,7 @@ function StaffEvoGPS(){
     if(k==="h18")return j.ai18||0;
     if(k==="spr")return j.spr||0;
     if(k==="acc")return j.acc||0;
+    if(k==="vmax")return j.vmax||0;
     return 0;
   };
   const curMetric=METRICS.find(m=>m.k===metric);
@@ -929,18 +934,17 @@ function StaffYoyo(){
   return(
     <>
       <MR>
-        <MetCard label="Nivel prom." value={avg(YOYO.map(p=>p.nivel)).toFixed(1)} sub="Yo-Yo IRT1 — 1era"/>
+        <MetCard label="Nivel prom." value={avg(YOYO.map(p=>p.nivel)).toFixed(1)} sub="Yo-Yo IRT1 — 15/4/26"/>
         <MetCard label="Nivel más alto" value={sorted[0].nivel} sub={sorted[0].n.split(" ")[0]} sc={T.amber}/>
         <MetCard label="VAM prom." value={`${avg(YOYO.map(p=>p.vam)).toFixed(1)} m/s`}/>
-        <MetCard label="Evaluadas 1era" value={YOYO.length} sub="Resto sin datos en 1era"/>
+        <MetCard label="Evaluadas" value={YOYO.length}/>
       </MR>
       <Card style={{marginBottom:10}}>
         <CT text="Clasificación por Nivel"/>
         <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
           {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#e09020"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
-              <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/>
-              <span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
+              <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
             </div>
           ))}
         </div>
@@ -954,49 +958,38 @@ function StaffYoyo(){
               <div style={{fontSize:22,marginBottom:4}}>{medals[i]}</div>
               <div style={{fontSize:12,fontWeight:500,color:T.text}}>{p.n.split(" ")[0]}</div>
               <div style={{fontSize:20,fontWeight:700,color:col,margin:"4px 0"}}>Niv. {p.nivel}</div>
-              <div style={{fontSize:11,color:T.muted2}}>{p.vam} m/s · {p.vamKmh} km/h</div>
               <div style={{marginTop:6,background:col+"22",borderRadius:6,padding:"3px 0",color:col,fontSize:10,fontWeight:500}}>{yoyoLabel(p.nivel)}</div>
             </div>
           );
         })}
       </div>
       <Card>
-        <CT text="Yo-Yo IRT1 — Hoja YOYO RIN1 · Bloque 1era (ordenado por Nivel)"/>
+        <CT text="Yo-Yo IRT1 — 15/4/26 (ordenado por Nivel)"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["#","Jugadora","Nivel","VAM km/h","VAM m/s","Dist. (m)","Grupo","Fecha","Clasificación"]}/>
+            <TH cols={["#","Jugadora","Nivel","Distancia","VAM (m/s)","Clasificación"]}/>
             <tbody>{sorted.map((p,i)=>{
               const col=yoyoColor(p.nivel);
-              const dist=yoyoDist[p.nivel]||"—";
               return(
                 <tr key={p.n}>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i+1}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700,fontFamily:"monospace",fontSize:14}}>{p.nivel}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{p.vamKmh}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700,fontSize:14}}>{p.nivel}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist}m</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{dist}m</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
-                    <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoGrupo(p.vam)}</span>
-                  </td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,fontSize:11}}>{p.fecha}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
-                    <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10}}>{yoyoLabel(p.nivel)}</span>
+                    <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoLabel(p.nivel)}</span>
                   </td>
                 </tr>
               );
             })}</tbody>
           </table>
         </div>
-        <div style={{marginTop:10,padding:"8px 12px",background:"#1e2535",borderRadius:6,fontSize:11,color:T.muted2}}>
-          ⚠ Solo 5 jugadoras registradas en bloque 1era de la hoja YOYO RIN1. El resto de jugadoras no tiene registro en ese bloque.
-        </div>
       </Card>
     </>
   );
 }
 
-// ─── STAFF MINUTOS DE JUEGO ────────────────────────────────────────────────────
 function StaffMinutos(){
   const partidos=["COGS","PWCC","MANQ A","UC B"];
   const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
@@ -1234,9 +1227,9 @@ function PlayerGPS({player}){
       {(tipo==="partidos"||tipo==="amistosos")&&sess.length>0&&(
         <RadarChart player={player} sesion={sess[0]}/>
       )}
-      {/* Gráfico HSR por zonas */}
-      {sess.length>0&&sess[0].zonas&&(
-        <GraficoHSR sesiones={[sess[0]]} titulo={`HSR por zonas — ${sess[0].label}`}/>
+      {/* Gráfico HSR por zonas — igual que Staff */}
+      {sess.length>0&&(
+        <GraficoHSR sesiones={sess.slice(0,1)} titulo={`HSR por zonas — ${player.split(" ")[0]}`}/>
       )}
       <Card style={{marginBottom:10}}>
         <CT text="Detalle por sesión"/>
@@ -1286,46 +1279,51 @@ function PlayerYoyo({player}){
   const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
   const myRank=d?sorted.findIndex(p=>p.n===player)+1:null;
   if(!d)return(
-    <div style={{textAlign:"center",padding:30}}>
-      <div style={{fontSize:36,marginBottom:10}}>🏑</div>
-      <div style={{color:T.muted,fontSize:14}}>Sin registro Yo-Yo en hoja 1era</div>
+    <div style={{color:T.muted,padding:20,textAlign:"center",fontSize:12}}>
+      Sin datos Yo-Yo para {player}
     </div>
   );
   const col=yoyoColor(d.nivel);
-  const dist=yoyoDist[d.nivel]||"—";
   return(
     <>
-      <div style={{background:T.surf,border:`1px solid ${col}`,borderRadius:8,padding:"14px 16px",marginBottom:14,textAlign:"center"}}>
-        <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Yo-Yo IRT1 — {d.fecha}</div>
-        <div style={{fontSize:30,fontWeight:700,color:col,marginBottom:2}}>Nivel {d.nivel}</div>
-        <div style={{fontSize:18,color:T.muted2,marginBottom:6}}>{d.vam} m/s · {d.vamKmh} km/h</div>
-        <div style={{fontSize:13,color:T.muted,marginBottom:8}}>{dist}m alcanzados</div>
-        <span style={{background:col+"22",color:col,padding:"4px 16px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(d.nivel)}</span>
-      </div>
       <MR>
-        <MetCard label="Mi nivel" value={d.nivel} sc={col}/>
-        <MetCard label="VAM" value={`${d.vam} m/s`} sc={col}/>
-        <MetCard label="Ranking" value={`#${myRank}`} sub={`de ${sorted.length}`}/>
-        <MetCard label="Grupo" value={yoyoGrupo(d.vam).split(" ")[1]||"1"} sc={col}/>
+        <MetCard label="Nivel alcanzado" value={d.nivel} sc={col}/>
+        <MetCard label="Distancia" value={`${d.dist}m`}/>
+        <MetCard label="VAM" value={`${d.vam} m/s`} sc={T.cyan}/>
+        <MetCard label="Ranking" value={`${myRank}° / ${YOYO.length}`}/>
       </MR>
+      <Card style={{marginBottom:10}}>
+        <CT text="Mi resultado Yo-Yo IRT1 — 15/4/26"/>
+        <div style={{textAlign:"center",padding:"20px 0"}}>
+          <div style={{fontSize:48,fontWeight:700,color:col,marginBottom:8}}>{d.nivel}</div>
+          <div style={{fontSize:14,color:T.muted2,marginBottom:4}}>Nivel alcanzado</div>
+          <span style={{background:col+"22",color:col,padding:"4px 16px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(d.nivel)}</span>
+        </div>
+        <div style={{display:"flex",justifyContent:"space-around",marginTop:16}}>
+          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.blue}}>{d.dist}m</div><div style={{fontSize:11,color:T.muted}}>Distancia</div></div>
+          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.cyan}}>{d.vam} m/s</div><div style={{fontSize:11,color:T.muted}}>VAM</div></div>
+          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.amber}}>{myRank}°</div><div style={{fontSize:11,color:T.muted}}>Ranking</div></div>
+        </div>
+      </Card>
       <Card>
-        <CT text="Mi posición en el ranking (por Nivel)"/>
-        {sorted.map((p,i)=>{const isMe=p.n===player;const gc=yoyoColor(p.nivel);return(
-          <div key={p.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5,background:isMe?T.amber+"11":"transparent",borderRadius:4,padding:isMe?"2px 4px":0}}>
-            {isMe&&<span style={{color:T.amber,fontSize:9}}>▶</span>}
-            <span style={{fontSize:11,color:isMe?T.amber:T.text,width:130,flexShrink:0,fontWeight:isMe?500:400}}>{i+1}. {p.n.split(" ")[0]}</span>
-            <div style={{flex:1,background:"#1e2535",borderRadius:3,height:7}}><div style={{width:`${Math.round((p.nivel-12)/(17-12)*100)}%`,height:7,borderRadius:3,background:isMe?T.amber:gc}}/></div>
-            <span style={{fontSize:11,color:isMe?T.amber:gc,width:55,textAlign:"right"}}>{p.nivel} ({p.vam})</span>
-          </div>
-        );})}
+        <CT text="Comparación con el equipo"/>
+        {sorted.map((p,i)=>{
+          const isMe=p.n===player;const gc=yoyoColor(p.nivel);
+          return(
+            <div key={p.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:isMe?"#1e3a5f":"transparent",borderRadius:6,padding:"4px 8px"}}>
+              <span style={{fontSize:11,color:T.muted,width:20}}>{i+1}</span>
+              <span style={{fontSize:12,color:isMe?T.blue:T.text,fontWeight:isMe?700:400,flex:1}}>{p.n.split(" ")[0]}</span>
+              <span style={{fontSize:12,color:gc,fontWeight:600}}>{p.nivel}</span>
+              <span style={{fontSize:11,color:T.muted}}>{p.dist}m</span>
+              <span style={{fontSize:11,color:T.cyan}}>{p.vam}m/s</span>
+            </div>
+          );
+        })}
       </Card>
     </>
   );
 }
 
-// ─── PLAYER ASISTENCIA ─────────────────────────────────────────────────────────
-
-// ─── PLAYER MINUTOS ───────────────────────────────────────────────────────────
 function PlayerMinutos({player}){
   const m=MINUTOS.find(x=>x.n===player);
   if(!m)return(
@@ -1397,7 +1395,7 @@ function PlayerAsistencia({player}){
             </thead>
             <tbody><tr>{d.dias.map((dia,i)=>(
               <td key={i} style={{padding:"3px 2px",textAlign:"center"}}>
-                <div style={{borderRadius:4,background:dia===1?"#0f2d1f":"#2d0f0f",display:"flex",alignItems:"center",justifyContent:"center",color:dia===1?T.green:T.red,fontSize:12,padding:"5px 2px"}}>{dia===1?"✓":"✗"}</div>
+                <div style={{borderRadius:4,background:dia===1?"#0f2d1f":dia===0?"#2d0f0f":"#1a1e2a",display:"flex",alignItems:"center",justifyContent:"center",color:dia===1?T.green:dia===0?T.red:T.muted,fontSize:12,padding:"5px 2px"}}>{dia===1?"✓":dia===0?"✗":"·"}</div>
               </td>
             ))}</tr></tbody>
           </table>
@@ -1615,4 +1613,74 @@ export default function App(){
       </div>
     </div>
   );
+// Asistencias — datos exactos del Drive hoja "Asistencias"
+// MAR: 2,4,6,9,11,13,16,18,20,23,25,27,30 (13 fechas)
+// ABR: 6,8,10,13,15,17,20,22,24,27,29 (11 fechas)
+// MAY: 4,6,8,11,13,15,18 (7 fechas)
+// null=blanco (no registrado, no cuenta para el %)
+const ATT_MESES=[
+  {label:"MAR", color:"#3ecf7a", fechas:["2/3","4/3","6/3","9/3","11/3","13/3","16/3","18/3","20/3","23/3","25/3","27/3","30/3"]},
+  {label:"ABR", color:"#e09020", fechas:["6/4","8/4","10/4","13/4","15/4","17/4","20/4","22/4","24/4","27/4","29/4"]},
+  {label:"MAY", color:"#8b6fe8", fechas:["4/5","6/5","8/5","11/5","13/5","15/5","18/5"]},
+];
+const ATT_FECHAS=ATT_MESES.flatMap(m=>m.fechas);
+// MAR(13) + ABR(11) + MAY(7) = 31 fechas
+// % calculados ignorando nulls
+const ASISTENCIA={
+  "Alfaro Javiera":
+    {mar:"88%",abr:"75%",may:"67%",tot:"77%",
+     dias:[1,0,null,1,1,1,1,1,1,null,null,null,null,1,1,1,0,null,null,1,0,1,1,null,1,0,1,1,0,null,1]},
+  "Arau María Paz":
+    {mar:"88%",abr:"89%",may:"100%",tot:"92%",
+     dias:[1,1,null,1,1,1,0,1,1,null,null,null,null,1,1,0,1,1,null,1,1,1,1,null,1,1,1,1,1,1,1]},
+  "Carrasco Sofia":
+    {mar:"100%",abr:"100%",may:"100%",tot:"100%",
+     dias:[1,1,null,1,1,1,1,1,1,null,null,null,null,1,1,1,1,null,null,1,1,1,1,null,1,1,1,1,1,1,1]},
+  "Errazu Sofia":
+    {mar:"50%",abr:"38%",may:"50%",tot:"45%",
+     dias:[1,0,null,1,0,0,0,1,1,null,null,null,null,1,0,0,1,null,null,0,1,0,0,null,1,0,1,1,0,null,0]},
+  "Gacitua Emilia":
+    {mar:"62%",abr:"100%",may:"86%",tot:"83%",
+     dias:[1,1,null,0,1,0,0,1,1,null,null,null,null,1,1,1,1,null,null,1,1,1,1,null,1,1,1,1,1,0,1]},
+  "Gomez Camila":
+    {mar:"100%",abr:"100%",may:"100%",tot:"100%",
+     dias:[1,1,null,1,1,1,1,1,1,null,null,null,null,1,1,1,1,null,null,1,1,1,1,null,1,1,1,1,1,1,1]},
+  "Gutierrez Renata":
+    {mar:"75%",abr:"100%",may:"100%",tot:"91%",
+     dias:[1,0,null,1,1,0,1,1,1,null,null,null,null,1,1,1,1,null,null,1,1,1,1,null,1,1,1,1,1,1,1]},
+  "Hevia Valentina":
+    {mar:"88%",abr:"38%",may:"100%",tot:"74%",
+     dias:[1,1,null,1,1,1,0,1,1,null,null,null,null,0,1,1,0,null,null,0,1,0,0,null,1,1,1,1,1,1,1]},
+  "Liu Macarena":
+    {mar:"12%",abr:"0%",may:"14%",tot:"9%",
+     dias:[0,0,null,0,0,1,0,0,0,null,null,null,null,0,0,0,0,null,null,0,0,0,0,null,0,0,0,0,1,0,0]},
+  "Mateluna Florencia":
+    {mar:"—",abr:"100%",may:"100%",tot:"100%",
+     dias:[null,null,null,null,null,null,null,null,null,null,null,null,null,1,1,1,1,null,null,1,1,1,1,null,1,1,1,1,1,1,1]},
+  "Muñoz Constanza":
+    {mar:"38%",abr:"38%",may:"43%",tot:"39%",
+     dias:[0,0,null,0,1,0,1,1,0,null,null,null,null,0,0,0,0,null,null,1,1,1,0,null,0,1,1,0,0,1,0]},
+  "Pareja Camila":
+    {mar:"75%",abr:"88%",may:"100%",tot:"87%",
+     dias:[1,1,null,1,1,0,0,1,1,null,null,null,null,1,1,0,1,null,null,1,1,1,1,null,1,1,1,1,1,1,1]},
+  "Pollmann Marianne":
+    {mar:"62%",abr:"88%",may:"57%",tot:"70%",
+     dias:[1,1,null,0,0,0,1,1,1,null,null,null,null,1,1,1,1,null,null,1,0,1,1,null,1,1,0,0,1,0,1]},
+  "Retamal Antonia":
+    {mar:"75%",abr:"50%",may:"86%",tot:"70%",
+     dias:[1,1,null,1,1,1,1,0,0,null,null,null,null,0,1,0,0,null,null,1,1,1,0,null,1,0,1,1,1,1,1]},
+  "Sepulveda Eileen":
+    {mar:"88%",abr:"62%",may:"0%",tot:"52%",
+     dias:[1,1,null,1,1,1,1,0,1,null,null,null,null,0,1,1,1,null,null,0,1,0,1,null,0,0,0,0,0,0,0]},
+  "Sierra Julieta":
+    {mar:"38%",abr:"0%",may:"29%",tot:"22%",
+     dias:[0,1,null,0,1,1,0,0,0,null,null,null,null,0,0,0,0,null,null,0,0,0,0,null,0,1,0,0,1,0,0]},
+  "Silva Victoria":
+    {mar:"12%",abr:"0%",may:"43%",tot:"17%",
+     dias:[0,0,null,0,0,0,0,0,1,null,null,null,null,0,0,0,0,null,null,0,0,0,0,null,0,1,1,0,1,0,0]},
+};
+
+
+
+
 }
