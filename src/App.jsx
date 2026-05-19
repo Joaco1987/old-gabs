@@ -428,21 +428,22 @@ const ENTRENOS=[
 ];
 
 // ─── MINUTOS DE JUEGO — hoja "Minutos Juego" del Drive ──────────────────────
+// Columnas: COGS | PWCC | MANQ | CAT B | OLD REDS
 const MINUTOS=[
-  {n:"Alfaro Javiera",    div:"1era",cogs:null,pwcc:null,manq:22,  catb:23,  reds:16,  tot:61,  prom:20.3},
-  {n:"Arau María Paz",    div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Carrasco Sofia",    div:"1era",cogs:null,pwcc:null,manq:35,  catb:21,  reds:52,  tot:108, prom:36.0},
-  {n:"Gacitua Emilia",    div:"1era",cogs:null,pwcc:null,manq:60,  catb:60,  reds:57,  tot:177, prom:59.0},
-  {n:"Gomez Camila",      div:"1era",cogs:null,pwcc:null,manq:40,  catb:41,  reds:29,  tot:110, prom:36.7},
-  {n:"Gutierrez Renata",  div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Liu Macarena",      div:"1era",cogs:null,pwcc:null,manq:43,  catb:34,  reds:53,  tot:130, prom:43.3},
-  {n:"Mateluna Florencia",div:"1era",cogs:null,pwcc:null,manq:21,  catb:18,  reds:29,  tot:68,  prom:22.7},
-  {n:"Muñoz Constanza",   div:"1era",cogs:60,  pwcc:60,  manq:53,  catb:60,  reds:60,  tot:293, prom:58.6},
-  {n:"Pareja Camila",     div:"1era",cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Pollmann Marianne", div:"1era",cogs:null,pwcc:null,manq:60,  catb:58,  reds:55,  tot:173, prom:57.7},
-  {n:"Errazu Sofia",      div:"1era",cogs:null,pwcc:null,manq:35,  catb:38,  reds:null, tot:73,  prom:36.5},
-  {n:"Sierra Julieta",    div:"1era",cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
-  {n:"Silva Victoria",    div:"1era",cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
+  {n:"Alfaro Javiera",    cogs:null,pwcc:null,manq:22,  catb:23,  reds:16,  tot:61,  prom:20.3},
+  {n:"Arau María Paz",    cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
+  {n:"Carrasco Sofia",    cogs:null,pwcc:null,manq:35,  catb:21,  reds:52,  tot:108, prom:36.0},
+  {n:"Gacitua Emilia",    cogs:null,pwcc:null,manq:60,  catb:60,  reds:57,  tot:177, prom:59.0},
+  {n:"Gomez Camila",      cogs:null,pwcc:null,manq:40,  catb:41,  reds:29,  tot:110, prom:36.7},
+  {n:"Gutierrez Renata",  cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
+  {n:"Liu Macarena",      cogs:null,pwcc:null,manq:43,  catb:34,  reds:53,  tot:130, prom:43.3},
+  {n:"Mateluna Florencia",cogs:null,pwcc:null,manq:21,  catb:18,  reds:29,  tot:68,  prom:22.7},
+  {n:"Muñoz Constanza",   cogs:60,  pwcc:60,  manq:53,  catb:60,  reds:60,  tot:293, prom:58.6},
+  {n:"Pareja Camila",     cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
+  {n:"Pollmann Marianne", cogs:null,pwcc:null,manq:60,  catb:58,  reds:55,  tot:173, prom:57.7},
+  {n:"Errazu Sofia",      cogs:null,pwcc:null,manq:35,  catb:38,  reds:null,tot:73,  prom:36.5},
+  {n:"Sierra Julieta",    cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
+  {n:"Silva Victoria",    cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
 ];
 
 // ─── YO-YO — hoja YOYO RIN1 del Drive "Old Gabs 1era" ────────────────────────
@@ -534,8 +535,7 @@ const ASISTENCIA={
   "Silva Victoria":
     {mar:"12%",abr:"0%",may:"43%",tot:"17%",
      dias:[0,0,null,0,0,0,0,0,1,null,null,null,null,0,0,0,0,null,null,0,0,0,0,null,0,1,1,0,1,0,0]},
-};
-// ─── WELLNESS & RPE (formulario — mantener de versión anterior) ───────────────
+};// ─── WELLNESS & RPE (formulario — mantener de versión anterior) ───────────────
 const WELLNESS={
   "Alfaro Javiera":    {horas:"6hs",calidad:4,fatiga:3,dolor:4,estres:2,animo:3,nota:"Periostitis"},
   "Gomez Camila":      {horas:"7hs",calidad:5,fatiga:4,dolor:4,estres:2,animo:4,nota:"Lumbar"},
@@ -990,8 +990,9 @@ function PlayerEvoGPS({player}){
 
 // ─── YOYO HELPERS ─────────────────────────────────────────────────────────────
 const yoyoColor=nivel=>nivel>=16.5?"#3ecf7a":nivel>=14.6?"#e09020":"#e05555";
-const yoyoLabel=nivel=>nivel>=16.5?"Verde":nivel>=14.6?"Amarillo":"Rojo";
-const yoyoGrupo=vam=>vam>=4.44?"Verde":vam>=4.06?"Amarillo":"Rojo";
+const yoyoLabel=nivel=>nivel>=16.5?"ALTO (>16.5)":nivel>=14.6?"MEDIO (14.6-16.4)":"BAJO (<14.6)";
+const yoyoGrupo=vam=>vam>=3.7?"ALTO":"MEDIO";
+const yoyoVamColor=vam=>vam>=3.7?"#3ecf7a":vam>=3.5?"#e09020":"#e09020";
 const yoyoDist={
   13.1:200,13.2:240,13.3:280,13.4:320,13.5:360,13.6:400,13.7:440,13.8:480,13.9:520,
   14.0:560,14.1:600,14.2:640,14.3:680,14.4:720,14.5:760,14.6:800,14.7:840,14.8:880,14.9:920,
@@ -1296,13 +1297,49 @@ function PlayerGPS({player}){
         <MetCard label="Sesiones" value={sess.length}/>
         <MetCard label="Vel. máx" value={`${Math.max(...sess.map(s=>s.data.vmax))} km/h`} sc={T.amber}/>
       </MR>
-      {sess.length>0&&(
-        <RadarChart player={player} sesion={sess[0]}/>
-      )}
-      {/* Gráfico HSR por zonas — igual que Staff */}
-      {sess.length>0&&(
-        <GraficoHSR sesiones={sess.slice(0,1)} titulo={`HSR por zonas — ${player.split(" ")[0]}`}/>
-      )}
+      
+      {/* Gráfico HSR por zonas — todas las sesiones */}
+      {sess.length>0&&(()=>{
+        const sessConDatos=sess.filter(s=>s.jugadoras?.find(j=>j.n===player));
+        if(!sessConDatos.length)return null;
+        return(
+          <Card style={{marginBottom:10}}>
+            <CT text={`HSR por zonas — ${player.split(" ")[0]}`}/>
+            <div style={{display:"flex",gap:12,marginBottom:8}}>
+              {[{l:"15-18 km/h",c:"#4a90e8"},{l:"18-21 km/h",c:"#e09020"},{l:">21 km/h",c:"#e05555"}].map(z=>(
+                <div key={z.l} style={{display:"flex",gap:4,alignItems:"center"}}>
+                  <div style={{width:10,height:10,borderRadius:2,background:z.c}}/>
+                  <span style={{fontSize:10,color:T.muted}}>{z.l}</span>
+                </div>
+              ))}
+            </div>
+            {sessConDatos.map(s=>{
+              const jd=s.jugadoras.find(j=>j.n===player);
+              if(!jd)return null;
+              const h15=Math.max(0,(jd.hsr||jd.ai15||0)-(jd.ai18||0)-(jd.spr||0));
+              const h18=jd.ai18||0;const spr=jd.spr||0;const tot=h15+h18+spr||1;
+              return(
+                <div key={s.id} style={{marginBottom:8}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
+                    <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}</span>
+                    <span style={{fontSize:10,color:T.muted}}>{h15+h18+spr}m</span>
+                  </div>
+                  <div style={{display:"flex",height:12,borderRadius:4,overflow:"hidden",background:"#1a1e2a"}}>
+                    {h15>0&&<div style={{width:`${(h15/tot)*100}%`,background:"#4a90e8"}}/>}
+                    {h18>0&&<div style={{width:`${(h18/tot)*100}%`,background:"#e09020"}}/>}
+                    {spr>0&&<div style={{width:`${(spr/tot)*100}%`,background:"#e05555"}}/>}
+                  </div>
+                  <div style={{display:"flex",gap:8,marginTop:2,fontSize:10}}>
+                    {h15>0&&<span style={{color:"#4a90e8"}}>{h15}m</span>}
+                    {h18>0&&<span style={{color:"#e09020"}}>{h18}m</span>}
+                    {spr>0&&<span style={{color:"#e05555"}}>{spr}m</span>}
+                  </div>
+                </div>
+              );
+            })}
+          </Card>
+        );
+      })()}
       <Card style={{marginBottom:10}}>
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
@@ -1326,6 +1363,9 @@ function PlayerGPS({player}){
       {/* Sprint >21 por sesión */}
       {hsrLegend}
       
+      {sess.length>0&&(
+        <RadarChart player={player} sesion={sess[0]}/>
+      )}
     </>
   );
 }
