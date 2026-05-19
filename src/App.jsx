@@ -441,7 +441,7 @@ const YOYO=[
   {n:"Pollmann Marianne",puesto:"DL",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
   {n:"Retamal Antonia",  puesto:"LT",nivel:15.1,dist:800, kmh:15.0,vam:4.17,vo2:43.1},
   {n:"Sepulveda Eileen", puesto:"DL",nivel:16.7,dist:1360,kmh:15.7,vam:4.36,vo2:47.4},
-];];
+];
 
 // ─── ASISTENCIA — hoja PF Old Gabs (datos previos del Drive) ─────────────────
 const ATT_FECHAS=["10/3","12/3","17/3","19/3","21/3","24/3","26/3","28/3","31/3","16/4","21/4","23/4","25/4","28/4","30/4","2/5"];
