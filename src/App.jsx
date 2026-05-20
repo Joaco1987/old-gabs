@@ -446,20 +446,20 @@ const ENTRENOS=[
 // ─── MINUTOS DE JUEGO — hoja "Minutos Juego" del Drive ──────────────────────
 // Columnas: COGS | PWCC | MANQ | CAT B | OLD REDS
 const MINUTOS=[
-  {n:"Alfaro Javiera",    cogs:null,pwcc:null,manq:22,  catb:23,  reds:16,  tot:61,  prom:20.3},
-  {n:"Arau María Paz",    cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Carrasco Sofia",    cogs:null,pwcc:null,manq:35,  catb:21,  reds:52,  tot:108, prom:36.0},
-  {n:"Gacitua Emilia",    cogs:null,pwcc:null,manq:60,  catb:60,  reds:57,  tot:177, prom:59.0},
-  {n:"Gomez Camila",      cogs:null,pwcc:null,manq:40,  catb:41,  reds:29,  tot:110, prom:36.7},
-  {n:"Gutierrez Renata",  cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Liu Macarena",      cogs:null,pwcc:null,manq:43,  catb:34,  reds:53,  tot:130, prom:43.3},
-  {n:"Mateluna Florencia",cogs:null,pwcc:null,manq:21,  catb:18,  reds:29,  tot:68,  prom:22.7},
-  {n:"Muñoz Constanza",   cogs:60,  pwcc:60,  manq:53,  catb:60,  reds:60,  tot:293, prom:58.6},
-  {n:"Pareja Camila",     cogs:60,  pwcc:60,  manq:60,  catb:60,  reds:60,  tot:300, prom:60.0},
-  {n:"Pollmann Marianne", cogs:null,pwcc:null,manq:60,  catb:58,  reds:55,  tot:173, prom:57.7},
-  {n:"Errazu Sofia",      cogs:null,pwcc:null,manq:35,  catb:38,  reds:null,tot:73,  prom:36.5},
-  {n:"Sierra Julieta",    cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
-  {n:"Silva Victoria",    cogs:null,pwcc:null,manq:60,  catb:60,  reds:60,  tot:180, prom:60.0},
+  {n:"Alfaro Javiera",    cogs:null,pwcc:null,manq:22, catb:28, reds:19,  tot:69,  prom:23.0},
+  {n:"Arau María Paz",    cogs:60,  pwcc:60,  manq:60, catb:null,reds:null,tot:180, prom:60.0},
+  {n:"Carrasco Sofia",    cogs:null,pwcc:null,manq:35, catb:32, reds:61,  tot:128, prom:42.7},
+  {n:"Errazu Sofia",      cogs:null,pwcc:null,manq:35, catb:null,reds:null,tot:35,  prom:35.0},
+  {n:"Gacitua Emilia",    cogs:null,pwcc:null,manq:60, catb:71, reds:68,  tot:199, prom:66.3},
+  {n:"Gomez Camila",      cogs:null,pwcc:null,manq:40, catb:49, reds:36,  tot:125, prom:41.7},
+  {n:"Gutierrez Renata",  cogs:60,  pwcc:60,  manq:60, catb:71, reds:68,  tot:319, prom:63.8},
+  {n:"Liu Macarena",      cogs:null,pwcc:null,manq:null,catb:48,reds:64,  tot:112, prom:56.0},
+  {n:"Mateluna Florencia",cogs:null,pwcc:null,manq:21, catb:null,reds:null,tot:21,  prom:21.0},
+  {n:"Muñoz Constanza",   cogs:60,  pwcc:60,  manq:53, catb:63, reds:68,  tot:304, prom:60.8},
+  {n:"Pareja Camila",     cogs:60,  pwcc:60,  manq:60, catb:71, reds:68,  tot:319, prom:63.8},
+  {n:"Pollmann Marianne", cogs:null,pwcc:null,manq:60, catb:71, reds:62,  tot:193, prom:64.3},
+  {n:"Sierra Julieta",    cogs:null,pwcc:null,manq:60, catb:71, reds:68,  tot:199, prom:66.3},
+  {n:"Silva Victoria",    cogs:null,pwcc:null,manq:60, catb:71, reds:68,  tot:199, prom:66.3},
 ];
 
 // ─── YO-YO — hoja YOYO RIN1 del Drive "Old Gabs 1era" ────────────────────────
@@ -572,6 +572,8 @@ const RPE_DATA={
   "Mateluna Florencia":7,"Sierra Julieta":7,"Gacitua Emilia":8,
   "Carrasco Sofia":9,"Pareja Camila":8,"Muñoz Constanza":6,
 };
+const WELLNESS_DATA={};  // se llena con los formularios de cada jugadora
+
 const ZONAS_DOLOR=["Gemelo/Sóleo","Cuádriceps","Isquiotibial","Rodilla","Aductor","Flexor cadera","Glúteo","Lumbar","Cuello"];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
