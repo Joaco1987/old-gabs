@@ -989,10 +989,12 @@ function PlayerEvoGPS({player}){
 }
 
 // ─── YOYO HELPERS ─────────────────────────────────────────────────────────────
+// Grupos YOYO por VAM: Grupo 1=3.8 | Grupo 2=3.6 | Grupo 3=3.4
 const yoyoColor=nivel=>nivel>=16.5?"#3ecf7a":nivel>=14.6?"#e09020":"#e05555";
-const yoyoLabel=nivel=>nivel>=16.5?"ALTO (>16.5)":nivel>=14.6?"MEDIO (14.6-16.4)":"BAJO (<14.6)";
-const yoyoGrupo=vam=>vam>=3.7?"ALTO":"MEDIO";
-const yoyoVamColor=vam=>vam>=3.7?"#3ecf7a":vam>=3.5?"#e09020":"#e09020";
+const yoyoLabel=nivel=>nivel>=16.5?"Grupo 1":nivel>=14.6?"Grupo 2":"Grupo 3";
+const yoyoGrupo=vam=>vam>=3.8?1:vam>=3.6?2:3;
+const yoyoGrupoColor=g=>g===1?"#3ecf7a":g===2?"#4a90e8":"#e09020";
+const yoyoGrupoLabel=g=>`Grupo ${g}`;
 const yoyoDist={
   13.1:200,13.2:240,13.3:280,13.4:320,13.5:360,13.6:400,13.7:440,13.8:480,13.9:520,
   14.0:560,14.1:600,14.2:640,14.3:680,14.4:720,14.5:760,14.6:800,14.7:840,14.8:880,14.9:920,
@@ -1025,13 +1027,13 @@ function StaffYoyo(){
       <div style={{marginBottom:6,fontSize:10,color:T.muted,textTransform:"uppercase",letterSpacing:".5px"}}>Podio — Nivel Alcanzado</div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
         {sorted.slice(0,3).map((p,i)=>{
-          const col=yoyoColor(p.nivel);
+          const col=yoyoGrupoColor(yoyoGrupo(p.vam));
           return(
             <div key={p.n} style={{background:T.surf,border:`1px solid ${col}`,borderRadius:8,padding:12,textAlign:"center"}}>
               <div style={{fontSize:22,marginBottom:4}}>{medals[i]}</div>
               <div style={{fontSize:12,fontWeight:500,color:T.text}}>{p.n.split(" ")[0]}</div>
               <div style={{fontSize:20,fontWeight:700,color:col,margin:"4px 0"}}>Niv. {p.nivel}</div>
-              <div style={{marginTop:6,background:col+"22",borderRadius:6,padding:"3px 0",color:col,fontSize:10,fontWeight:500}}>{yoyoLabel(p.nivel)}</div>
+              <div style={{marginTop:6,background:col+"22",borderRadius:6,padding:"3px 0",color:col,fontSize:10,fontWeight:500}}>{yoyoGrupoLabel(yoyoGrupo(p.vam))}</div>
             </div>
           );
         })}
@@ -1042,7 +1044,7 @@ function StaffYoyo(){
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
             <TH cols={["#","Jugadora","Nivel","Distancia","VAM (m/s)","Clasificación"]}/>
             <tbody>{sorted.map((p,i)=>{
-              const col=yoyoColor(p.nivel);
+              const col=yoyoGrupoColor(yoyoGrupo(p.vam));
               return(
                 <tr key={p.n}>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i+1}</td>
@@ -1051,7 +1053,7 @@ function StaffYoyo(){
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist}m</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
-                    <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoLabel(p.nivel)}</span>
+                    <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoGrupoLabel(yoyoGrupo(p.vam))}</span>
                   </td>
                 </tr>
               );
@@ -1299,8 +1301,17 @@ function PlayerGPS({player}){
       </MR>
       
       {/* Gráfico HSR por zonas — todas las sesiones */}
+      {/* Selector de sesión — igual que Staff */}
+      {sess.length>0&&(
+        <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:8}}>
+          <button onClick={()=>setSelId(null)} style={{padding:"3px 10px",borderRadius:5,border:`1px solid ${!selId?T.green:T.border}`,background:!selId?"#0f2d1f":"transparent",color:!selId?T.green:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>Todas</button>
+          {sess.map(s=>(
+            <button key={s.id} onClick={()=>setSelId(s.id)} style={{padding:"3px 10px",borderRadius:5,border:`1px solid ${selId===s.id?T.green:T.border}`,background:selId===s.id?"#0f2d1f":"transparent",color:selId===s.id?T.green:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>{s.label}</button>
+          ))}
+        </div>
+      )}
       {sess.length>0&&(()=>{
-        const sessConDatos=sess.filter(s=>s.jugadoras?.find(j=>j.n===player));
+        const sessConDatos=(selId?sess.filter(s=>s.id===selId):sess).filter(s=>s.jugadoras?.find(j=>j.n===player));
         if(!sessConDatos.length)return null;
         return(
           <Card style={{marginBottom:10}}>
@@ -1405,7 +1416,7 @@ function PlayerYoyo({player}){
       <Card>
         <CT text="Comparación con el equipo"/>
         {sorted.map((p,i)=>{
-          const isMe=p.n===player;const gc=yoyoColor(p.nivel);
+          const isMe=p.n===player;const gc=yoyoGrupoColor(yoyoGrupo(p.vam));
           return(
             <div key={p.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:isMe?"#1e3a5f":"transparent",borderRadius:6,padding:"4px 8px"}}>
               <span style={{fontSize:11,color:T.muted,width:20}}>{i+1}</span>
