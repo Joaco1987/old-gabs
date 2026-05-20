@@ -371,6 +371,7 @@ const ENTRENOS=[
     {n:"Mateluna Florencia",min:21,dist:1582,mxm:74,hsr:82,ai18:364,spr:3,acc:50,dsc:25,vmax:21.1}
     {n:"Gacitua Emilia",min:21,dist:1594,mxm:75,hsr:0,ai18:503,spr:67,acc:46,dsc:27,vmax:22.9},
    ]},
+
   {id:"e11",label:"11/05",fecha:"11/05",tipo:"entreno",
    prom_hsr:1186,prom_h18:434,prom_spr:11,
    zonas:[
@@ -417,6 +418,29 @@ const ENTRENOS=[
     {n:"Gacitua Emilia",min:20,dist:1408,mxm:71,hsr:0,ai18:138,spr:187,acc:31,dsc:17,vmax:28.5}
     {n:"Mateluna Florencia",min:20,dist:1412,mxm:71,hsr:0,ai18:157,spr:101,acc:30,dsc:1,vmax:26.2},
    ]},
+  {id:"e13",label:"18/05",fecha:"18/05",tipo:"entreno",
+   prom_hsr:567,prom_h18:482,prom_spr:32,
+   zonas:[
+    {n:"Sepulveda Eileen",   h15:29,  h18:47,  spr:5},
+    {n:"Alfaro Javiera",     h15:100, h18:244, spr:22},
+    {n:"Retamal Antonia",    h15:207, h18:603, spr:29},
+    {n:"Pareja Camila",      h15:566, h18:348, spr:1},
+    {n:"Gutierrez Renata",   h15:637, h18:400, spr:38},
+    {n:"Carrasco Sofia",     h15:337, h18:818, spr:59},
+    {n:"Mateluna Florencia", h15:496, h18:638, spr:26},
+    {n:"Gacitua Emilia",     h15:307, h18:763, spr:138},
+   ],
+   jugadoras:[
+    {n:"Sepulveda Eileen",   min:6, dist:396,  mxm:71, hsr:29,  ai18:47,  spr:5,  acc:5, dsc:0, vmax:24.5},
+    {n:"Alfaro Javiera",     min:7, dist:720,  mxm:98, hsr:100, ai18:244, spr:22, acc:15,dsc:3, vmax:25.5},
+    {n:"Retamal Antonia",    min:12,dist:1288, mxm:111,hsr:207, ai18:603, spr:29, acc:29,dsc:28,vmax:25.4},
+    {n:"Pareja Camila",      min:16,dist:1828, mxm:111,hsr:566, ai18:348, spr:1,  acc:35,dsc:5, vmax:24.1},
+    {n:"Gutierrez Renata",   min:16,dist:1883, mxm:114,hsr:637, ai18:400, spr:38, acc:31,dsc:19,vmax:25.4},
+    {n:"Carrasco Sofia",     min:16,dist:1902, mxm:116,hsr:337, ai18:818, spr:59, acc:44,dsc:15,vmax:25.5},
+    {n:"Mateluna Florencia", min:16,dist:1956, mxm:119,hsr:496, ai18:638, spr:26, acc:47,dsc:11,vmax:25.1},
+    {n:"Gacitua Emilia",     min:16,dist:1976, mxm:120,hsr:307, ai18:763, spr:138,acc:40,dsc:14,vmax:27.1},
+   ]},
+
 ];
 
 // ─── MINUTOS DE JUEGO — hoja "Minutos Juego" del Drive ──────────────────────
@@ -681,10 +705,10 @@ function StaffGPS(){
             <CT text="Datos individuales"/>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-                <TH cols={["Jugadora","Min","Dist.","m/min","HSR/AI>15","AI>18","Spr>21","ACC","DSC","V.máx"]}/>
+                <TH cols={["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","V.máx"]}/>
                 <tbody>{[...sess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
-                  const h15=sess.zonas?sess.zonas.find(z=>z.n===j.n)?.h15:j.ai15!=null?j.ai15-j.ai18-j.spr:null;
-                  const h18=sess.zonas?sess.zonas.find(z=>z.n===j.n)?.h18:j.ai18!=null?j.ai18-j.spr:null;
+                  const h15=sess.zonas?sess.zonas.find(z=>z.n===j.n)?.h15:(j.hsr!=null||j.ai15!=null)?Math.max(0,(j.hsr??j.ai15)-(j.ai18??0)-(j.spr??0)):null;
+                  const h18=sess.zonas?sess.zonas.find(z=>z.n===j.n)?.h18:j.ai18!=null?j.ai18:null;
                   const sp=sess.zonas?sess.zonas.find(z=>z.n===j.n)?.spr:j.spr!=null?j.spr:null;
                   const hsr=j.hsr!=null?j.hsr:j.ai15!=null?j.ai15:null;
                   return(
@@ -693,7 +717,7 @@ function StaffGPS(){
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{j.min}'</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{j.dist.toLocaleString()}m</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{j.mxm}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{hsr!=null?`${hsr}m`:"—"}</td>
+                      
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green}}>{h15!=null?`${Math.max(0,h15)}m`:"—"}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{h18!=null?`${Math.max(0,h18)}m`:"—"}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400}}>{sp!=null?`${sp}m`:"—"}</td>
