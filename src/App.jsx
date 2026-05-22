@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from "react"; // build 2026-05-22 23:14
 
 // ─── TEMA ─────────────────────────────────────────────────────────────────────
 const T={bg:"#0d0f14",surf:"#111520",surf2:"#161b28",border:"#1e2535",border2:"#2a3550",
