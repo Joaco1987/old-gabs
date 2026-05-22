@@ -1723,6 +1723,7 @@ function PlayerWellness({player}){
 function LoginScreen({onLogin}){
   const [tipo,setTipo]=useState(null);
   const [pass,setPass]=useState("");
+  const [showPass,setShowPass]=useState(false);
   const [player,setPlayer]=useState("");
   const [error,setError]=useState("");
   const handleLogin=()=>{
@@ -1771,7 +1772,12 @@ function LoginScreen({onLogin}){
             )}
             <div style={{marginBottom:16}}>
               <div style={{fontSize:11,color:T.muted,marginBottom:6}}>Contraseña</div>
-              <input type="password" value={pass} onChange={e=>{setPass(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••••" style={{width:"100%",background:"#0d1020",border:`1px solid ${error?T.red:T.border2}`,borderRadius:8,color:T.text,fontSize:14,padding:"10px 12px",outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
+              <div style={{position:"relative"}}>
+                <input {...{type:showPass?"text":"password"}} value={pass} onChange={e=>{setPass(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••••" style={{width:"100%",background:"#0d1020",border:`1px solid ${error?T.red:T.border2}`,borderRadius:8,boxSizing:"border-box",paddingRight:38,color:T.text,fontSize:14,padding:"10px 12px",outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
+                <button onClick={()=>setShowPass(v=>!v)} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:T.muted,fontSize:16,padding:0,lineHeight:1}}>
+                  {showPass?"👁":"👁‍🗨"}
+                </button>
+              </div>
               {error&&<div style={{fontSize:11,color:T.red,marginTop:6}}>{error}</div>}
             </div>
             <button onClick={handleLogin} style={{width:"100%",padding:12,background:tipo==="staff"?T.blue:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Ingresar</button>
