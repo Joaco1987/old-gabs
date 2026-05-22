@@ -788,7 +788,7 @@ function StaffGPS(){
             <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020"}}>
               <CT text="Promedio equipo (fila Promedio del sheet)"/>
               <div style={{display:"flex",gap:10,flexWrap:"wrap",fontSize:12}}>
-                {[["Dist.",`${sess.prom.dist?.toLocaleString()}m`,T.blue],["m/min",sess.prom.mxm,T.muted2],["HSR",`${sess.prom.hsr}m`,T.text],["18-21",`${sess.prom.h18}m`,T.amber],["Spr>21",`${sess.prom.spr}m`,T.red],["ACC",sess.prom.acc,T.purple],["DSC",sess.prom.dsc,T.cyan],["Vmáx",`${sess.prom.vmax}km/h`,T.amber]].map(([l,v,c])=>(
+                {[["Dist.",`${sess.prom.dist?.toLocaleString()}m`,T.blue],["m/min",sess.prom.mxm,T.muted2],["HSR",`${sess.prom.hsr}m`,T.text],["18-21",`${sess.prom.h18}m`,T.amber],["Spr>21",`${sess.prom.spr}m`,T.red],["ACC",sess.prom.acc,T.purple],["DSC",sess.prom.dsc,T.cyan],["Nº Spr",(()=>{const ns=sess.jugadoras?.reduce((a,j)=>a+(j.ns||0),0)||0;return Math.round(ns/(sess.jugadoras?.length||1));})(),"#3ecf7a"],["Vmáx",`${sess.prom.vmax}km/h`,"#e879f9"]].map(([l,v,c])=>(
                   <div key={l} style={{textAlign:"center",minWidth:55}}>
                     <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{l}</div>
                     <div style={{fontSize:14,fontWeight:600,color:c}}>{v}</div>
