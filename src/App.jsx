@@ -1721,6 +1721,7 @@ function PlayerWellness({player}){
   const base=WELLNESS[player]||{horas:"7hs",calidad:3,fatiga:3,dolor:3,estres:3,animo:3};
   const [form,setForm]=useState({horas:base.horas,calidad:base.calidad,fatiga:base.fatiga,dolor:base.dolor,estres:base.estres,animo:base.animo,zonasDolor:[],otroZona:""});
   const [saved,setSaved]=useState(false);
+  const [saving,setSaving]=useState(false);
   const upd=(k,v)=>{setForm(p=>({...p,[k]:v}));setSaved(false);};
   const toggleZona=z=>{setForm(p=>({...p,zonasDolor:p.zonasDolor.includes(z)?p.zonasDolor.filter(x=>x!==z):[...p.zonasDolor,z]}));setSaved(false);};
   const WRow=({field,label})=>(
