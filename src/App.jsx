@@ -1249,74 +1249,124 @@ function StaffAsistencia(){
 
 // ─── STAFF RPE ─────────────────────────────────────────────────────────────────
 function StaffRPE(){
-  const entries=Object.entries(RPE_DATA).sort((a,b)=>b[1]-a[1]);
-  const alerts=entries.filter(([,v])=>v>=8);
-  return(
-    <>
-      <MR>
-        <MetCard label="RPE prom." value={Math.round(avg(entries.map(([,v])=>v)))} sub="Última sesión (1-10)"/>
-        <MetCard label="RPE ≥8" value={alerts.length} sub="Alertas" sc={T.red}/>
-        <MetCard label="RPE ≤6" value={entries.filter(([,v])=>v<=6).length} sub="Normal" sc={T.green}/>
-      </MR>
-      {alerts.length>0&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"8px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ RPE ≥8: {alerts.map(([n])=>n.split(" ")[0]).join(", ")}</div>}
-      <Card>
-        <CT text="RPE individual — última sesión"/>
-        {entries.map(([n,v])=>{const col=v>=8?T.red:v>=7?T.amber:T.green;return(
-          <div key={n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-            <span style={{fontSize:11,color:T.text,width:140,flexShrink:0}}>{n}</span>
-            <div style={{flex:1,background:"#1e2535",borderRadius:3,height:8}}><div style={{width:`${v/10*100}%`,height:8,borderRadius:3,background:col}}/></div>
-            <span style={{fontSize:14,fontWeight:700,color:col,width:18,textAlign:"right"}}>{v}</span>
-          </div>
-        );})}
-      </Card>
-    </>
-  );
-}
+  const [rows,setRows]=React.useState([]);
+  const [loading,setLoading]=React.useState(true);
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbyN2tk21GLiuti8j_TgAUJvjM0-DyKhwqL3kr39GlgoW4ZNUv5WMbFgA5SuAdZbX1I/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["RPE y Wellness"]||[];
+        const headers=sheet[0]||[];
+        const rpeRows=sheet.slice(1)
+          .filter(r=>r[2]==="RPE")
+          .map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]])))
+          .sort((a,b)=>new Date(b.Timestamp)-new Date(a.Timestamp));
+        setRows(rpeRows);
+      })
+      .catch(()=>setRows([]))
+      .finally(()=>setLoading(false));
+  },[]);
 
-// ─── STAFF WELLNESS ────────────────────────────────────────────────────────────
-function StaffWellness(){
-  const entries=Object.entries(WELLNESS);
-  const alerts=entries.filter(([,w])=>w.calidad<=2||w.fatiga<=2||w.estres<=2||w.animo<=2);
+  const entries=Object.entries(RPE_DATA).sort((a,b)=>b[1]-a[1]);
+  const alerts=rows.filter(r=>+r.RPE>=8);
   return(
     <>
-      <MR>
-        <MetCard label="Alertas" value={alerts.length} sub="Valor bajo" sc={alerts.length>1?T.red:T.amber}/>
-        <MetCard label="Calidad sueño" value={`${avg(entries.map(([,w])=>w.calidad)).toFixed(1)}/5`}/>
-        <MetCard label="Energía prom." value={`${avg(entries.map(([,w])=>w.fatiga)).toFixed(1)}/5`}/>
-        <MetCard label="Ánimo prom." value={`${avg(entries.map(([,w])=>w.animo)).toFixed(1)}/5`}/>
-      </MR>
-      {alerts.map(([n,w])=>(
-        <div key={n} style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:6,fontSize:12,color:T.red}}>
-          ⚠ <strong>{n}</strong> — {[w.calidad<=2?`Cal:${w.calidad}`:"",w.fatiga<=2?`Ene:${w.fatiga}`:"",w.estres<=2?`Est:${w.estres}`:"",w.animo<=2?`Áni:${w.animo}`:""].filter(Boolean).join(" | ")}
-        </div>
-      ))}
+      {alerts.length>0&&(
+        <Card style={{marginBottom:10,border:"1px solid #5a1f1f",background:"#1a0a0a"}}>
+          <CT text="⚠ ALERTAS RPE ≥ 8"/>
+          {alerts.map((r,i)=>(
+            <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"4px 0",borderBottom:"1px solid #2a1515"}}>
+              <span style={{color:T.text,fontSize:12}}>{r.Jugadora}</span>
+              <span style={{color:T.red,fontWeight:700,fontSize:12}}>RPE {r.RPE} — {r.Fecha}</span>
+            </div>
+          ))}
+        </Card>
+      )}
       <Card>
-        <CT text="Wellness plantel (1=rojo · 5=verde)"/>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse"}}>
-            <TH cols={["Jugadora","Hs Sueño","Calidad","Energía","Dolor","Estrés","Ánimo","Zona"]}/>
-            <tbody>{entries.map(([n,w])=>(
-              <tr key={n}>
-                <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.text,fontSize:11,whiteSpace:"nowrap"}}>{n}</td>
-                <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",textAlign:"center",color:T.muted,fontSize:11}}>{w.horas}</td>
-                {["calidad","fatiga","dolor","estres","animo"].map(k=>(
-                  <td key={k} style={{padding:"6px 8px",borderBottom:"1px solid #141824",textAlign:"center"}}>
-                    <WCircle val={w[k]}/>
-                  </td>
-                ))}
-                <td style={{padding:"6px 8px",borderBottom:"1px solid #141824",color:T.muted,fontSize:11}}>{w.nota}</td>
+        <CT text={loading?"Cargando registros...":"REGISTROS RPE — DESDE LA APP"}/>
+        {loading&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Cargando...</div>}
+        {!loading&&rows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros aún</div>}
+        {rows.length>0&&(
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <TH cols={["Fecha","Jugadora","RPE"]}/>
+            <tbody>{rows.map((r,i)=>(
+              <tr key={i}>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r.Fecha}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:+r.RPE>=8?T.red:+r.RPE>=6?T.amber:T.green,fontWeight:700}}>{r.RPE}</td>
               </tr>
             ))}</tbody>
           </table>
-        </div>
+        )}
       </Card>
     </>
   );
 }
+function StaffWellness(){
+  const [rows,setRows]=React.useState([]);
+  const [loading,setLoading]=React.useState(true);
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbyN2tk21GLiuti8j_TgAUJvjM0-DyKhwqL3kr39GlgoW4ZNUv5WMbFgA5SuAdZbX1I/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["RPE y Wellness"]||[];
+        const headers=sheet[0]||[];
+        const wRows=sheet.slice(1)
+          .filter(r=>r[2]==="Wellness")
+          .map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]])))
+          .sort((a,b)=>new Date(b.Timestamp)-new Date(a.Timestamp));
+        setRows(wRows);
+      })
+      .catch(()=>setRows([]))
+      .finally(()=>setLoading(false));
+  },[]);
 
-// ─── PLAYER GPS ────────────────────────────────────────────────────────────────
+  const wColor=v=>v<=2?"#e05555":v===3?"#e09020":"#3ecf7a";
+  const alerts=rows.filter(r=>+r["Calidad Sueño"]<=2||+r.Fatiga<=2||+r["Estrés"]<=2||+r["Ánimo"]<=2);
 
-// ─── RADAR CHART ──────────────────────────────────────────────────────────────
+  return(
+    <>
+      {alerts.length>0&&(
+        <Card style={{marginBottom:10,border:"1px solid #5a1f1f",background:"#1a0a0a"}}>
+          <CT text="⚠ ALERTAS WELLNESS"/>
+          {alerts.map((r,i)=>(
+            <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"4px 0",borderBottom:"1px solid #2a1515"}}>
+              <span style={{color:T.text,fontSize:12}}>{r.Jugadora} — {r.Fecha}</span>
+              <div style={{display:"flex",gap:6}}>
+                {+r["Calidad Sueño"]<=2&&<span style={{color:T.red,fontSize:11}}>Sueño↓</span>}
+                {+r.Fatiga<=2&&<span style={{color:T.red,fontSize:11}}>Fatiga↓</span>}
+                {+r["Estrés"]<=2&&<span style={{color:T.red,fontSize:11}}>Estrés↑</span>}
+                {+r["Ánimo"]<=2&&<span style={{color:T.red,fontSize:11}}>Ánimo↓</span>}
+              </div>
+            </div>
+          ))}
+        </Card>
+      )}
+      <Card>
+        <CT text={loading?"Cargando registros...":"REGISTROS WELLNESS — DESDE LA APP"}/>
+        {loading&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Cargando...</div>}
+        {!loading&&rows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros aún</div>}
+        {rows.length>0&&(
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <TH cols={["Fecha","Jugadora","Sueño","Horas","Fatiga","Dolor","Estrés","Ánimo"]}/>
+            <tbody>{rows.map((r,i)=>(
+              <tr key={i}>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r.Fecha}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r["Calidad Sueño"]),fontWeight:600}}>{r["Calidad Sueño"]}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r["Horas Sueño"]}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r.Fatiga),fontWeight:600}}>{r.Fatiga}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r["Dolor Muscular"]}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r["Estrés"]),fontWeight:600}}>{r["Estrés"]}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r["Ánimo"]),fontWeight:600}}>{r["Ánimo"]}</td>
+              </tr>
+            ))}</tbody>
+          </table>
+        )}
+      </Card>
+    </>
+  );
+}
 function RadarChart({player,sesion}){
   if(!sesion||sesion.jugadoras.length<2)return null;
   const jd=sesion.jugadoras.find(j=>j.n===player);
@@ -1630,9 +1680,24 @@ function PlayerAsistencia({player}){
 }
 
 // ─── PLAYER RPE ───────────────────────────────────────────────────────────────
+
+// ─── GUARDAR RPE/WELLNESS EN GOOGLE SHEETS ────────────────────────────────────
+const SHEET_ID="1yvYdo8HyJoBPtEne0eIPWBZ80L8kjFOk0iBEvi4bDCs";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyN2tk21GLiuti8j_TgAUJvjM0-DyKhwqL3kr39GlgoW4ZNUv5WMbFgA5SuAdZbX1I/exec";
+const saveToSheet=async(jugadora,tipo,datos)=>{
+  try{
+    await fetch(SCRIPT_URL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({jugadora,tipo,...datos})
+    });
+    return true;
+  }catch(e){console.error("Save error:",e);return false;}
+};
 function PlayerRPE({player}){
   const [rpe,setRpe]=useState(RPE_DATA[player]||5);
   const [saved,setSaved]=useState(false);
+  const [saving,setSaving]=useState(false);
   return(
     <>
       {rpe>=8&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ RPE ≥8 — el cuerpo técnico recibirá alerta.</div>}
@@ -1708,7 +1773,22 @@ function PlayerWellness({player}){
         </div>
         <WRow field="estres" label="Nivel de estrés"/>
         <WRow field="animo" label="Estado anímico"/>
-        <button onClick={()=>setSaved(true)} style={{width:"100%",padding:10,background:T.maroon,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit",marginTop:4}}>Guardar Wellness</button>
+        <button onClick={async()=>{
+          setSaving(true);
+          const today=new Date().toLocaleDateString("es-CL");
+          await saveToSheet(player,"Wellness",{
+            fecha:today,
+            calidad_sueno:form.calidad,
+            horas_sueno:form.horas,
+            fatiga:form.fatiga,
+            dolor_muscular:form.dolor,
+            zonas:form.zonasDolor.join("|"),
+            estres:form.estres,
+            animo:form.animo
+          });
+          WELLNESS_DATA[player]=form;
+          setSaving(false);setSaved(true);
+        }} style={{width:"100%",padding:10,background:T.maroon,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit",marginTop:4}}>{saving?"Guardando...":"Guardar Wellness"}</button>
         {saved&&<div style={{textAlign:"center",marginTop:8,fontSize:12,color:T.green}}>✓ Wellness guardado</div>}
       </Card>
     </>
