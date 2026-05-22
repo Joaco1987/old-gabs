@@ -1485,8 +1485,32 @@ function PlayerGPS({player}){
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={["Sesión","Min","Dist.","m/min","HSR","ACC","Nº Spr","V.máx"]}/>
-            <tbody>{(selId?sess.filter(s=>s.id===selId):sess).map(s=>(
+            <TH cols={selId?["Jugadora","Min","Dist.","m/min","HSR","ACC","Nº Spr","V.máx"]:["Sesión","Min","Dist.","m/min","HSR","ACC","Nº Spr","V.máx"]}/>
+            <tbody>{selId?(
+              // Sesión seleccionada: mostrar todas las jugadoras
+              (()=>{
+                const selSess=sess.find(s=>s.id===selId);
+                if(!selSess)return null;
+                return [...selSess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
+                  const isMe=j.n===player;
+                  const h15=j.hsr||j.ai15||0;
+                  return(
+                    <tr key={j.n} style={{background:isMe?"#0d1f35":"transparent"}}>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>{isMe?"▶ ":""}{j.n.split(" ")[0]}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{j.min}'</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?600:400}}>{j.dist.toLocaleString()}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{j.mxm}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.green:T.text}}>{h15}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc||0}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.amber:T.muted,fontWeight:(j.ns||0)>0?600:400}}>{j.ns||0}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
+                    </tr>
+                  );
+                });
+              })()
+            ):(
+              // Sin selección: una fila por sesión (datos propios)
+              sess.map(s=>(
               <tr key={s.id}>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.data.min}'</td>
@@ -1497,7 +1521,8 @@ function PlayerGPS({player}){
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(s.data.ns||0)>0?T.amber:T.muted,fontWeight:(s.data.ns||0)>0?600:400}}>{s.data.ns||0}</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
               </tr>
-            ))}</tbody>
+            ))
+            )}</tbody>
           </table>
         </div>
       </Card>
