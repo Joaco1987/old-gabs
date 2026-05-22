@@ -775,7 +775,7 @@ function StaffGPS(){
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400}}>{sp!=null?`${sp}m`:"—"}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{j.dsc}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.amber:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
                     </tr>
                   );
