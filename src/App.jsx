@@ -1116,13 +1116,14 @@ function StaffYoyo(){
             <TH cols={["#","Jugadora","Nivel","Distancia","VAM (m/s)","Clasificación"]}/>
             <tbody>{sorted.map((p,i)=>{
               const col=yoyoGrupoColor(yoyoGrupo(p.vam));
+              const nivelCol=yoyoNivelColor(p.nivel);
               return(
                 <tr key={p.n}>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i+1}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700,fontSize:14}}>{p.nivel}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist}m</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:600}}>{p.vam}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
                     <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoGrupoLabel(yoyoGrupo(p.vam))}</span>
                   </td>
@@ -1460,6 +1461,7 @@ function PlayerYoyo({player}){
     </div>
   );
   const col=yoyoColor(d.nivel);
+  const nivelColD=yoyoNivelColor(d.nivel);
   return(
     <>
       <MR>
@@ -1471,7 +1473,7 @@ function PlayerYoyo({player}){
       <Card style={{marginBottom:10}}>
         <CT text="Mi resultado Yo-Yo IRT1 — 15/4/26"/>
         <div style={{textAlign:"center",padding:"20px 0"}}>
-          <div style={{fontSize:48,fontWeight:700,color:col,marginBottom:8}}>{d.nivel}</div>
+          <div style={{fontSize:48,fontWeight:700,color:nivelColD,marginBottom:8}}>{d.nivel}</div>
           <div style={{fontSize:14,color:T.muted2,marginBottom:4}}>Nivel alcanzado</div>
           <span style={{background:col+"22",color:col,padding:"4px 16px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(d.nivel)}</span>
         </div>
@@ -1485,11 +1487,12 @@ function PlayerYoyo({player}){
         <CT text="Comparación con el equipo"/>
         {sorted.map((p,i)=>{
           const isMe=p.n===player;const gc=yoyoGrupoColor(yoyoGrupo(p.vam));
+              const nivelColP=yoyoNivelColor(p.nivel);
           return(
             <div key={p.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:isMe?"#1e3a5f":"transparent",borderRadius:6,padding:"4px 8px"}}>
               <span style={{fontSize:11,color:T.muted,width:20}}>{i+1}</span>
               <span style={{fontSize:12,color:isMe?T.blue:T.text,fontWeight:isMe?700:400,flex:1}}>{p.n.split(" ")[0]}</span>
-              <span style={{fontSize:12,color:gc,fontWeight:600}}>{p.nivel}</span>
+              <span style={{fontSize:12,color:nivelColP,fontWeight:600}}>{p.nivel}</span>
               <span style={{fontSize:11,color:T.muted}}>{p.dist}m</span>
               <span style={{fontSize:11,color:T.cyan}}>{p.vam}m/s</span>
             </div>
