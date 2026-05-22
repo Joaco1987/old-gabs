@@ -715,7 +715,7 @@ function GraficoHSR({sesiones,titulo}){
         return(
           <div key={s.id} style={{marginBottom:8}}>
             <div style={{display:"flex",justifyContent:"space-between",marginBottom:3,fontSize:11}}>
-              <span style={{color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+              <span style={{color:T.muted2}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?<span style={{fontSize:10,color:T.muted}}> {s.fecha}</span>:null}</span>
               <div style={{display:"flex",gap:8}}>
                 <span style={{color:T.green,fontSize:10}}>{h15}m</span>
                 <span style={{color:T.amber,fontSize:10}}>{h18}m</span>
@@ -744,7 +744,7 @@ function StaffGPS(){
       {fbtn(tipo,setTipo,[["partidos","🏑 Partidos"],["amistosos","⚡ Amistosos"],["entrenos","🏃 Entrenos"],["todos","Todo"]])}
       <div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:12}}>
         <button onClick={()=>setSesion(null)} style={{padding:"3px 8px",borderRadius:4,border:!sesion?`1px solid ${T.blue}`:`1px solid ${T.border}`,background:!sesion?T.blue+"22":"transparent",color:!sesion?T.blue:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>Resumen</button>
-        {pool.map(s=><button key={s.id} onClick={()=>setSesion(s.id)} style={{padding:"3px 8px",borderRadius:4,border:sesion===s.id?`1px solid ${T.blue}`:`1px solid ${T.border}`,background:sesion===s.id?T.blue+"22":"transparent",color:sesion===s.id?T.blue:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>{sIcon(s.tipo)} {s.label} {s.fecha}</button>)}
+        {pool.map(s=><button key={s.id} onClick={()=>setSesion(s.id)} style={{padding:"3px 8px",borderRadius:4,border:sesion===s.id?`1px solid ${T.blue}`:`1px solid ${T.border}`,background:sesion===s.id?T.blue+"22":"transparent",color:sesion===s.id?T.blue:T.muted,fontSize:10,cursor:"pointer",fontFamily:"inherit"}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?" "+s.fecha:""}</button>)}
       </div>
 
       {sess?(
@@ -965,7 +965,7 @@ function StaffEvoGPS(){
           return(
             <div key={s.id} style={{marginBottom:8}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?<span style={{fontSize:10,color:T.muted}}> {s.fecha}</span>:null}</span>
                 <div style={{display:"flex",gap:6,alignItems:"center"}}>
                 <span style={{fontSize:11,color:curMetric?.color,fontWeight:600}}>{v}{curMetric?.unit}</span>
                 {i>0&&vals[i-1]>0&&(()=>{const chg=Math.round(((v-vals[i-1])/vals[i-1])*100);return chg!==0?<span style={{fontSize:10,color:chg>0?T.green:T.red,fontWeight:600}}>{chg>0?"+":""}{chg}%</span>:null;})()}
@@ -1051,7 +1051,7 @@ function PlayerEvoGPS({player}){
           return(
             <div key={s.id} style={{marginBottom:8}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?<span style={{fontSize:10,color:T.muted}}> {s.fecha}</span>:null}</span>
                 <div style={{display:"flex",gap:6,alignItems:"center"}}>
                 <span style={{fontSize:11,color:curMetric?.color,fontWeight:600}}>{v}{curMetric?.unit}</span>
                 {i>0&&vals[i-1]>0&&(()=>{const chg=Math.round(((v-vals[i-1])/vals[i-1])*100);return chg!==0?<span style={{fontSize:10,color:chg>0?T.green:T.red,fontWeight:600}}>{chg>0?"+":""}{chg}%</span>:null;})()}
@@ -1230,7 +1230,7 @@ function StaffAsistencia(){
                   <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,fontSize:11,whiteSpace:"nowrap"}}>{r.n.split(" ")[0]}</td>
                   {r.dias.map((d,i)=>(
                     <td key={i} style={{padding:"2px 1px",borderBottom:"1px solid #141824",textAlign:"center",borderLeft:i===0||i===marF.length||i===marF.length+abrF.length?`1px solid ${T.border2}`:"none"}}>
-                      <span style={{display:"inline-block",width:14,height:14,borderRadius:2,background:d===1?"#0f2d1f":"#2d0f0f",color:d===1?T.green:T.red,fontSize:8,lineHeight:"14px",textAlign:"center"}}>{d===1?"✓":"✗"}</span>
+                      <span style={{display:"inline-block",width:14,height:14,borderRadius:2,background:d===null?"#1a1e2a":d===1?"#0f2d1f":"#2d0f0f",color:d===null?T.muted:d===1?T.green:T.red,fontSize:8,lineHeight:"14px",textAlign:"center"}}>{d===null?"—":d===1?"✓":"✗"}</span>
                     </td>
                   ))}
                   <td style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:T.green,fontWeight:500,borderLeft:`1px solid ${T.border2}`}}>{r.mar}</td>
@@ -1404,7 +1404,7 @@ function PlayerGPS({player}){
               return(
                 <div key={s.id} style={{marginBottom:8}}>
                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
-                    <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+                    <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?<span style={{fontSize:10,color:T.muted}}> {s.fecha}</span>:null}</span>
                     <div style={{display:"flex",gap:8}}>
                       <span style={{color:T.green,fontSize:10}}>{h15}m</span>
                       <span style={{color:T.amber,fontSize:10}}>{h18}m</span>
@@ -1565,16 +1565,18 @@ function PlayerAsistencia({player}){
   const d=ASISTENCIA[player];
   if(!d)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos de asistencia</div>;
   const p=d.dias.filter(x=>x===1).length;
-  const pct=Math.round(p/d.dias.length*100);
+  const ausencias=d.dias.filter(x=>x===0).length;
+  const validos=d.dias.filter(x=>x!==null).length;
+  const pct=validos>0?Math.round(p/validos*100):0;
   const marF=ATT_FECHAS.filter(f=>f.includes("/3"));
   const abrF=ATT_FECHAS.filter(f=>f.includes("/4"));
   const mayF=ATT_FECHAS.filter(f=>f.includes("/5"));
   return(
     <>
       <MR>
-        <MetCard label="Mi asistencia" value={`${pct}%`} sub={`${p}/${d.dias.length} sesiones`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
+        <MetCard label="Mi asistencia" value={`${pct}%`} sub={`${p}/${validos} sesiones`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
         <MetCard label="Presencias" value={p} sc={T.green}/>
-        <MetCard label="Ausencias" value={d.dias.length-p} sc={T.red}/>
+        <MetCard label="Ausencias" value={ausencias} sc={T.red}/>
       </MR>
       {pct<60&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ Asistencia menor al 60%</div>}
       <Card style={{marginBottom:10}}>
