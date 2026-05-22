@@ -1358,7 +1358,13 @@ function RadarChart({player,sesion}){
 }
 
 function PlayerGPS({player}){
-  const [tipo,setTipo]=useState("partidos");
+  const initTipo=(()=>{
+    if(PARTIDOS.some(s=>s.jugadoras.find(j=>j.n===player)))return"partidos";
+    if(AMISTOSOS.some(s=>s.jugadoras.find(j=>j.n===player)))return"amistosos";
+    if(ENTRENOS.some(s=>s.jugadoras.find(j=>j.n===player)))return"entrenos";
+    return"partidos";
+  })();
+  const [tipo,setTipo]=useState(initTipo);
   const [selId,setSelId]=useState(null);
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess;
   const sess=mySess(player,pool);
