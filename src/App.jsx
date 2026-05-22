@@ -715,7 +715,7 @@ function GraficoHSR({sesiones,titulo}){
         return(
           <div key={s.id} style={{marginBottom:8}}>
             <div style={{display:"flex",justifyContent:"space-between",marginBottom:3,fontSize:11}}>
-              <span style={{color:T.muted2}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?<span style={{fontSize:10,color:T.muted}}> {s.fecha}</span>:null}</span>
+              <span style={{color:T.muted2}}>{sIcon(s.tipo)} {s.label}</span>
               <div style={{display:"flex",gap:8}}>
                 <span style={{color:T.green,fontSize:10}}>{h15}m</span>
                 <span style={{color:T.amber,fontSize:10}}>{h18}m</span>
@@ -965,7 +965,7 @@ function StaffEvoGPS(){
           return(
             <div key={s.id} style={{marginBottom:8}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?<span style={{fontSize:10,color:T.muted}}> {s.fecha}</span>:null}</span>
+                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}</span>
                 <div style={{display:"flex",gap:6,alignItems:"center"}}>
                 <span style={{fontSize:11,color:curMetric?.color,fontWeight:600}}>{v}{curMetric?.unit}</span>
                 {i>0&&vals[i-1]>0&&(()=>{const chg=Math.round(((v-vals[i-1])/vals[i-1])*100);return chg!==0?<span style={{fontSize:10,color:chg>0?T.green:T.red,fontWeight:600}}>{chg>0?"+":""}{chg}%</span>:null;})()}
@@ -1051,7 +1051,7 @@ function PlayerEvoGPS({player}){
           return(
             <div key={s.id} style={{marginBottom:8}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
-                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?<span style={{fontSize:10,color:T.muted}}> {s.fecha}</span>:null}</span>
+                <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}</span>
                 <div style={{display:"flex",gap:6,alignItems:"center"}}>
                 <span style={{fontSize:11,color:curMetric?.color,fontWeight:600}}>{v}{curMetric?.unit}</span>
                 {i>0&&vals[i-1]>0&&(()=>{const chg=Math.round(((v-vals[i-1])/vals[i-1])*100);return chg!==0?<span style={{fontSize:10,color:chg>0?T.green:T.red,fontWeight:600}}>{chg>0?"+":""}{chg}%</span>:null;})()}
@@ -1404,7 +1404,7 @@ function PlayerGPS({player}){
               return(
                 <div key={s.id} style={{marginBottom:8}}>
                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
-                    <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}{s.fecha&&s.fecha!==s.label&&!s.label.includes(s.fecha)?<span style={{fontSize:10,color:T.muted}}> {s.fecha}</span>:null}</span>
+                    <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}</span>
                     <div style={{display:"flex",gap:8}}>
                       <span style={{color:T.green,fontSize:10}}>{h15}m</span>
                       <span style={{color:T.amber,fontSize:10}}>{h18}m</span>
@@ -1424,7 +1424,7 @@ function PlayerGPS({player}){
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
             <TH cols={["Sesión","Fecha","Min","Dist.","m/min","HSR","ACC","V.máx"]}/>
-            <tbody>{sess.map(s=>(
+            <tbody>{(selId?sess.filter(s=>s.id===selId):sess).map(s=>(
               <tr key={s.id}>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.fecha}</td>
@@ -1443,7 +1443,7 @@ function PlayerGPS({player}){
       {hsrLegend}
       
       {sess.length>0&&(
-        <RadarChart player={player} sesion={sess[0]}/>
+        <RadarChart player={player} sesion={selId?sess.find(s=>s.id===selId)||sess[0]:sess[0]}/>
       )}
     </>
   );
