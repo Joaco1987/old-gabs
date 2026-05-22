@@ -23,7 +23,7 @@ const PARTIDOS=[
     {n:"Gacitua Emilia",min:52,dist:5578,mxm:107,hsr:468,ai18:235,spr:137,acc:32,dsc:40,vmax:25.2},
     {n:"Pareja Camila",min:64,dist:5617,mxm:87,hsr:198,ai18:57,spr:0,acc:5,dsc:10,vmax:23.0},
     {n:"Muñoz Constanza",min:61,dist:5702,mxm:93,hsr:377,ai18:198,spr:0,acc:7,dsc:20,vmax:23.9},
-    {n:"Pollman Marianne",min:60,dist:6162,mxm:103,hsr:498,ai18:179,spr:0,acc:12,dsc:17,vmax:22.4},
+    {n:"Pollmann Marianne",min:60,dist:6162,mxm:103,hsr:498,ai18:179,spr:0,acc:12,dsc:17,vmax:22.4},
     {n:"Errazu Sofia",min:56,dist:6298,mxm:111,hsr:365,ai18:69,spr:0,acc:24,dsc:21,vmax:20.7},
     {n:"Sierra Julieta",min:58,dist:6558,mxm:112,hsr:596,ai18:275,spr:0,acc:13,dsc:30,vmax:23.9},
     {n:"Silva Victoria",min:57,dist:6681,mxm:117,hsr:773,ai18:310,spr:108,acc:25,dsc:45,vmax:23.4},
@@ -218,14 +218,13 @@ const ENTRENOS=[
     {n:"Mateluna Florencia",min:19,dist:1412,mxm:71,hsr:134,ai18:157,spr:101,acc:30,dsc:1,vmax:26.2},
    ]},
   {id:"e04",label:"13/04",fecha:"13/04",tipo:"entreno",
-   prom_hsr:452,prom_h18:295,prom_spr:0,
+   prom_hsr:469,prom_h18:320,prom_spr:0,
    zonas:[
     {n:"Errazu Sofia",h15:307,h18:332,spr:3},
     {n:"Pollmann Marianne",h15:414,h18:232,spr:0},
     {n:"Gutierrez Renata",h15:655,h18:54,spr:0},
     {n:"Gomez Camila",h15:459,h18:52,spr:0},
-    {n:"Pastenes Nicole",h15:317,h18:101,spr:0},
-    {n:"Carrasco Sofia",h15:437,h18:525,spr:0},
+        {n:"Carrasco Sofia",h15:437,h18:525,spr:0},
     {n:"Mateluna Florencia",h15:705,h18:297,spr:0},
     {n:"Gacitua Emilia",h15:394,h18:501,spr:0},
     {n:"Sepulveda Eileen",h15:383,h18:564,spr:0},
@@ -235,8 +234,7 @@ const ENTRENOS=[
     {n:"Pollmann Marianne",min:15,dist:1349,mxm:110,hsr:414,ai18:232,spr:0,acc:9,dsc:4,vmax:23.1},
     {n:"Gutierrez Renata",min:15,dist:1477,mxm:95,hsr:655,ai18:54,spr:0,acc:4,dsc:0,vmax:19.6},
     {n:"Gomez Camila",min:15,dist:1536,mxm:97,hsr:459,ai18:52,spr:0,acc:5,dsc:3,vmax:20.9},
-    {n:"Pastenes Nicole",min:15,dist:1582,mxm:100,hsr:317,ai18:101,spr:0,acc:3,dsc:1,vmax:21.7},
-    {n:"Carrasco Sofia",min:15,dist:1638,mxm:106,hsr:436,ai18:525,spr:0,acc:20,dsc:11,vmax:23.8},
+        {n:"Carrasco Sofia",min:15,dist:1638,mxm:106,hsr:436,ai18:525,spr:0,acc:20,dsc:11,vmax:23.8},
     {n:"Mateluna Florencia",min:15,dist:1666,mxm:108,hsr:705,ai18:297,spr:0,acc:27,dsc:8,vmax:21.0},
     {n:"Gacitua Emilia",min:15,dist:1693,mxm:109,hsr:394,ai18:501,spr:0,acc:16,dsc:9,vmax:23.7},
     {n:"Sepulveda Eileen",min:15,dist:1714,mxm:115,hsr:383,ai18:564,spr:0,acc:23,dsc:11,vmax:23.6},
@@ -244,7 +242,7 @@ const ENTRENOS=[
   {id:"e05",label:"15/04",fecha:"15/04",tipo:"entreno",
    prom_hsr:519,prom_h18:65,prom_spr:0,
    zonas:[
-    {n:"Arau Maria",h15:39,h18:0,spr:0},
+    {n:"Arau María Paz",h15:39,h18:0,spr:0},
     {n:"Pollmann Marianne",h15:389,h18:52,spr:0},
     {n:"Gomez Camila",h15:317,h18:8,spr:0},
     {n:"Pareja Camila",h15:430,h18:22,spr:0},
@@ -255,7 +253,7 @@ const ENTRENOS=[
     {n:"Sepulveda Eileen",h15:747,h18:86,spr:0},
    ],
    jugadoras:[
-    {n:"Arau Maria",min:57,dist:1413,mxm:24,hsr:39,ai18:0,spr:0,acc:7,dsc:1,vmax:17.0},
+    {n:"Arau María Paz",min:57,dist:1413,mxm:24,hsr:39,ai18:0,spr:0,acc:7,dsc:1,vmax:17.0},
     {n:"Pollmann Marianne",min:47,dist:3472,mxm:74,hsr:389,ai18:52,spr:0,acc:35,dsc:20,vmax:19.9},
     {n:"Gomez Camila",min:47,dist:3557,mxm:75,hsr:317,ai18:8,spr:0,acc:20,dsc:32,vmax:18.9},
     {n:"Pareja Camila",min:47,dist:3807,mxm:80,hsr:430,ai18:22,spr:0,acc:44,dsc:32,vmax:21.4},
@@ -326,7 +324,7 @@ const ENTRENOS=[
   {id:"e09",label:"29/04",fecha:"29/04",tipo:"entreno",
    prom_hsr:560,prom_h18:436,prom_spr:50,
    zonas:[
-    {n:"Arau Maria",h15:19,h18:4,spr:0},
+    {n:"Arau María Paz",h15:19,h18:4,spr:0},
     {n:"Gomez Camila",h15:281,h18:10,spr:0},
     {n:"Gacitua Emilia",h15:565,h18:725,spr:124},
     {n:"Pareja Camila",h15:674,h18:265,spr:15},
@@ -338,7 +336,7 @@ const ENTRENOS=[
     {n:"Sepulveda Eileen",h15:606,h18:768,spr:35},
    ],
    jugadoras:[
-    {n:"Arau Maria",min:68,dist:1710,mxm:25,hsr:19,ai18:4,spr:0,acc:9,dsc:0,vmax:18.6},
+    {n:"Arau María Paz",min:68,dist:1710,mxm:25,hsr:19,ai18:4,spr:0,acc:9,dsc:0,vmax:18.6},
     {n:"Gomez Camila",min:72,dist:3574,mxm:50,hsr:280,ai18:10,spr:0,acc:3,dsc:17,vmax:18.5},
     {n:"Gacitua Emilia",min:72,dist:5052,mxm:70,hsr:525,ai18:725,spr:124,acc:45,dsc:27,vmax:27.7},
     {n:"Pareja Camila",min:72,dist:5118,mxm:71,hsr:674,ai18:265,spr:15,acc:29,dsc:16,vmax:24.6},
@@ -352,7 +350,7 @@ const ENTRENOS=[
   {id:"e10",label:"4/05",fecha:"4/05",tipo:"entreno",
    prom_hsr:76,prom_h18:66,prom_spr:0,
    zonas:[
-    {n:"Arau Maria",h15:0,h18:0,spr:0},
+    {n:"Arau María Paz",h15:0,h18:0,spr:0},
     {n:"Gomez Camila",h15:99,h18:14,spr:0},
     {n:"Alfaro Javiera",h15:77,h18:68,spr:0},
     {n:"Gutierrez Renata",h15:80,h18:59,spr:0},
@@ -363,7 +361,7 @@ const ENTRENOS=[
     {n:"Mateluna Florencia",h15:96,h18:89,spr:0},
    ],
    jugadoras:[
-    {n:"Arau Maria",min:9,dist:384,mxm:42,hsr:3,ai18:0,spr:0,acc:7,dsc:2,vmax:15.6},
+    {n:"Arau María Paz",min:9,dist:384,mxm:42,hsr:3,ai18:0,spr:0,acc:7,dsc:2,vmax:15.6},
     {n:"Gomez Camila",min:25,dist:987,mxm:39,hsr:99,ai18:14,spr:0,acc:27,dsc:8,vmax:18.5},
     {n:"Alfaro Javiera",min:25,dist:993,mxm:39,hsr:77,ai18:68,spr:0,acc:28,dsc:10,vmax:21.1},
     {n:"Gutierrez Renata",min:25,dist:994,mxm:40,hsr:80,ai18:59,spr:0,acc:30,dsc:9,vmax:20.4},
@@ -376,7 +374,7 @@ const ENTRENOS=[
   {id:"e11",label:"11/05",fecha:"11/05",tipo:"entreno",
    prom_hsr:199,prom_h18:54,prom_spr:0,
    zonas:[
-    {n:"Arau Maria",h15:32,h18:0,spr:0},
+    {n:"Arau María Paz",h15:32,h18:0,spr:0},
     {n:"Gomez Camila",h15:127,h18:17,spr:0},
     {n:"Gutierrez Renata",h15:180,h18:51,spr:0},
     {n:"Carrasco Sofia",h15:327,h18:84,spr:0},
@@ -389,7 +387,7 @@ const ENTRENOS=[
     {n:"Retamal Antonia",h15:243,h18:62,spr:0},
    ],
    jugadoras:[
-    {n:"Arau Maria",min:65,dist:1935,mxm:30,hsr:32,ai18:0,spr:0,acc:8,dsc:6,vmax:17.4},
+    {n:"Arau María Paz",min:65,dist:1935,mxm:30,hsr:32,ai18:0,spr:0,acc:8,dsc:6,vmax:17.4},
     {n:"Gomez Camila",min:65,dist:3262,mxm:50,hsr:122,ai18:17,spr:0,acc:16,dsc:22,vmax:19.3},
     {n:"Gutierrez Renata",min:65,dist:3604,mxm:55,hsr:180,ai18:51,spr:0,acc:33,dsc:24,vmax:21.1},
     {n:"Carrasco Sofia",min:65,dist:3628,mxm:56,hsr:327,ai18:84,spr:0,acc:46,dsc:66,vmax:20.4},
@@ -404,7 +402,7 @@ const ENTRENOS=[
   {id:"e12",label:"13/05",fecha:"13/05",tipo:"entreno",
    prom_hsr:300,prom_h18:452,prom_spr:66,
    zonas:[
-    {n:"Arau Maria",h15:26,h18:0,spr:0},
+    {n:"Arau María Paz",h15:26,h18:0,spr:0},
     {n:"Pollmann Marianne",h15:288,h18:210,spr:8},
     {n:"Pareja Camila",h15:280,h18:411,spr:4},
     {n:"Gutierrez Renata",h15:296,h18:530,spr:14},
@@ -416,7 +414,7 @@ const ENTRENOS=[
     {n:"Sierra Julieta",h15:287,h18:538,spr:168},
    ],
    jugadoras:[
-    {n:"Arau Maria",min:54,dist:1514,mxm:28,hsr:26,ai18:0,spr:0,acc:16,dsc:2,vmax:17.0},
+    {n:"Arau María Paz",min:54,dist:1514,mxm:28,hsr:26,ai18:0,spr:0,acc:16,dsc:2,vmax:17.0},
     {n:"Pollmann Marianne",min:51,dist:3107,mxm:60,hsr:288,ai18:210,spr:8,acc:15,dsc:8,vmax:24.9},
     {n:"Pareja Camila",min:50,dist:3666,mxm:73,hsr:280,ai18:411,spr:4,acc:35,dsc:16,vmax:24.5},
     {n:"Gutierrez Renata",min:50,dist:3736,mxm:74,hsr:297,ai18:530,spr:14,acc:27,dsc:21,vmax:25.8},
@@ -430,7 +428,7 @@ const ENTRENOS=[
   {id:"e13",label:"18/05",fecha:"18/05",tipo:"entreno",
    prom_hsr:150,prom_h18:49,prom_spr:7,
    zonas:[
-    {n:"Arau Maria",h15:0,h18:0,spr:0},
+    {n:"Arau María Paz",h15:0,h18:0,spr:0},
     {n:"Gutierrez Renata",h15:112,h18:22,spr:0},
     {n:"Alfaro Javiera",h15:99,h18:19,spr:0},
     {n:"Mateluna Florencia",h15:217,h18:77,spr:4},
@@ -443,7 +441,7 @@ const ENTRENOS=[
     {n:"Retamal Antonia",h15:184,h18:90,spr:7},
    ],
    jugadoras:[
-    {n:"Arau Maria",min:74,dist:1521,mxm:20,hsr:0,ai18:0,spr:0,acc:4,dsc:0,vmax:14.4},
+    {n:"Arau María Paz",min:74,dist:1521,mxm:20,hsr:0,ai18:0,spr:0,acc:4,dsc:0,vmax:14.4},
     {n:"Gutierrez Renata",min:74,dist:3281,mxm:44,hsr:112,ai18:22,spr:0,acc:23,dsc:24,vmax:20.1},
     {n:"Alfaro Javiera",min:74,dist:3314,mxm:44,hsr:99,ai18:19,spr:0,acc:31,dsc:22,vmax:20.6},
     {n:"Mateluna Florencia",min:74,dist:3356,mxm:45,hsr:217,ai18:77,spr:4,acc:43,dsc:34,vmax:21.4},
@@ -458,8 +456,8 @@ const ENTRENOS=[
   {id:"e14",label:"20/05",fecha:"20/05",tipo:"entreno",
    prom_hsr:347,prom_h18:277,prom_spr:224,
    zonas:[
-    {n:"Arau Maria",h15:31,h18:7,spr:0},
-    {n:"Pollman Marianne",h15:141,h18:32,spr:40},
+    {n:"Arau María Paz",h15:31,h18:7,spr:0},
+    {n:"Pollmann Marianne",h15:141,h18:32,spr:40},
     {n:"Gacitua Emilia",h15:153,h18:152,spr:413},
     {n:"Silva Victoria",h15:299,h18:188,spr:21},
     {n:"Gomez Camila",h15:477,h18:324,spr:171},
@@ -471,8 +469,8 @@ const ENTRENOS=[
     {n:"Mateluna Florencia",h15:415,h18:427,spr:443},
    ],
    jugadoras:[
-    {n:"Arau Maria",min:67,dist:1919,mxm:29,hsr:32,ai18:7,spr:0,acc:13,dsc:5,vmax:19.2},
-    {n:"Pollman Marianne",min:33,dist:1958,mxm:58,hsr:141,ai18:32,spr:40,acc:4,dsc:3,vmax:23.4},
+    {n:"Arau María Paz",min:67,dist:1919,mxm:29,hsr:32,ai18:7,spr:0,acc:13,dsc:5,vmax:19.2},
+    {n:"Pollmann Marianne",min:33,dist:1958,mxm:58,hsr:141,ai18:32,spr:40,acc:4,dsc:3,vmax:23.4},
     {n:"Gacitua Emilia",min:30,dist:2548,mxm:84,hsr:153,ai18:152,spr:413,acc:31,dsc:23,vmax:28.0},
     {n:"Silva Victoria",min:41,dist:3787,mxm:91,hsr:298,ai18:188,spr:21,acc:23,dsc:51,vmax:22.3},
     {n:"Gomez Camila",min:54,dist:4291,mxm:78,hsr:477,ai18:324,spr:171,acc:26,dsc:19,vmax:23.2},
@@ -499,7 +497,7 @@ const MINUTOS=[
   {n:"Manriquez Fernanda",cogs:null,pwcc:null,manq:null,catb:null,reds:null,tot:0,prom:0},
   {n:"Martinez Amanda",cogs:null,pwcc:null,manq:null,catb:null,reds:null,tot:0,prom:0},
   {n:"Mateluna Florencia",cogs:null,pwcc:null,manq:21,catb:18,reds:29,tot:68,prom:22.7},
-  {n:"Muñoz Costanza",cogs:60,pwcc:60,manq:53,catb:60,reds:60,tot:293,prom:58.6},
+  {n:"Muñoz Constanza",cogs:60,pwcc:60,manq:53,catb:60,reds:60,tot:293,prom:58.6},
   {n:"Pareja Camila",cogs:60,pwcc:60,manq:60,catb:60,reds:60,tot:300,prom:60.0},
   {n:"Pollmann Marianne",cogs:null,pwcc:null,manq:60,catb:58,reds:55,tot:173,prom:57.7},
   {n:"Retamal Antonia",cogs:null,pwcc:null,manq:null,catb:null,reds:null,tot:0,prom:0},
@@ -582,7 +580,7 @@ const ASISTENCIA={
   "Mateluna Florencia":{
     mar:"0%",abr:"100%",may:"100%",tot:"100%",
     dias:[null,null,null,null,null,null,null,null,null,null,null,null,null,1,1,1,1,null,null,1,1,1,1,null,1,1,1,1,1,1,1,1,null,null,null,null]},
-  "Muñoz Costanza":{
+  "Muñoz Constanza":{
     mar:"50%",abr:"38%",may:"38%",tot:"42%",
     dias:[0,0,null,0,1,0,1,1,1,null,null,null,null,0,0,0,0,null,null,1,1,1,0,null,0,1,1,0,0,1,0,0,null,null,null,null]},
   "Pareja Camila":{
@@ -1147,20 +1145,20 @@ function StaffMinutos(){
         <MetCard label="Jugadoras" value={MINUTOS.length}/>
         <MetCard label="Máx. minutos" value={`${Math.max(...MINUTOS.map(m=>m.tot))} min`} sub="Arau/Gutierrez/Pareja" sc={T.green}/>
         <MetCard label="Prom. equipo" value={`${Math.round(avg(MINUTOS.map(m=>m.tot)))} min`} sub="Total temporada"/>
-        <MetCard label="Partidos" value={4} sub="COGS · PWCC · MANQ · UC B"/>
+        <MetCard label="Partidos" value={4} sub="COGS · PWCC · MANQ · UC B · OLD REDS"/>
       </MR>
       <Card>
         <CT text="Minutos de juego por jugadora — hoja Minutos de Juego"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Jugadora","Div","COGS","PWCC","MANQ A","UC B","Total","Prom."]}/>
+            <TH cols={["Jugadora","Div","COGS","PWCC","MANQ","UC B","OLD REDS","Total","Prom."]}/>
             <tbody>{[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
               const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
               return(
                 <tr key={m.n}>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{m.n}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}><Chip text={m.div} color={m.div==="S16"?T.purple:T.blue}/></td>
-                  {[m.cogs,m.pwcc,m.manq,m.ucb].map((v,i)=>(
+                  {[m.cogs,m.pwcc,m.manq,m.catb,m.reds].map((v,i)=>(
                     <td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v!=null?`${v}'`:"—"}</td>
                   ))}
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700}}>{m.tot}'</td>
