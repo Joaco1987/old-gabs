@@ -1006,6 +1006,7 @@ function PlayerEvoGPS({player}){
     {k:"spr", label:"Sprint >21",unit:"m",color:T.red},
     {k:"acc", label:"ACC",       unit:"", color:T.purple},
     {k:"vmax",label:"Vel. Máx",  unit:"km/h",color:T.pink||"#e879f9"},
+    {k:"ns",  label:"Nº Sprint",  unit:"",    color:"#e09020"},
   ];
   const getSessions=()=>{
     const p=PARTIDOS.map(s=>({...s,tipo:"partido"}));
