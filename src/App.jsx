@@ -1484,11 +1484,10 @@ function PlayerGPS({player}){
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={["Sesión","Fecha","Min","Dist.","m/min","HSR","ACC","V.máx"]}/>
+            <TH cols={["Sesión","Min","Dist.","m/min","HSR","ACC","Nº Spr","V.máx"]}/>
             <tbody>{(selId?sess.filter(s=>s.id===selId):sess).map(s=>(
               <tr key={s.id}>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.fecha}</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.data.min}'</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{s.data.dist.toLocaleString()}m</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
