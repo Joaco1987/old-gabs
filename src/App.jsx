@@ -1089,7 +1089,7 @@ function StaffYoyo(){
       <Card style={{marginBottom:10}}>
         <CT text="Clasificación por Nivel"/>
         <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#e09020"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
+          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#d4b000"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
               <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
             </div>
@@ -1482,6 +1482,16 @@ function PlayerYoyo({player}){
           <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.blue}}>{d.dist}m</div><div style={{fontSize:11,color:T.muted}}>Distancia</div></div>
           <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.cyan}}>{d.vam} m/s</div><div style={{fontSize:11,color:T.muted}}>VAM</div></div>
           <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.amber}}>{myRank}°</div><div style={{fontSize:11,color:T.muted}}>Ranking</div></div>
+        </div>
+      </Card>
+      <Card style={{marginBottom:10}}>
+        <CT text="Clasificación por Nivel"/>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#d4b000"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
+              <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
+            </div>
+          ))}
         </div>
       </Card>
       <Card>
