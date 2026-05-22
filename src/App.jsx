@@ -1485,7 +1485,7 @@ function PlayerGPS({player}){
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={selId?["Jugadora","Min","Dist.","m/min","HSR","ACC","Nº Spr","V.máx"]:["Sesión","Min","Dist.","m/min","HSR","ACC","Nº Spr","V.máx"]}/>
+            <TH cols={selId?["Jugadora","Min","Dist.","m/min","HSR","ACC","DSC","Nº Spr","V.máx"]:["Sesión","Min","Dist.","m/min","HSR","ACC","DSC","Nº Spr","V.máx"]}/>
             <tbody>{selId?(
               // Sesión seleccionada: mostrar todas las jugadoras
               (()=>{
@@ -1502,7 +1502,8 @@ function PlayerGPS({player}){
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{j.mxm}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.green:T.text}}>{h15}m</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc||0}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.amber:T.muted,fontWeight:(j.ns||0)>0?600:400}}>{j.ns||0}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{j.dsc||0}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400}}>{j.ns||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
                     </tr>
                   );
@@ -1518,7 +1519,8 @@ function PlayerGPS({player}){
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{(s.data.hsr||s.data.ai15||0)}m</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{s.data.acc||0}</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(s.data.ns||0)>0?T.amber:T.muted,fontWeight:(s.data.ns||0)>0?600:400}}>{s.data.ns||0}</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{s.data.dsc||0}</td>
+                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(s.data.ns||0)>0?T.text:T.muted,fontWeight:(s.data.ns||0)>0?600:400}}>{s.data.ns||0}</td>
                 <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
               </tr>
             ))
