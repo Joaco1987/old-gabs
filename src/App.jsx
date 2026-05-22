@@ -1333,38 +1333,34 @@ function PlayerGPS({player}){
       {sess.length>0&&(()=>{
         const sessConDatos=(selId?sess.filter(s=>s.id===selId):sess).filter(s=>s.jugadoras?.find(j=>j.n===player));
         if(!sessConDatos.length)return null;
+        const vals=sessConDatos.map(s=>{
+          const jd=s.jugadoras.find(j=>j.n===player);
+          if(!jd)return{h15:0,h18:0,spr:0};
+          const h15=jd.hsr||0;
+          const h18=jd.ai18||0;
+          const spr=jd.spr||0;
+          return{h15,h18,spr};
+        });
+        const mx=Math.max(...vals.map(v=>v.h15+v.h18+v.spr),1);
         return(
           <Card style={{marginBottom:10}}>
             <CT text={`HSR por zonas — ${player.split(" ")[0]}`}/>
-            <div style={{display:"flex",gap:12,marginBottom:8}}>
-              {[{l:"15-18 km/h",c:"#4a90e8"},{l:"18-21 km/h",c:"#e09020"},{l:">21 km/h",c:"#e05555"}].map(z=>(
-                <div key={z.l} style={{display:"flex",gap:4,alignItems:"center"}}>
-                  <div style={{width:10,height:10,borderRadius:2,background:z.c}}/>
-                  <span style={{fontSize:10,color:T.muted}}>{z.l}</span>
-                </div>
-              ))}
-            </div>
-            {sessConDatos.map(s=>{
-              const jd=s.jugadoras.find(j=>j.n===player);
-              if(!jd)return null;
-              const h15=Math.max(0,(jd.hsr||jd.ai15||0)-(jd.ai18||0)-(jd.spr||0));
-              const h18=jd.ai18||0;const spr=jd.spr||0;const tot=h15+h18+spr||1;
+            {hsrLegend}
+            {sessConDatos.map((s,i)=>{
+              const {h15,h18,spr}=vals[i];
+              const tot=h15+h18+spr;
               return(
                 <div key={s.id} style={{marginBottom:8}}>
                   <div style={{display:"flex",justifyContent:"space-between",marginBottom:2}}>
-                    <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label}</span>
-                    <span style={{fontSize:10,color:T.muted}}>{h15+h18+spr}m</span>
+                    <span style={{fontSize:11,color:T.muted2}}>{sIcon(s.tipo)} {s.label} <span style={{fontSize:10,color:T.muted}}>{s.fecha}</span></span>
+                    <div style={{display:"flex",gap:8}}>
+                      <span style={{color:T.green,fontSize:10}}>{h15}m</span>
+                      <span style={{color:T.amber,fontSize:10}}>{h18}m</span>
+                      <span style={{color:spr>0?T.red:T.muted,fontSize:10,fontWeight:spr>0?700:400}}>{spr}m</span>
+                      <span style={{color:T.muted,fontSize:10}}>{tot}m</span>
+                    </div>
                   </div>
-                  <div style={{display:"flex",height:12,borderRadius:4,overflow:"hidden",background:"#1a1e2a"}}>
-                    {h15>0&&<div style={{width:`${(h15/tot)*100}%`,background:"#4a90e8"}}/>}
-                    {h18>0&&<div style={{width:`${(h18/tot)*100}%`,background:"#e09020"}}/>}
-                    {spr>0&&<div style={{width:`${(spr/tot)*100}%`,background:"#e05555"}}/>}
-                  </div>
-                  <div style={{display:"flex",gap:8,marginTop:2,fontSize:10}}>
-                    {h15>0&&<span style={{color:"#4a90e8"}}>{h15}m</span>}
-                    {h18>0&&<span style={{color:"#e09020"}}>{h18}m</span>}
-                    {spr>0&&<span style={{color:"#e05555"}}>{spr}m</span>}
-                  </div>
+                  <HsrBar h15={h15} h18={h18} spr={spr} mx={mx}/>
                 </div>
               );
             })}
@@ -1488,6 +1484,26 @@ function PlayerMinutos({player}){
           </div>
         ))}
         {jugados.length===0&&<div style={{color:T.muted,textAlign:"center",padding:12}}>Sin minutos registrados</div>}
+      </Card>
+      <Card>
+        <CT text="RANKING MINUTOS — EQUIPO"/>
+        {(()=>{
+          const tots=MINUTOS.map(r=>({
+            n:r.n,
+            tot:(r.cogs||0)+(r.pwcc||0)+(r.manq||0)+(r.catb||0)+(r.reds||0)
+          })).filter(r=>r.tot>0).sort((a,b)=>b.tot-a.tot);
+          const mx=tots[0]?.tot||1;
+          return tots.map((r,i)=>(
+            <div key={r.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+              <span style={{fontSize:10,color:T.muted,width:16,textAlign:"right"}}>{i+1}</span>
+              <span style={{fontSize:11,color:r.n===player?T.blue:T.text,fontWeight:r.n===player?700:400,width:130}}>{r.n.split(" ")[0]}</span>
+              <div style={{flex:1,height:8,borderRadius:3,background:"#1e2535"}}>
+                <div style={{width:`${(r.tot/mx)*100}%`,height:"100%",borderRadius:3,background:r.n===player?T.blue:T.muted2}}/>
+              </div>
+              <span style={{fontSize:10,color:r.n===player?T.blue:T.muted,width:32,textAlign:"right"}}>{r.tot}'</span>
+            </div>
+          ));
+        })()}
       </Card>
     </>
   );
