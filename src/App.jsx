@@ -757,7 +757,7 @@ function StaffGPS(){
             <CT text="Datos individuales"/>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-                <TH cols={["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","V.máx"]}/>
+                <TH cols={["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx"]}/>
                 <tbody>{[...sess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
                   const h15=sess.zonas?sess.zonas.find(z=>z.n===j.n)?.h15:(j.hsr!=null||j.ai15!=null)?Math.max(0,(j.hsr??j.ai15)-(j.ai18??0)-(j.spr??0)):null;
                   const h18=sess.zonas?sess.zonas.find(z=>z.n===j.n)?.h18:j.ai18!=null?j.ai18:null;
@@ -775,6 +775,7 @@ function StaffGPS(){
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400}}>{sp!=null?`${sp}m`:"—"}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{j.dsc}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.amber:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
                     </tr>
                   );
