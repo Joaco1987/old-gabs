@@ -984,6 +984,7 @@ function StaffEvoGPS(){
 
 // ─── PLAYER EVOLUCIÓN GPS ─────────────────────────────────────────────────────
 const yoyoGrupoColor=g=>g===1?"#3ecf7a":g===2?"#4a90e8":"#e09020";
+const yoyoNivelColor=n=>n>=16.5?"#3ecf7a":n>=14.6?"#d4b000":"#e05555";
 const yoyoGrupoLabel=g=>`Grupo ${g}`;
 const yoyoDist={
   13.1:200,13.2:240,13.3:280,13.4:320,13.5:360,13.6:400,13.7:440,13.8:480,13.9:520,
