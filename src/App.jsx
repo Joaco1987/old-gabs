@@ -1719,10 +1719,12 @@ const SHEET_ID="1yvYdo8HyJoBPtEne0eIPWBZ80L8kjFOk0iBEvi4bDCs";
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyN2tk21GLiuti8j_TgAUJvjM0-DyKhwqL3kr39GlgoW4ZNUv5WMbFgA5SuAdZbX1I/exec";
 const saveToSheet=async(jugadora,tipo,datos)=>{
   try{
+    // Usar text/plain evita preflight CORS en Apps Script
     await fetch(SCRIPT_URL,{
       method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({jugadora,tipo,...datos})
+      headers:{"Content-Type":"text/plain"},
+      body:JSON.stringify({jugadora,tipo,...datos}),
+      mode:"no-cors"
     });
     return true;
   }catch(e){console.error("Save error:",e);return false;}
