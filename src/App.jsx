@@ -1718,30 +1718,16 @@ function PlayerAsistencia({player}){
 const SHEET_ID="1yvYdo8HyJoBPtEne0eIPWBZ80L8kjFOk0iBEvi4bDCs";
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec";
 const saveToSheet=(jugadora,tipo,datos)=>{
+  const params=new URLSearchParams({jugadora,tipo,...Object.fromEntries(Object.entries(datos).map(([k,v])=>[k,v===null||v===undefined?"":String(v)]))});
+  const url=`${SCRIPT_URL}?${params.toString()}`;
+  // Imagen 1x1 px — GET cross-origin sin restricciones CORS
   return new Promise((resolve)=>{
-    const params=new URLSearchParams({jugadora,tipo,...Object.fromEntries(Object.entries(datos).map(([k,v])=>[k,String(v||"")]))});
-    const url=`${SCRIPT_URL}?${params.toString()}`;
-    // Iframe oculto — evita CORS completamente
-    const id="gs_iframe_"+Date.now();
-    const iframe=document.createElement("iframe");
-    iframe.id=id; iframe.name=id; iframe.style.display="none";
-    document.body.appendChild(iframe);
-    const form=document.createElement("form");
-    form.method="GET"; form.action=SCRIPT_URL; form.target=id;
-    [...params.entries()].forEach(([k,v])=>{
-      const inp=document.createElement("input");
-      inp.type="hidden"; inp.name=k; inp.value=v;
-      form.appendChild(inp);
-    });
-    document.body.appendChild(form);
-    iframe.onload=()=>{
-      setTimeout(()=>{
-        try{document.body.removeChild(iframe);document.body.removeChild(form);}catch(e){}
-      },500);
-      resolve(true);
-    };
-    setTimeout(()=>resolve(true),5000);
-    form.submit();
+    const img=new Image();
+    let done=false;
+    const finish=()=>{if(!done){done=true;resolve(true);}};
+    img.onload=finish;img.onerror=finish;
+    img.src=url;
+    setTimeout(finish,4000);
   });
 };
 function PlayerRPE({player}){
