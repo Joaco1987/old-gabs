@@ -1719,16 +1719,9 @@ const SHEET_ID="1yvYdo8HyJoBPtEne0eIPWBZ80L8kjFOk0iBEvi4bDCs";
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec";
 const saveToSheet=(jugadora,tipo,datos)=>{
   const params=new URLSearchParams({jugadora,tipo,...Object.fromEntries(Object.entries(datos).map(([k,v])=>[k,v===null||v===undefined?"":String(v)]))});
-  const url=`${SCRIPT_URL}?${params.toString()}`;
-  // Imagen 1x1 px — GET cross-origin sin restricciones CORS
-  return new Promise((resolve)=>{
-    const img=new Image();
-    let done=false;
-    const finish=()=>{if(!done){done=true;resolve(true);}};
-    img.onload=finish;img.onerror=finish;
-    img.src=url;
-    setTimeout(finish,4000);
-  });
+  return fetch(`${SCRIPT_URL}?${params.toString()}`,{method:"GET",mode:"no-cors"})
+    .then(()=>true)
+    .catch(()=>true);
 };
 function PlayerRPE({player}){
   const [rpe,setRpe]=useState(RPE_DATA[player]||5);
