@@ -788,7 +788,7 @@ function StaffGPS(){
             <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020"}}>
               <CT text="Promedio equipo (fila Promedio del sheet)"/>
               <div style={{display:"flex",gap:10,flexWrap:"wrap",fontSize:12}}>
-                {[["Dist.",`${sess.prom.dist?.toLocaleString()}m`,T.blue],["m/min",sess.prom.mxm,T.muted2],["HSR",`${sess.prom.hsr}m`,T.text],["18-21",`${sess.prom.h18}m`,T.amber],["Spr>21",`${sess.prom.spr}m`,T.red],["ACC",sess.prom.acc,T.purple],["DSC",sess.prom.dsc,T.cyan],["Nº Spr",(()=>{const ns=sess.jugadoras?.reduce((a,j)=>a+(j.ns||0),0)||0;return Math.round(ns/(sess.jugadoras?.length||1));})(),"#3ecf7a"],["Vmáx",`${sess.prom.vmax}km/h`,"#e879f9"]].map(([l,v,c])=>(
+                {[["Dist.",`${sess.prom.dist?.toLocaleString()}m`,T.blue],["m/min",sess.prom.mxm,T.muted2],["HSR",`${sess.prom.hsr}m`,T.text],["18-21",`${sess.prom.h18}m`,T.amber],["Spr>21",`${sess.prom.spr}m`,T.red],["ACC",sess.prom.acc,T.purple],["DSC",sess.prom.dsc,T.cyan],["Nº Spr",(()=>{return sess.jugadoras?.reduce((a,j)=>a+(j.ns||0),0)||0;})(),"#06b6d4"],["Vmáx",`${sess.prom.vmax}km/h`,"#e879f9"]].map(([l,v,c])=>(
                   <div key={l} style={{textAlign:"center",minWidth:55}}>
                     <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{l}</div>
                     <div style={{fontSize:14,fontWeight:600,color:c}}>{v}</div>
@@ -1258,7 +1258,7 @@ function StaffRPE(){
   const [rows,setRows]=React.useState([]);
   const [loading,setLoading]=React.useState(true);
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbyN2tk21GLiuti8j_TgAUJvjM0-DyKhwqL3kr39GlgoW4ZNUv5WMbFgA5SuAdZbX1I/exec")
+    fetch("https://script.google.com/macros/s/AKfycbwU4w8NfJFzq83YrZzcqoZn7pn_srkFgMu6JjznLHqquW4x5fPukqql83ggF7R08lps/exec")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["RPE y Wellness"]||[];
@@ -1312,7 +1312,7 @@ function StaffWellness(){
   const [rows,setRows]=React.useState([]);
   const [loading,setLoading]=React.useState(true);
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbyN2tk21GLiuti8j_TgAUJvjM0-DyKhwqL3kr39GlgoW4ZNUv5WMbFgA5SuAdZbX1I/exec")
+    fetch("https://script.google.com/macros/s/AKfycbwU4w8NfJFzq83YrZzcqoZn7pn_srkFgMu6JjznLHqquW4x5fPukqql83ggF7R08lps/exec")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["RPE y Wellness"]||[];
@@ -1716,15 +1716,19 @@ function PlayerAsistencia({player}){
 
 // ─── GUARDAR RPE/WELLNESS EN GOOGLE SHEETS ────────────────────────────────────
 const SHEET_ID="1yvYdo8HyJoBPtEne0eIPWBZ80L8kjFOk0iBEvi4bDCs";
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbyN2tk21GLiuti8j_TgAUJvjM0-DyKhwqL3kr39GlgoW4ZNUv5WMbFgA5SuAdZbX1I/exec";
+const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec";
 const saveToSheet=async(jugadora,tipo,datos)=>{
   try{
-    // Usar text/plain evita preflight CORS en Apps Script
-    await fetch(SCRIPT_URL,{
-      method:"POST",
-      headers:{"Content-Type":"text/plain"},
-      body:JSON.stringify({jugadora,tipo,...datos}),
-      mode:"no-cors"
+    // Usar un img tag para hacer GET sin restricciones CORS
+    const params=new URLSearchParams({jugadora,tipo,...Object.fromEntries(Object.entries(datos).map(([k,v])=>[k,String(v||"")]))});
+    const url=`${SCRIPT_URL}?${params.toString()}`;
+    // Intentar con fetch no-cors Y con imagen (doble seguro)
+    fetch(url,{method:"GET",mode:"no-cors"}).catch(()=>{});
+    await new Promise((resolve)=>{
+      const img=new Image();
+      img.onload=img.onerror=resolve;
+      img.src=url+"&t="+Date.now();
+      setTimeout(resolve,3000);
     });
     return true;
   }catch(e){console.error("Save error:",e);return false;}
