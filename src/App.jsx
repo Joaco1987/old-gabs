@@ -1258,13 +1258,13 @@ function StaffRPE(){
   const [rows,setRows]=React.useState([]);
   const [loading,setLoading]=React.useState(true);
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbwU4w8NfJFzq83YrZzcqoZn7pn_srkFgMu6JjznLHqquW4x5fPukqql83ggF7R08lps/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["RPE y Wellness"]||[];
         const headers=sheet[0]||[];
         const rpeRows=sheet.slice(1)
-          .filter(r=>r[2]==="RPE")
+          .filter(r=>{const tipoIdx=headers.indexOf("Tipo");return r[tipoIdx]==="RPE";})
           .map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]])))
           .sort((a,b)=>new Date(b.Timestamp)-new Date(a.Timestamp));
         setRows(rpeRows);
@@ -1312,13 +1312,13 @@ function StaffWellness(){
   const [rows,setRows]=React.useState([]);
   const [loading,setLoading]=React.useState(true);
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbwU4w8NfJFzq83YrZzcqoZn7pn_srkFgMu6JjznLHqquW4x5fPukqql83ggF7R08lps/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["RPE y Wellness"]||[];
         const headers=sheet[0]||[];
         const wRows=sheet.slice(1)
-          .filter(r=>r[2]==="Wellness")
+          .filter(r=>{const tipoIdx=headers.indexOf("Tipo");return r[tipoIdx]==="Wellness";})
           .map(r=>Object.fromEntries(headers.map((h,i)=>[h,r[i]])))
           .sort((a,b)=>new Date(b.Timestamp)-new Date(a.Timestamp));
         setRows(wRows);
@@ -1717,21 +1717,32 @@ function PlayerAsistencia({player}){
 // ─── GUARDAR RPE/WELLNESS EN GOOGLE SHEETS ────────────────────────────────────
 const SHEET_ID="1yvYdo8HyJoBPtEne0eIPWBZ80L8kjFOk0iBEvi4bDCs";
 const SCRIPT_URL="https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec";
-const saveToSheet=async(jugadora,tipo,datos)=>{
-  try{
-    // Usar un img tag para hacer GET sin restricciones CORS
+const saveToSheet=(jugadora,tipo,datos)=>{
+  return new Promise((resolve)=>{
     const params=new URLSearchParams({jugadora,tipo,...Object.fromEntries(Object.entries(datos).map(([k,v])=>[k,String(v||"")]))});
     const url=`${SCRIPT_URL}?${params.toString()}`;
-    // Intentar con fetch no-cors Y con imagen (doble seguro)
-    fetch(url,{method:"GET",mode:"no-cors"}).catch(()=>{});
-    await new Promise((resolve)=>{
-      const img=new Image();
-      img.onload=img.onerror=resolve;
-      img.src=url+"&t="+Date.now();
-      setTimeout(resolve,3000);
+    // Iframe oculto — evita CORS completamente
+    const id="gs_iframe_"+Date.now();
+    const iframe=document.createElement("iframe");
+    iframe.id=id; iframe.name=id; iframe.style.display="none";
+    document.body.appendChild(iframe);
+    const form=document.createElement("form");
+    form.method="GET"; form.action=SCRIPT_URL; form.target=id;
+    [...params.entries()].forEach(([k,v])=>{
+      const inp=document.createElement("input");
+      inp.type="hidden"; inp.name=k; inp.value=v;
+      form.appendChild(inp);
     });
-    return true;
-  }catch(e){console.error("Save error:",e);return false;}
+    document.body.appendChild(form);
+    iframe.onload=()=>{
+      setTimeout(()=>{
+        try{document.body.removeChild(iframe);document.body.removeChild(form);}catch(e){}
+      },500);
+      resolve(true);
+    };
+    setTimeout(()=>resolve(true),5000);
+    form.submit();
+  });
 };
 function PlayerRPE({player}){
   const [rpe,setRpe]=useState(RPE_DATA[player]||5);
@@ -1748,7 +1759,12 @@ function PlayerRPE({player}){
             <button key={n} onClick={()=>{setRpe(n);setSaved(false);}} style={{width:34,height:34,borderRadius:6,border:rpe===n?`2px solid ${T.blue}`:`1px solid ${T.border}`,background:rpe===n?T.blue+"33":"transparent",color:rpe===n?T.blue:T.muted,fontSize:14,fontWeight:rpe===n?700:400,cursor:"pointer",fontFamily:"inherit"}}>{n}</button>
           ))}
         </div>
-        <button onClick={()=>setSaved(true)} style={{width:"100%",padding:10,background:T.blue,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>Guardar RPE</button>
+        <button onClick={async()=>{
+          setSaving(true);
+          const today=new Date().toLocaleDateString("es-CL");
+          await saveToSheet(player,"RPE",{fecha:today,rpe:rpe});
+          setSaving(false);setSaved(true);
+        }} style={{width:"100%",padding:10,background:T.blue,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"Guardar RPE"}</button>
         {saved&&<div style={{textAlign:"center",marginTop:8,fontSize:12,color:T.green}}>✓ RPE guardado</div>}
       </Card>
     </>
