@@ -1277,8 +1277,9 @@ function StaffRPE(){
   const rpeColor=v=>+v>=8?"#e05555":+v>=6?"#e09020":"#3ecf7a";
 
   const fmtF=f=>{
-    const p=String(f||"").split("-");
-    if(p.length<3)return f||"";
+    const s=String(f||"").split("T")[0]; // quita la hora si hay
+    const p=s.split("-");
+    if(p.length<3)return s||"";
     return p[0].length===4
       ? p[2].padStart(2,"0")+"/"+p[1].padStart(2,"0")
       : p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0");
@@ -1394,8 +1395,9 @@ function StaffWellness(){
 
   // Fecha "2026-05-25" o "25-05-2026" → "25/05"
   const fmtF=f=>{
-    const p=String(f||"").split("-");
-    if(p.length<3)return f||"";
+    const s=String(f||"").split("T")[0]; // quita la hora si hay
+    const p=s.split("-");
+    if(p.length<3)return s||"";
     return p[0].length===4
       ? p[2].padStart(2,"0")+"/"+p[1].padStart(2,"0")
       : p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0");
