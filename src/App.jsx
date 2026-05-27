@@ -1257,6 +1257,7 @@ function StaffAsistencia(){
 function StaffRPE(){
   const [rows,setRows]=React.useState([]);
   const [loading,setLoading]=React.useState(true);
+  const [openDate,setOpenDate]=React.useState(null);
   React.useEffect(()=>{
     fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
       .then(r=>r.json())
@@ -1274,47 +1275,95 @@ function StaffRPE(){
   },[]);
 
   const rpeCol=n=>n>=8?"#e05555":n>=5?"#e09020":n>=1?"#3ecf7a":"#aaa";
-  const alerts=rows.filter(r=>+r.RPE>=8);
+
+  const fmtF=f=>{
+    const s=String(f||"").split("T")[0];
+    const p=s.split("-");
+    if(p.length<3)return s||"";
+    return p[0].length===4
+      ? p[2].padStart(2,"0")+"/"+p[1].padStart(2,"0")
+      : p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0");
+  };
+
+  const hoy=(()=>{const d=new Date();return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");})();
+
+  const groupBy=arr=>{
+    const map={};
+    arr.forEach(r=>{const k=fmtF(r.Fecha);if(!map[k])map[k]=[];map[k].push(r);});
+    return map;
+  };
+
+  const allByDate=groupBy(rows);
+  const todayRows=allByDate[hoy]||[];
+  const pastDates=Object.keys(allByDate).filter(d=>d!==hoy);
+  const alertsHoy=todayRows.filter(r=>+r.RPE>=8);
+
+  const RPETable=({recs})=>(
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+      <TH cols={["Jugadora","RPE"]}/>
+      <tbody>{recs.map((r,i)=>(
+        <tr key={i}>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:rpeCol(+r.RPE),fontWeight:700,textAlign:"center",fontSize:14}}>{r.RPE}</td>
+        </tr>
+      ))}</tbody>
+    </table>
+  );
 
   return(
     <>
-      {/* ALERTAS — siempre arriba */}
-      {alerts.length>0&&(
+      {/* ALERTAS HOY */}
+      {alertsHoy.length>0&&(
         <Card style={{marginBottom:10,border:"1px solid #5a1f1f",background:"#1a0a0a"}}>
-          <CT text="⚠ ALERTAS RPE ≥ 8"/>
-          {alerts.map((r,i)=>(
-            <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"4px 0",borderBottom:"1px solid #2a1515"}}>
+          <CT text={"⚠ ALERTAS RPE — "+hoy}/>
+          {alertsHoy.map((r,i)=>(
+            <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"3px 0"}}>
               <span style={{color:T.text,fontSize:12,fontWeight:500}}>{r.Jugadora}</span>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <span style={{color:T.muted,fontSize:11}}>{r.Fecha}</span>
-                <span style={{color:T.red,fontSize:13,fontWeight:700}}>RPE {r.RPE}</span>
-              </div>
+              <span style={{color:T.red,fontSize:12,fontWeight:700}}>RPE {r.RPE}</span>
             </div>
           ))}
         </Card>
       )}
 
-      {/* TABLA REGISTROS */}
-      <Card>
-        <CT text={loading?"Cargando registros...":"REGISTROS RPE — DESDE LA APP"}/>
+      {/* HOY */}
+      <Card style={{marginBottom:10}}>
+        <CT text={loading?"Cargando...":"REGISTROS RPE HOY — "+hoy}/>
         {loading&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Cargando...</div>}
-        {!loading&&rows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros aún</div>}
-        {rows.length>0&&(
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Fecha","Jugadora","RPE"]}/>
-            <tbody>{rows.map((r,i)=>{
-              const n=+r.RPE;
-              return(
-                <tr key={i}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r.Fecha}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:rpeCol(n),fontWeight:700,textAlign:"center",fontSize:14}}>{r.RPE}</td>
-                </tr>
-              );
-            })}</tbody>
-          </table>
-        )}
+        {!loading&&todayRows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros hoy</div>}
+        {!loading&&todayRows.length>0&&<RPETable recs={todayRows}/>}
       </Card>
+
+      {/* FECHAS ANTERIORES */}
+      {!loading&&pastDates.length>0&&(
+        <Card>
+          <CT text="FECHAS ANTERIORES"/>
+          {pastDates.map(fecha=>(
+            <div key={fecha} style={{borderBottom:"1px solid #1e2535"}}>
+              <div onClick={()=>setOpenDate(openDate===fecha?null:fecha)}
+                style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 4px",cursor:"pointer"}}>
+                <span style={{color:T.blue,fontSize:13,fontWeight:600}}>{fecha}</span>
+                <span style={{color:T.muted,fontSize:12}}>{openDate===fecha?"▲":"▼"}</span>
+              </div>
+              {openDate===fecha&&(
+                <div style={{paddingBottom:8}}>
+                  {allByDate[fecha].some(r=>+r.RPE>=8)&&(
+                    <div style={{background:"#1a0a0a",borderRadius:6,padding:"6px 8px",marginBottom:6}}>
+                      <div style={{fontSize:10,color:T.red,fontWeight:700,marginBottom:4}}>⚠ ALERTAS RPE ≥ 8</div>
+                      {allByDate[fecha].filter(r=>+r.RPE>=8).map((r,i)=>(
+                        <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"2px 0"}}>
+                          <span style={{color:T.text,fontSize:12}}>{r.Jugadora}</span>
+                          <span style={{color:T.red,fontSize:12,fontWeight:700}}>RPE {r.RPE}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <RPETable recs={allByDate[fecha]}/>
+                </div>
+              )}
+            </div>
+          ))}
+        </Card>
+      )}
     </>
   );
 }
@@ -1386,7 +1435,7 @@ function StaffWellness(){
 
   const WellnessTable=({recs})=>(
     <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-      <TH cols={["Jugadora","Sueño","Horas","Fatiga","Dolor","Estrés","Ánimo"]}/>
+      <TH cols={["Jugadora","Sueño","Horas","Fatiga","Dolor","Zona","Estrés","Ánimo"]}/>
       <tbody>{recs.map((r,i)=>(
         <tr key={i}>
           <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
@@ -1394,6 +1443,7 @@ function StaffWellness(){
           <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{r["Horas Sueño"]}</td>
           <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r.Fatiga),fontWeight:600,textAlign:"center"}}>{r.Fatiga}</td>
           <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Dolor Muscular"]),fontWeight:600,textAlign:"center"}}>{r["Dolor Muscular"]}</td>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,fontSize:11}}>{r["Zonas Dolor"]||"—"}</td>
           <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Estrés"]),fontWeight:600,textAlign:"center"}}>{r["Estrés"]}</td>
           <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Ánimo"]),fontWeight:600,textAlign:"center"}}>{r["Ánimo"]}</td>
         </tr>
