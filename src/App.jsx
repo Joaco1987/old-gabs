@@ -1063,8 +1063,7 @@ function PlayerEvoGPS({player}){
               </div>
               <div style={{width:1,height:36,background:T.border}}/>
               <div>
-                <div style={{fontSize:12,fontWeight:600,color:T.text}}>{maxS.label}</div>
-                <div style={{fontSize:11,color:T.muted}}>{sIcon(maxS.tipo)} {maxS.fecha||maxS.id}</div>
+                <div style={{fontSize:12,fontWeight:600,color:T.text}}>{sIcon(maxS.tipo)} {maxS.label}</div>
               </div>
             </div>
           ):null;
