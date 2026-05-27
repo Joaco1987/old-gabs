@@ -1311,6 +1311,7 @@ function StaffRPE(){
 function StaffWellness(){
   const [rows,setRows]=React.useState([]);
   const [loading,setLoading]=React.useState(true);
+  const [openDate,setOpenDate]=React.useState(null);
   React.useEffect(()=>{
     fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
       .then(r=>r.json())
@@ -1329,84 +1330,112 @@ function StaffWellness(){
 
   const wColor=v=>+v<=2?"#e05555":+v===3?"#e09020":"#3ecf7a";
 
-  // "2026-05-25" o "25-05-2026" → "25/05"
+  // Fecha "2026-05-25" o "25-05-2026" → "25/05"
   const fmtF=f=>{
     const p=String(f||"").split("-");
-    if(p.length<3) return f||"";
+    if(p.length<3)return f||"";
     return p[0].length===4
       ? p[2].padStart(2,"0")+"/"+p[1].padStart(2,"0")
       : p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0");
   };
 
-  // Agrupar por fecha
-  const groupBy=(arr,key)=>{
+  // Fecha hoy en formato "dd/mm"
+  const hoy=(()=>{const d=new Date();return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");})();
+
+  // Agrupar por fecha formateada
+  const groupBy=arr=>{
     const map={};
-    arr.forEach(r=>{
-      const k=fmtF(r[key]);
-      if(!map[k])map[k]=[];
-      map[k].push(r);
-    });
+    arr.forEach(r=>{const k=fmtF(r.Fecha);if(!map[k])map[k]=[];map[k].push(r);});
     return map;
   };
 
-  // Alertas agrupadas por fecha
-  const alertRows=rows.filter(r=>+r["Calidad Sueño"]<=2||+r.Fatiga<=2||+r["Estrés"]<=2||+r["Ánimo"]<=2);
-  const alertsByDate=groupBy(alertRows,"Fecha");
+  const allByDate=groupBy(rows);
+  const todayRows=allByDate[hoy]||[];
+  const pastDates=Object.keys(allByDate).filter(d=>d!==hoy);
 
-  // Registros agrupados por fecha
-  const regByDate=groupBy(rows,"Fecha");
+  const alertsHoy=todayRows.filter(r=>+r["Calidad Sueño"]<=2||+r.Fatiga<=2||+r["Estrés"]<=2||+r["Ánimo"]<=2);
+
+  const AlertRow=({r})=>{
+    const al=[];
+    if(+r["Calidad Sueño"]<=2)al.push("Sueño↓");
+    if(+r.Fatiga<=2)al.push("Fatiga↓");
+    if(+r["Estrés"]<=2)al.push("Estrés↑");
+    if(+r["Ánimo"]<=2)al.push("Ánimo↓");
+    if(!al.length)return null;
+    return(
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"3px 0"}}>
+        <span style={{color:T.text,fontSize:12,fontWeight:500}}>{r.Jugadora}</span>
+        <div style={{display:"flex",gap:6}}>
+          {al.map((a,j)=><span key={j} style={{color:T.red,fontSize:11,fontWeight:600}}>{a}</span>)}
+        </div>
+      </div>
+    );
+  };
+
+  const WellnessTable=({recs})=>(
+    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+      <TH cols={["Jugadora","Sueño","Horas","Fatiga","Dolor","Estrés","Ánimo"]}/>
+      <tbody>{recs.map((r,i)=>(
+        <tr key={i}>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Calidad Sueño"]),fontWeight:600,textAlign:"center"}}>{r["Calidad Sueño"]}</td>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{r["Horas Sueño"]}</td>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r.Fatiga),fontWeight:600,textAlign:"center"}}>{r.Fatiga}</td>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Dolor Muscular"]),fontWeight:600,textAlign:"center"}}>{r["Dolor Muscular"]}</td>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Estrés"]),fontWeight:600,textAlign:"center"}}>{r["Estrés"]}</td>
+          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Ánimo"]),fontWeight:600,textAlign:"center"}}>{r["Ánimo"]}</td>
+        </tr>
+      ))}</tbody>
+    </table>
+  );
 
   return(
     <>
-      {alertRows.length>0&&(
+      {/* ALERTAS HOY */}
+      {alertsHoy.length>0&&(
         <Card style={{marginBottom:10,border:"1px solid #5a1f1f",background:"#1a0a0a"}}>
-          <CT text="⚠ ALERTAS WELLNESS"/>
-          {Object.entries(alertsByDate).map(([fecha,recs])=>(
-            <div key={fecha} style={{marginBottom:8}}>
-              <div style={{fontSize:11,fontWeight:700,color:T.muted,padding:"4px 0",borderBottom:"1px solid #2a1515",marginBottom:4}}>{fecha}</div>
-              {recs.map((r,i)=>{
-                const al=[];
-                if(+r["Calidad Sueño"]<=2)al.push("Sueño↓");
-                if(+r.Fatiga<=2)al.push("Fatiga↓");
-                if(+r["Estrés"]<=2)al.push("Estrés↑");
-                if(+r["Ánimo"]<=2)al.push("Ánimo↓");
-                return(
-                  <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"3px 0"}}>
-                    <span style={{color:T.text,fontSize:12,fontWeight:500}}>{r.Jugadora}</span>
-                    <div style={{display:"flex",gap:6}}>
-                      {al.map((a,j)=><span key={j} style={{color:T.red,fontSize:11,fontWeight:600}}>{a}</span>)}
+          <CT text={"⚠ ALERTAS WELLNESS — "+hoy}/>
+          {alertsHoy.map((r,i)=><AlertRow key={i} r={r}/>)}
+        </Card>
+      )}
+
+      {/* REGISTROS HOY */}
+      <Card style={{marginBottom:10}}>
+        <CT text={loading?"Cargando...":"REGISTROS HOY — "+hoy}/>
+        {loading&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Cargando...</div>}
+        {!loading&&todayRows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros hoy</div>}
+        {!loading&&todayRows.length>0&&<WellnessTable recs={todayRows}/>}
+      </Card>
+
+      {/* FECHAS ANTERIORES — acordeón */}
+      {!loading&&pastDates.length>0&&(
+        <Card>
+          <CT text="FECHAS ANTERIORES"/>
+          {pastDates.map(fecha=>(
+            <div key={fecha} style={{borderBottom:"1px solid #1e2535"}}>
+              <div
+                onClick={()=>setOpenDate(openDate===fecha?null:fecha)}
+                style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 4px",cursor:"pointer"}}
+              >
+                <span style={{color:T.blue,fontSize:13,fontWeight:600}}>{fecha}</span>
+                <span style={{color:T.muted,fontSize:12}}>{openDate===fecha?"▲":"▼"}</span>
+              </div>
+              {openDate===fecha&&(
+                <div style={{paddingBottom:8}}>
+                  {/* Alertas de esa fecha */}
+                  {allByDate[fecha].some(r=>+r["Calidad Sueño"]<=2||+r.Fatiga<=2||+r["Estrés"]<=2||+r["Ánimo"]<=2)&&(
+                    <div style={{background:"#1a0a0a",borderRadius:6,padding:"6px 8px",marginBottom:6}}>
+                      <div style={{fontSize:10,color:T.red,fontWeight:700,marginBottom:4}}>⚠ ALERTAS</div>
+                      {allByDate[fecha].map((r,i)=><AlertRow key={i} r={r}/>)}
                     </div>
-                  </div>
-                );
-              })}
+                  )}
+                  <WellnessTable recs={allByDate[fecha]}/>
+                </div>
+              )}
             </div>
           ))}
         </Card>
       )}
-      <Card>
-        <CT text={loading?"Cargando...":"REGISTROS WELLNESS"}/>
-        {loading&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Cargando...</div>}
-        {!loading&&rows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros aún</div>}
-        {!loading&&rows.length>0&&Object.entries(regByDate).map(([fecha,recs])=>(
-          <div key={fecha} style={{marginBottom:12}}>
-            <div style={{fontSize:12,fontWeight:700,color:T.blue,padding:"4px 0",borderBottom:"1px solid #1e2535",marginBottom:4}}>{fecha}</div>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-              <TH cols={["Jugadora","Sueño","Horas","Fatiga","Dolor","Estrés","Ánimo"]}/>
-              <tbody>{recs.map((r,i)=>(
-                <tr key={i}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Calidad Sueño"]),fontWeight:600,textAlign:"center"}}>{r["Calidad Sueño"]}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{r["Horas Sueño"]}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r.Fatiga),fontWeight:600,textAlign:"center"}}>{r.Fatiga}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Dolor Muscular"]),fontWeight:600,textAlign:"center"}}>{r["Dolor Muscular"]}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Estrés"]),fontWeight:600,textAlign:"center"}}>{r["Estrés"]}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Ánimo"]),fontWeight:600,textAlign:"center"}}>{r["Ánimo"]}</td>
-                </tr>
-              ))}</tbody>
-            </table>
-          </div>
-        ))}
-      </Card>
     </>
   );
 }
