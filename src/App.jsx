@@ -1822,7 +1822,14 @@ function PlayerRPE({player}){
       {rpe>=8&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ RPE ≥8 — el cuerpo técnico recibirá alerta.</div>}
       <Card>
         <CT text="Mi RPE post-sesión (1-10)"/>
-        <div style={{textAlign:"center",fontSize:32,fontWeight:700,color:rpe>=8?T.red:rpe>=7?T.amber:T.green,marginBottom:10}}>{rpe}</div>
+        {rpe>0&&(()=>{
+          const RD={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#d4b000"],6:["Duro","#d4b000"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};
+          const [desc,col]=RD[rpe]||["","#aaa"];
+          return(<div style={{textAlign:"center",marginBottom:12}}>
+            <span style={{fontSize:36,fontWeight:800,color:col}}>{rpe}</span>
+            <div style={{fontSize:13,color:col,fontWeight:600,marginTop:2}}>{desc}</div>
+          </div>);
+        })()}
         <div style={{display:"flex",gap:4,justifyContent:"center",flexWrap:"wrap",marginBottom:12}}>
           {[1,2,3,4,5,6,7,8,9,10].map(n=>{
             const RPE_DESC={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#d4b000"],6:["Duro","#d4b000"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};
@@ -1833,7 +1840,6 @@ function PlayerRPE({player}){
             );
           })}
         </div>
-        {rpe>0&&(()=>{const RPE_DESC={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#d4b000"],6:["Duro","#d4b000"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};const [desc,col]=RPE_DESC[rpe];return(<div style={{textAlign:"center",marginTop:6,marginBottom:2}}><span style={{fontSize:22,fontWeight:800,color:col}}>{rpe}</span><span style={{fontSize:13,color:col,marginLeft:8,fontWeight:500}}>{desc}</span></div>);})()}
         <button onClick={async()=>{
           setSaving(true);
           const today=new Date().toLocaleDateString("es-CL");
