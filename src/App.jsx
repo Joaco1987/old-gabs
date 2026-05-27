@@ -1196,7 +1196,10 @@ function StaffMinutos(){
 function StaffAsistencia(){
   const rows=Object.entries(ASISTENCIA).map(([n,d])=>({
     n,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
-    pct:Math.round(d.dias.filter(x=>x===1).length/d.dias.length*100)
+    pct:(()=>{
+      const meses=[d.mar,d.abr,d.may].filter(v=>v!==null&&v!==undefined&&!isNaN(+v));
+      return meses.length?Math.round(meses.reduce((a,v)=>a+(+v),0)/meses.length):0;
+    })()
   })).sort((a,b)=>b.pct-a.pct);
   const marF=ATT_FECHAS.filter(f=>f.includes("/3"));
   const abrF=ATT_FECHAS.filter(f=>f.includes("/4"));
