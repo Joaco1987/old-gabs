@@ -1197,8 +1197,9 @@ function StaffAsistencia(){
   const rows=Object.entries(ASISTENCIA).map(([n,d])=>({
     n,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
     pct:(()=>{
-      const meses=[d.mar,d.abr,d.may].filter(v=>v!==null&&v!==undefined&&!isNaN(+v));
-      return meses.length?Math.round(meses.reduce((a,v)=>a+(+v),0)/meses.length):0;
+      const parse=v=>v?parseFloat(String(v).replace("%","")):null;
+      const meses=[parse(d.mar),parse(d.abr),parse(d.may)].filter(v=>v!==null&&!isNaN(v));
+      return meses.length?Math.round(meses.reduce((a,v)=>a+v,0)/meses.length):0;
     })()
   })).sort((a,b)=>b.pct-a.pct);
   const marF=ATT_FECHAS.filter(f=>f.includes("/3"));
