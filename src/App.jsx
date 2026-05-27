@@ -1803,9 +1803,20 @@ const saveToSheet=(jugadora,tipo,datos)=>{
     .catch(()=>true);
 };
 function PlayerRPE({player}){
+  const todayKey=(p)=>{const d=new Date();return p+"_rpe_"+d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();};
+  const [yaDone,setYaDone]=useState(()=>!!localStorage.getItem(todayKey(player)));
   const [rpe,setRpe]=useState(RPE_DATA[player]||5);
   const [saved,setSaved]=useState(false);
   const [saving,setSaving]=useState(false);
+  if(yaDone)return(
+    <Card>
+      <div style={{textAlign:"center",padding:"30px 10px"}}>
+        <div style={{fontSize:28,marginBottom:8}}>✅</div>
+        <div style={{color:"#3ecf7a",fontSize:15,fontWeight:700,marginBottom:6}}>RPE registrado hoy</div>
+        <div style={{color:T.muted,fontSize:12}}>Ya cargaste tu RPE de hoy. Volvé mañana.</div>
+      </div>
+    </Card>
+  );
   return(
     <>
       {rpe>=8&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ RPE ≥8 — el cuerpo técnico recibirá alerta.</div>}
@@ -1827,7 +1838,7 @@ function PlayerRPE({player}){
           setSaving(true);
           const today=new Date().toLocaleDateString("es-CL");
           await saveToSheet(player,"RPE",{fecha:today,rpe:rpe});
-          setSaving(false);setSaved(true);
+          setSaving(false);setSaved(true);localStorage.setItem(todayKey(player),'1');setYaDone(true);localStorage.setItem(todayKey(player),'1');setYaDone(true);
         }} style={{width:"100%",padding:10,background:T.blue,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"Guardar RPE"}</button>
         {saved&&<div style={{textAlign:"center",marginTop:8,fontSize:12,color:T.green}}>✓ RPE guardado</div>}
       </Card>
@@ -1838,6 +1849,8 @@ function PlayerRPE({player}){
 // ─── PLAYER WELLNESS ──────────────────────────────────────────────────────────
 function PlayerWellness({player}){
   const base=WELLNESS[player]||{horas:"7hs",calidad:3,fatiga:3,dolor:3,estres:3,animo:3};
+  const todayKeyW=(p)=>{const d=new Date();return p+"_well_"+d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();};
+  const [yaDone,setYaDone]=useState(()=>!!localStorage.getItem(todayKeyW(player)));
   const [form,setForm]=useState({horas:base.horas,calidad:base.calidad,fatiga:base.fatiga,dolor:base.dolor,estres:base.estres,animo:base.animo,zonasDolor:[],otroZona:""});
   const [saved,setSaved]=useState(false);
   const [saving,setSaving]=useState(false);
@@ -1854,6 +1867,15 @@ function PlayerWellness({player}){
         ))}
       </div>
     </div>
+  );
+  if(yaDone)return(
+    <Card>
+      <div style={{textAlign:"center",padding:"30px 10px"}}>
+        <div style={{fontSize:28,marginBottom:8}}>✅</div>
+        <div style={{color:"#3ecf7a",fontSize:15,fontWeight:700,marginBottom:6}}>Wellness registrado hoy</div>
+        <div style={{color:T.muted,fontSize:12}}>Ya cargaste tu Wellness de hoy. Volvé mañana.</div>
+      </div>
+    </Card>
   );
   return(
     <>
@@ -1907,7 +1929,7 @@ function PlayerWellness({player}){
             animo:form.animo
           });
           WELLNESS_DATA[player]=form;
-          setSaving(false);setSaved(true);
+          setSaving(false);setSaved(true);localStorage.setItem(todayKeyW(player),'1');setYaDone(true);
         }} style={{width:"100%",padding:10,background:T.maroon,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit",marginTop:4}}>{saving?"Guardando...":"Guardar Wellness"}</button>
         {saved&&<div style={{textAlign:"center",marginTop:8,fontSize:12,color:T.green}}>✓ Wellness guardado</div>}
       </Card>
