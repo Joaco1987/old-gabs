@@ -631,7 +631,7 @@ const avg=arr=>{const v=arr.filter(x=>x!=null&&x>0);return v.length?v.reduce((a,
 const allSess=[...PARTIDOS,...AMISTOSOS,...ENTRENOS];
 const allNames=()=>{const s=new Set();allSess.forEach(ss=>ss.jugadoras.forEach(j=>s.add(j.n)));return Array.from(s).sort();};
 const mySess=(n,pool)=>pool.map(s=>({...s,data:s.jugadoras.find(j=>j.n===n)})).filter(s=>s.data);
-const wColor=n=>["","#e05555","#e07020","#d4b000","#5cb85c","#1a7a2a"][n]||"#4a5470";
+const wColor=n=>["","#e05555","#e07020","#f5c518","#5cb85c","#1a7a2a"][n]||"#4a5470";
 const wBg=n=>["","#2d0a0a","#2d1a0a","#2d2500","#0a2d0a","#051a05"][n]||"#1e2535";
 const sIcon=t=>t==="partido"?"🏑":t==="amistoso"?"⚡":"🏃";
 
@@ -986,7 +986,7 @@ function StaffEvoGPS(){
 
 // ─── PLAYER EVOLUCIÓN GPS ─────────────────────────────────────────────────────
 const yoyoGrupoColor=g=>g===1?"#3ecf7a":g===2?"#4a90e8":"#e09020";
-const yoyoNivelColor=n=>n>=16.5?"#3ecf7a":n>=14.6?"#d4b000":"#e05555";
+const yoyoNivelColor=n=>n>=16.5?"#3ecf7a":n>=14.6?"#f5c518":"#e05555";
 const yoyoGrupoLabel=g=>`Grupo ${g}`;
 const yoyoDist={
   13.1:200,13.2:240,13.3:280,13.4:320,13.5:360,13.6:400,13.7:440,13.8:480,13.9:520,
@@ -1093,7 +1093,7 @@ function StaffYoyo(){
       <Card style={{marginBottom:10}}>
         <CT text="Clasificación por Nivel"/>
         <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#d4b000"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
+          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#f5c518"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
               <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
             </div>
@@ -1703,7 +1703,7 @@ function PlayerYoyo({player}){
       <Card style={{marginBottom:10}}>
         <CT text="Clasificación por Nivel"/>
         <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#d4b000"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
+          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#f5c518"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
               <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
             </div>
@@ -1873,7 +1873,7 @@ function PlayerRPE({player}){
       <Card>
         <CT text="Mi RPE post-sesión (1-10)"/>
         {rpe>0&&(()=>{
-          const RD={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#d4b000"],6:["Duro","#d4b000"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};
+          const RD={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#f5c518"],6:["Duro","#f5c518"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};
           const [desc,col]=RD[rpe]||["","#aaa"];
           return(<div style={{textAlign:"center",marginBottom:12}}>
             <span style={{fontSize:36,fontWeight:800,color:col}}>{rpe}</span>
@@ -1882,7 +1882,7 @@ function PlayerRPE({player}){
         })()}
         <div style={{display:"flex",gap:4,justifyContent:"center",flexWrap:"wrap",marginBottom:12}}>
           {[1,2,3,4,5,6,7,8,9,10].map(n=>{
-            const RPE_DESC={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#d4b000"],6:["Duro","#d4b000"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};
+            const RPE_DESC={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#f5c518"],6:["Duro","#f5c518"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};
             const [desc,col]=RPE_DESC[n];
             const sel=rpe===n;
             return(
