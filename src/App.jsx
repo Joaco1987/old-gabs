@@ -1328,6 +1328,15 @@ function StaffWellness(){
   },[]);
 
   const wColor=v=>v<=2?"#e05555":v===3?"#e09020":"#3ecf7a";
+  // Formatear fecha a "25/05"
+  const fmtFecha=f=>{
+    if(!f)return"";
+    // Formato "25-05-2026" o "2026-05-25"
+    const p=String(f).split(/[-\/]/);
+    if(p.length<3)return f;
+    if(p[0].length===4)return p[2].padStart(2,"0")+"/"+p[1].padStart(2,"0");
+    return p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0");
+  };
   const alerts=rows.filter(r=>+r["Calidad Sueño"]<=2||+r.Fatiga<=2||+r["Estrés"]<=2||+r["Ánimo"]<=2);
 
   return(
@@ -1335,17 +1344,24 @@ function StaffWellness(){
       {alerts.length>0&&(
         <Card style={{marginBottom:10,border:"1px solid #5a1f1f",background:"#1a0a0a"}}>
           <CT text="⚠ ALERTAS WELLNESS"/>
-          {alerts.map((r,i)=>(
-            <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"4px 0",borderBottom:"1px solid #2a1515"}}>
-              <span style={{color:T.text,fontSize:12}}>{r.Jugadora} — {r.Fecha}</span>
-              <div style={{display:"flex",gap:6}}>
-                {+r["Calidad Sueño"]<=2&&<span style={{color:T.red,fontSize:11}}>Sueño↓</span>}
-                {+r.Fatiga<=2&&<span style={{color:T.red,fontSize:11}}>Fatiga↓</span>}
-                {+r["Estrés"]<=2&&<span style={{color:T.red,fontSize:11}}>Estrés↑</span>}
-                {+r["Ánimo"]<=2&&<span style={{color:T.red,fontSize:11}}>Ánimo↓</span>}
+          {alerts.map((r,i)=>{
+            const alertas=[];
+            if(+r["Calidad Sueño"]<=2)alertas.push("Sueño↓");
+            if(+r.Fatiga<=2)alertas.push("Fatiga↓");
+            if(+r["Estrés"]<=2)alertas.push("Estrés↑");
+            if(+r["Ánimo"]<=2)alertas.push("Ánimo↓");
+            return(
+              <div key={i} style={{padding:"5px 0",borderBottom:"1px solid #2a1515"}}>
+                <div style={{fontSize:11,color:T.muted,marginBottom:2}}>{fmtFecha(r.Fecha)}</div>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                  <span style={{color:T.text,fontSize:12,fontWeight:500}}>{r.Jugadora}</span>
+                  <div style={{display:"flex",gap:6}}>
+                    {alertas.map((a,j)=><span key={j} style={{color:T.red,fontSize:11,fontWeight:600}}>{a}</span>)}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </Card>
       )}
       <Card>
@@ -1357,12 +1373,12 @@ function StaffWellness(){
             <TH cols={["Fecha","Jugadora","Sueño","Horas","Fatiga","Dolor","Estrés","Ánimo"]}/>
             <tbody>{rows.map((r,i)=>(
               <tr key={i}>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r.Fecha}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{fmtFecha(r.Fecha)}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r["Calidad Sueño"]),fontWeight:600}}>{r["Calidad Sueño"]}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r["Horas Sueño"]}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r.Fatiga),fontWeight:600}}>{r.Fatiga}</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r["Dolor Muscular"]}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r["Dolor Muscular"]),fontWeight:600}}>{r["Dolor Muscular"]}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r["Estrés"]),fontWeight:600}}>{r["Estrés"]}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(+r["Ánimo"]),fontWeight:600}}>{r["Ánimo"]}</td>
               </tr>
@@ -1373,6 +1389,7 @@ function StaffWellness(){
     </>
   );
 }
+
 function RadarChart({player,sesion}){
   if(!sesion||sesion.jugadoras.length<2)return null;
   const jd=sesion.jugadoras.find(j=>j.n===player);
