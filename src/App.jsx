@@ -961,6 +961,24 @@ function StaffEvoGPS(){
       </div>
       <Card>
         <CT text={`${curMetric?.label} — ${vista==="equipo"?"Promedio equipo":jugSel.split(" ")[0]}`}/>
+        {vals.length>0&&(()=>{
+          const maxIdx=vals.indexOf(Math.max(...vals));
+          const maxS=sessions[maxIdx];
+          const maxV=vals[maxIdx];
+          const unit=curMetric?.unit||"";
+          return maxS?(
+            <div style={{display:"flex",alignItems:"center",gap:10,background:"#0d1f35",borderRadius:8,padding:"8px 14px",marginBottom:10,border:"1px solid #1e3a5f"}}>
+              <div style={{textAlign:"center",minWidth:40}}>
+                <div style={{fontSize:22,fontWeight:800,color:curMetric?.color||T.blue}}>{maxV}{unit}</div>
+                <div style={{fontSize:9,color:T.muted,marginTop:1}}>MÁX</div>
+              </div>
+              <div style={{width:1,height:36,background:T.border}}/>
+              <div>
+                <div style={{fontSize:12,fontWeight:600,color:T.text}}>{sIcon(maxS.tipo)} {maxS.label}</div>
+              </div>
+            </div>
+          ):null;
+        })()}
         {sessions.map((s,i)=>{
           const v=vals[i];
           const pct=(v/maxVal)*100;
