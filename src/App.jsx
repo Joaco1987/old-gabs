@@ -1257,7 +1257,6 @@ function StaffAsistencia(){
 function StaffRPE(){
   const [rows,setRows]=React.useState([]);
   const [loading,setLoading]=React.useState(true);
-  const [openDate,setOpenDate]=React.useState(null);
   React.useEffect(()=>{
     fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
       .then(r=>r.json())
@@ -1274,99 +1273,48 @@ function StaffRPE(){
       .finally(()=>setLoading(false));
   },[]);
 
-  const rpeColor=v=>+v>=8?"#e05555":+v>=6?"#e09020":"#3ecf7a";
-
-  const fmtF=f=>{
-    const s=String(f||"").split("T")[0]; // quita la hora si hay
-    const p=s.split("-");
-    if(p.length<3)return s||"";
-    return p[0].length===4
-      ? p[2].padStart(2,"0")+"/"+p[1].padStart(2,"0")
-      : p[0].padStart(2,"0")+"/"+p[1].padStart(2,"0");
-  };
-
-  const hoy=(()=>{const d=new Date();return String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0");})();
-
-  const groupBy=arr=>{
-    const map={};
-    arr.forEach(r=>{const k=fmtF(r.Fecha);if(!map[k])map[k]=[];map[k].push(r);});
-    return map;
-  };
-
-  const allByDate=groupBy(rows);
-  const todayRows=allByDate[hoy]||[];
-  const pastDates=Object.keys(allByDate).filter(d=>d!==hoy);
-
-  const alertsHoy=todayRows.filter(r=>+r.RPE>=8);
-
-  const RPETable=({recs})=>(
-    <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-      <TH cols={["Jugadora","RPE"]}/>
-      <tbody>{recs.map((r,i)=>(
-        <tr key={i}>
-          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
-          <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:rpeColor(r.RPE),fontWeight:700,textAlign:"center",fontSize:14}}>{r.RPE}</td>
-        </tr>
-      ))}</tbody>
-    </table>
-  );
+  const rpeCol=n=>n>=8?"#e05555":n>=5?"#e09020":n>=1?"#3ecf7a":"#aaa";
+  const alerts=rows.filter(r=>+r.RPE>=8);
 
   return(
     <>
-      {/* ALERTAS HOY */}
-      {alertsHoy.length>0&&(
+      {/* ALERTAS — siempre arriba */}
+      {alerts.length>0&&(
         <Card style={{marginBottom:10,border:"1px solid #5a1f1f",background:"#1a0a0a"}}>
-          <CT text={"⚠ ALERTAS RPE — "+hoy}/>
-          {alertsHoy.map((r,i)=>(
-            <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"3px 0"}}>
+          <CT text="⚠ ALERTAS RPE ≥ 8"/>
+          {alerts.map((r,i)=>(
+            <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"4px 0",borderBottom:"1px solid #2a1515"}}>
               <span style={{color:T.text,fontSize:12,fontWeight:500}}>{r.Jugadora}</span>
-              <span style={{color:T.red,fontSize:12,fontWeight:700}}>RPE {r.RPE}</span>
-            </div>
-          ))}
-        </Card>
-      )}
-
-      {/* REGISTROS HOY */}
-      <Card style={{marginBottom:10}}>
-        <CT text={loading?"Cargando...":"REGISTROS RPE HOY — "+hoy}/>
-        {loading&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Cargando...</div>}
-        {!loading&&todayRows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros hoy</div>}
-        {!loading&&todayRows.length>0&&<RPETable recs={todayRows}/>}
-      </Card>
-
-      {/* FECHAS ANTERIORES — acordeón */}
-      {!loading&&pastDates.length>0&&(
-        <Card>
-          <CT text="FECHAS ANTERIORES"/>
-          {pastDates.map(fecha=>(
-            <div key={fecha} style={{borderBottom:"1px solid #1e2535"}}>
-              <div
-                onClick={()=>setOpenDate(openDate===fecha?null:fecha)}
-                style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 4px",cursor:"pointer"}}
-              >
-                <span style={{color:T.blue,fontSize:13,fontWeight:600}}>{fecha}</span>
-                <span style={{color:T.muted,fontSize:12}}>{openDate===fecha?"▲":"▼"}</span>
+              <div style={{display:"flex",alignItems:"center",gap:10}}>
+                <span style={{color:T.muted,fontSize:11}}>{r.Fecha}</span>
+                <span style={{color:T.red,fontSize:13,fontWeight:700}}>RPE {r.RPE}</span>
               </div>
-              {openDate===fecha&&(
-                <div style={{paddingBottom:8}}>
-                  {allByDate[fecha].some(r=>+r.RPE>=8)&&(
-                    <div style={{background:"#1a0a0a",borderRadius:6,padding:"6px 8px",marginBottom:6}}>
-                      <div style={{fontSize:10,color:T.red,fontWeight:700,marginBottom:4}}>⚠ ALERTAS RPE ≥ 8</div>
-                      {allByDate[fecha].filter(r=>+r.RPE>=8).map((r,i)=>(
-                        <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"2px 0"}}>
-                          <span style={{color:T.text,fontSize:12}}>{r.Jugadora}</span>
-                          <span style={{color:T.red,fontSize:12,fontWeight:700}}>RPE {r.RPE}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  <RPETable recs={allByDate[fecha]}/>
-                </div>
-              )}
             </div>
           ))}
         </Card>
       )}
+
+      {/* TABLA REGISTROS */}
+      <Card>
+        <CT text={loading?"Cargando registros...":"REGISTROS RPE — DESDE LA APP"}/>
+        {loading&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Cargando...</div>}
+        {!loading&&rows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros aún</div>}
+        {rows.length>0&&(
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <TH cols={["Fecha","Jugadora","RPE"]}/>
+            <tbody>{rows.map((r,i)=>{
+              const n=+r.RPE;
+              return(
+                <tr key={i}>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r.Fecha}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{r.Jugadora}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:rpeCol(n),fontWeight:700,textAlign:"center",fontSize:14}}>{r.RPE}</td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
+        )}
+      </Card>
     </>
   );
 }
@@ -1865,10 +1813,16 @@ function PlayerRPE({player}){
         <CT text="Mi RPE post-sesión (1-10)"/>
         <div style={{textAlign:"center",fontSize:32,fontWeight:700,color:rpe>=8?T.red:rpe>=7?T.amber:T.green,marginBottom:10}}>{rpe}</div>
         <div style={{display:"flex",gap:4,justifyContent:"center",flexWrap:"wrap",marginBottom:12}}>
-          {[1,2,3,4,5,6,7,8,9,10].map(n=>(
-            <button key={n} onClick={()=>{setRpe(n);setSaved(false);}} style={{width:34,height:34,borderRadius:6,border:rpe===n?`2px solid ${T.blue}`:`1px solid ${T.border}`,background:rpe===n?T.blue+"33":"transparent",color:rpe===n?T.blue:T.muted,fontSize:14,fontWeight:rpe===n?700:400,cursor:"pointer",fontFamily:"inherit"}}>{n}</button>
-          ))}
+          {[1,2,3,4,5,6,7,8,9,10].map(n=>{
+            const RPE_DESC={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#d4b000"],6:["Duro","#d4b000"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};
+            const [desc,col]=RPE_DESC[n];
+            const sel=rpe===n;
+            return(
+              <button key={n} onClick={()=>{setRpe(n);setSaved(false);}} style={{width:34,height:34,borderRadius:6,border:sel?`2px solid ${col}`:`1px solid ${T.border}`,background:sel?col+"33":"transparent",color:sel?col:T.muted,fontSize:14,fontWeight:sel?700:400,cursor:"pointer",fontFamily:"inherit"}}>{n}</button>
+            );
+          })}
         </div>
+        {rpe>0&&(()=>{const RPE_DESC={1:["Muy muy suave","#3ecf7a"],2:["Muy suave","#3ecf7a"],3:["Suave","#3ecf7a"],4:["Moderado","#3ecf7a"],5:["Algo duro","#d4b000"],6:["Duro","#d4b000"],7:["Muy duro","#e09020"],8:["Muy muy duro","#e09020"],9:["Extremadamente duro","#e05555"],10:["Máximo esfuerzo","#e05555"]};const [desc,col]=RPE_DESC[rpe];return(<div style={{textAlign:"center",marginTop:6,marginBottom:2}}><span style={{fontSize:22,fontWeight:800,color:col}}>{rpe}</span><span style={{fontSize:13,color:col,marginLeft:8,fontWeight:500}}>{desc}</span></div>);})()}
         <button onClick={async()=>{
           setSaving(true);
           const today=new Date().toLocaleDateString("es-CL");
