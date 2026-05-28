@@ -1232,74 +1232,96 @@ function StaffMinutos(){
 function StaffAsistencia(){
   const [vista,setVista]=useState("reporte");
   if(vista==="tomar")return <StaffTomarAsistencia onVolver={()=>setVista("reporte")}/>;
-  const rows=Object.entries(ASISTENCIA).map(([n,d])=>({
-    n,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
-    pct:(()=>{
-      const parse=v=>v?parseFloat(String(v).replace("%","")):null;
-      const meses=[parse(d.mar),parse(d.abr),parse(d.may)].filter(v=>v!==null&&!isNaN(v));
-      return meses.length?Math.round(meses.reduce((a,v)=>a+v,0)/meses.length):0;
-    })()
-  })).sort((a,b)=>b.pct-a.pct);
-  const marF=ATT_FECHAS.filter(f=>f.includes("/3"));
-  const abrF=ATT_FECHAS.filter(f=>f.includes("/4"));
-  const mayF=ATT_FECHAS.filter(f=>f.includes("/5"));
+  return <StaffAsistenciaReporte onTomar={()=>setVista("tomar")}/>;
+}
+function StaffAsistenciaReporte({onTomar}){
+  const [rows,setRows]=useState(null);
+  const [loading,setLoading]=useState(true);
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Asistencias App"]||[];
+        if(!sheet.length){setRows([]);setLoading(false);return;}
+        const headers=sheet[0].map(h=>String(h));
+        const fechaIdx=headers.indexOf("Fecha");
+        const jugIdx=headers.indexOf("Jugadora");
+        const estIdx=headers.indexOf("Estado");
+        // Construir: { jugadora: { "2026-03": {total,pres}, ... } }
+        const data={};
+        const fechasSet=new Set();
+        sheet.slice(1).forEach(r=>{
+          const fecha=String(r[fechaIdx]||"").trim();
+          const jug=String(r[jugIdx]||"").trim();
+          const est=String(r[estIdx]||"").trim();
+          if(!fecha||!jug||!est)return;
+          // mes = "2026-03"
+          const mes=fecha.slice(0,7);
+          fechasSet.add(fecha);
+          if(!data[jug])data[jug]={};
+          if(!data[jug][mes])data[jug][mes]={total:0,pres:0};
+          data[jug][mes].total++;
+          if(est==="P")data[jug][mes].pres++;
+        });
+        // Calcular % por mes y total
+        const meses=["2026-03","2026-04","2026-05"];
+        const result=Object.entries(data).map(([n,mdata])=>{
+          const pctMes=m=>{
+            const d=mdata[m];
+            return d&&d.total>0?Math.round(d.pres/d.total*100):null;
+          };
+          const mar=pctMes("2026-03");
+          const abr=pctMes("2026-04");
+          const may=pctMes("2026-05");
+          const vals=[mar,abr,may].filter(v=>v!==null);
+          const tot=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):0;
+          return {n,mar:mar!==null?mar+"%":"—",abr:abr!==null?abr+"%":"—",may:may!==null?may+"%":"—",tot:tot+"%",pct:tot};
+        }).sort((a,b)=>b.pct-a.pct);
+        setRows(result);
+      })
+      .catch(()=>setRows([]))
+      .finally(()=>setLoading(false));
+  },[]);
+
+  const pctNum=s=>parseInt(String(s).replace("%",""))||0;
   return(
     <>
       <div style={{display:"flex",gap:8,marginBottom:10}}>
-        <button onClick={()=>setVista("reporte")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
-        <button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>✓ Tomar Asistencia</button>
+        <button onClick={()=>{}} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
+        <button onClick={onTomar} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>✓ Tomar Asistencia</button>
       </div>
-      <MR>
-        <MetCard label="Prom. asistencia" value={`${Math.round(avg(rows.map(r=>r.pct)))}%`} sub="Total Mar-May"/>
-        <MetCard label="≥80%" value={rows.filter(r=>r.pct>=80).length} sub="Jugadoras"/>
-        <MetCard label="<60%" value={rows.filter(r=>r.pct<60).length} sub="Alertas" sc={T.red}/>
-      </MR>
-      <Card>
-        <CT text="Calendario — % mensual"/>
-        <div style={{overflowX:"auto"}}>
-          <table style={{borderCollapse:"collapse",fontSize:11,width:"100%"}}>
-            <thead>
-              <tr>
-                <th style={{textAlign:"left",color:T.muted,padding:"3px 6px",borderBottom:`1px solid ${T.border}`,fontSize:10}}>Jugadora</th>
-                <th colSpan={marF.length} style={{textAlign:"center",color:T.green,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>MARZO</th>
-                <th colSpan={abrF.length} style={{textAlign:"center",color:T.blue,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>ABRIL</th>
-                <th colSpan={mayF.length} style={{textAlign:"center",color:T.amber,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>MAYO</th>
-                <th style={{textAlign:"center",color:T.green,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9,borderLeft:`1px solid ${T.border2}`}}>%MAR</th>
-                <th style={{textAlign:"center",color:T.blue,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9}}>%ABR</th>
-                <th style={{textAlign:"center",color:T.amber,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9}}>%MAY</th>
-                <th style={{textAlign:"center",color:T.muted,padding:"3px 5px",borderBottom:`1px solid ${T.border}`,fontSize:9}}>%TOT</th>
-              </tr>
-              <tr>
-                <th/>
-                {ATT_FECHAS.map((f,i)=><th key={i} style={{textAlign:"center",color:T.muted,padding:"2px 2px",borderBottom:`1px solid ${T.border}`,fontSize:7,minWidth:18,borderLeft:i===0||i===marF.length||i===marF.length+abrF.length?`1px solid ${T.border2}`:"none"}}>{f}</th>)}
-                <th/><th/><th/><th/>
-              </tr>
-            </thead>
-            <tbody>{rows.map(r=>{
-              const col=r.pct>=80?T.green:r.pct>=60?T.amber:T.red;
-              return(
-                <tr key={r.n}>
-                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,fontSize:11,whiteSpace:"nowrap"}}>{r.n.split(" ")[0]}</td>
-                  {r.dias.map((d,i)=>(
-                    <td key={i} style={{padding:"2px 1px",borderBottom:"1px solid #141824",textAlign:"center",borderLeft:i===0||i===marF.length||i===marF.length+abrF.length?`1px solid ${T.border2}`:"none"}}>
-                      <span style={{display:"inline-block",width:14,height:14,borderRadius:2,background:d===null?"#1a1e2a":d===1?"#0f2d1f":"#2d0f0f",color:d===null?T.muted:d===1?T.green:T.red,fontSize:8,lineHeight:"14px",textAlign:"center"}}>{d===null?"—":d===1?"✓":"✗"}</span>
-                    </td>
-                  ))}
-                  <td style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:T.green,fontWeight:500,borderLeft:`1px solid ${T.border2}`}}>{r.mar}</td>
-                  <td style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:T.blue,fontWeight:500}}>{r.abr}</td>
-                  <td style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:T.amber,fontWeight:500}}>{r.may}</td>
-                  <td style={{padding:"4px 5px",borderBottom:"1px solid #141824",textAlign:"center",fontSize:10,color:col,fontWeight:600}}>{r.pct}%</td>
-                </tr>
-              );
-            })}</tbody>
-          </table>
-        </div>
-      </Card>
+      {loading&&<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Cargando asistencias desde Drive...</div></Card>}
+      {!loading&&rows!==null&&(
+        <>
+          <MR>
+            <MetCard label="Prom. asistencia" value={rows.length?Math.round(rows.reduce((a,r)=>a+r.pct,0)/rows.length)+"%":"—"} sub="Total"/>
+            <MetCard label="≥80%" value={rows.filter(r=>r.pct>=80).length} sub="Jugadoras"/>
+            <MetCard label="<60%" value={rows.filter(r=>r.pct<60).length} sub="Alertas" sc={T.red}/>
+          </MR>
+          <Card>
+            <CT text="REPORTE ASISTENCIA — EN VIVO DESDE DRIVE"/>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+              <TH cols={["Jugadora","Mar","Abr","May","Total"]}/>
+              <tbody>{rows.map((r,i)=>{
+                const col=r.pct>=80?T.green:r.pct>=60?T.amber:T.red;
+                return(
+                  <tr key={i}>
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500}}>{r.n}</td>
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{r.mar}</td>
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.amber,textAlign:"center"}}>{r.abr}</td>
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.blue,textAlign:"center"}}>{r.may}</td>
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700,textAlign:"center"}}>{r.tot}</td>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          </Card>
+        </>
+      )}
     </>
   );
 }
 
-// ─── STAFF RPE ─────────────────────────────────────────────────────────────────
 
 function StaffTomarAsistencia({onVolver}){
   const JUGADORAS=["Alfaro Javiera","Arau María Paz","Carrasco Sofia","Errazu Sofia","Gacitua Emilia","Gomez Camila","Gutierrez Renata","Hevia Valentina","Liu Macarena","Manriquez Fernanda","Martinez Amanda","Mateluna Florencia","Muñoz Constanza","Pareja Camila","Pollmann Marianne","Retamal Antonia","Sepulveda Eileen","Sierra Julieta","Silva Victoria"];
