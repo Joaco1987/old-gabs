@@ -1230,6 +1230,8 @@ function StaffMinutos(){
 
 // ─── STAFF ASISTENCIA ──────────────────────────────────────────────────────────
 function StaffAsistencia(){
+  const [vista,setVista]=useState("reporte");
+  if(vista==="tomar")return <StaffTomarAsistencia onVolver={()=>setVista("reporte")}/>;
   const rows=Object.entries(ASISTENCIA).map(([n,d])=>({
     n,mar:d.mar,abr:d.abr,may:d.may,tot:d.tot,dias:d.dias,
     pct:(()=>{
@@ -1243,6 +1245,10 @@ function StaffAsistencia(){
   const mayF=ATT_FECHAS.filter(f=>f.includes("/5"));
   return(
     <>
+      <div style={{display:"flex",gap:8,marginBottom:10}}>
+        <button onClick={()=>setVista("reporte")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
+        <button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>✓ Tomar Asistencia</button>
+      </div>
       <MR>
         <MetCard label="Prom. asistencia" value={`${Math.round(avg(rows.map(r=>r.pct)))}%`} sub="Total Mar-May"/>
         <MetCard label="≥80%" value={rows.filter(r=>r.pct>=80).length} sub="Jugadoras"/>
@@ -1294,6 +1300,60 @@ function StaffAsistencia(){
 }
 
 // ─── STAFF RPE ─────────────────────────────────────────────────────────────────
+
+function StaffTomarAsistencia({onVolver}){
+  const JUGADORAS=["Alfaro Javiera","Arau María Paz","Carrasco Sofia","Errazu Sofia","Gacitua Emilia","Gomez Camila","Gutierrez Renata","Hevia Valentina","Liu Macarena","Manriquez Fernanda","Martinez Amanda","Mateluna Florencia","Muñoz Constanza","Pareja Camila","Pollmann Marianne","Retamal Antonia","Sepulveda Eileen","Sierra Julieta","Silva Victoria"];
+  const hoy=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
+  const [fecha,setFecha]=useState(hoy);
+  const [pres,setPres]=useState({});
+  const [saving,setSaving]=useState(false);
+  const [saved,setSaved]=useState(false);
+  const toggle=j=>setPres(p=>{const n={...p};n[j]=n[j]===1?0:n[j]===0?null:1;return n;});
+  const marcarTodas=v=>{const n={};JUGADORAS.forEach(j=>n[j]=v);setPres(n);};
+  const col=j=>pres[j]===1?"#3ecf7a":pres[j]===0?"#e05555":T.muted;
+  const lbl=j=>pres[j]===1?"P":pres[j]===0?"A":"—";
+  const guardar=async()=>{
+    setSaving(true);
+    const datos=JSON.stringify(JUGADORAS.map(j=>({jugadora:j,estado:pres[j]===1?"P":pres[j]===0?"A":""})));
+    const params=new URLSearchParams({accion:"asistencia",fecha,datos});
+    await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
+    setSaving(false);setSaved(true);setTimeout(()=>setSaved(false),3000);
+  };
+  return(
+    <>
+      <button onClick={onVolver} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit",marginBottom:10}}>← Volver al Reporte</button>
+      <Card style={{marginBottom:10}}>
+        <CT text="TOMAR ASISTENCIA"/>
+        <div style={{display:"flex",gap:8,alignItems:"flex-end",marginBottom:12,flexWrap:"wrap"}}>
+          <div>
+            <div style={{fontSize:10,color:T.muted,marginBottom:3}}>Fecha</div>
+            <input type="date" value={fecha} onChange={e=>{setFecha(e.target.value);setSaved(false);}}
+              style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,color:T.text,padding:"6px 10px",fontSize:13,fontFamily:"inherit"}}/>
+          </div>
+          <button onClick={()=>marcarTodas(1)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #3ecf7a",background:"#0f2d1f",color:"#3ecf7a",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✓ Todas P</button>
+          <button onClick={()=>marcarTodas(0)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #e05555",background:"#2d0f0f",color:"#e05555",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✗ Todas A</button>
+          <button onClick={()=>setPres({})} style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Reset</button>
+        </div>
+        <table style={{width:"100%",borderCollapse:"collapse"}}>
+          <tbody>{JUGADORAS.map((j,i)=>(
+            <tr key={i} onClick={()=>toggle(j)} style={{cursor:"pointer",background:pres[j]===1?"#0f2d1f33":pres[j]===0?"#2d0f0f33":"transparent"}}>
+              <td style={{padding:"9px 8px",borderBottom:`1px solid ${T.border}`,color:T.text,fontWeight:500,fontSize:13}}>{j}</td>
+              <td style={{padding:"9px 8px",borderBottom:`1px solid ${T.border}`,textAlign:"right"}}>
+                <span style={{fontSize:18,fontWeight:800,color:col(j)}}>{lbl(j)}</span>
+              </td>
+            </tr>
+          ))}</tbody>
+        </table>
+      </Card>
+      <button onClick={guardar} disabled={saving}
+        style={{width:"100%",padding:"13px",background:saved?"#0f2d1f":T.blue,border:"none",borderRadius:8,
+          color:saved?"#3ecf7a":"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+        {saving?"Guardando...":saved?"✓ Guardado en Drive":"Guardar Asistencia"}
+      </button>
+    </>
+  );
+}
+
 function StaffRPE(){
   const [rows,setRows]=React.useState([]);
   const [loading,setLoading]=React.useState(true);
