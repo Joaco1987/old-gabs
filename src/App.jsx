@@ -2033,10 +2033,11 @@ function PlayerAsistencia({player}){
   const totalVal=diasData.length;
   const pct=totalVal>0?Math.round(totalPres/totalVal*100):0;
 
+  const feb=pctMes("2026-02");
   const mar=pctMes("2026-03");
   const abr=pctMes("2026-04");
   const may=pctMes("2026-05");
-  const vals=[mar,abr,may].filter(v=>v!==null);
+  const vals=[feb,mar,abr,may].filter(v=>v!==null);
   const tot=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):pct;
 
   // Construir filas del calendario: todas las fechas únicas en orden
@@ -2099,6 +2100,7 @@ function PlayerAsistencia({player}){
         </div>
         <div style={{display:"flex",gap:10,marginTop:10,flexWrap:"wrap"}}>
           {[
+            {l:"Febrero",v:feb!==null?feb+"%":"—",c:T.purple||"#a78bfa"},
             {l:"Marzo",v:mar!==null?mar+"%":"—",c:T.green},
             {l:"Abril",v:abr!==null?abr+"%":"—",c:T.blue},
             {l:"Mayo",v:may!==null?may+"%":"—",c:T.amber},
