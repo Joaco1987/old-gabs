@@ -827,7 +827,7 @@ function StaffGPS(){
                   {[
                     ["Dist.",`${dist.toLocaleString()}m`,T.blue],
                     ["m/min",mxm,T.muted2],
-                    ["15-18",`${h15}m`,T.text],
+                    ["15-18",`${h15}m`,T.green],
                     ["18-21",`${h18}m`,T.amber],
                     [">21",`${spr}m`,T.red],
                     ["ACC",acc,T.purple],
@@ -1936,9 +1936,48 @@ function PlayerGPS({player}){
           </table>
         </div>
       </Card>
-      {/* Sprint >21 por sesión */}
-      {hsrLegend}
-      
+      {/* Promedio equipo de la sesión seleccionada */}
+      {selId&&(()=>{
+        const selSess=sess.find(s=>s.id===selId);
+        if(!selSess||!selSess.jugadoras||!selSess.jugadoras.length)return null;
+        const jugs=selSess.jugadoras;
+        const n=jugs.length;
+        const avg=k=>Math.round(jugs.reduce((a,j)=>a+(j[k]||0),0)/n);
+        const avgf=k=>Math.round(jugs.reduce((a,j)=>a+(j[k]||0),0)/n*10)/10;
+        const dist=avg("dist");
+        const mxm=dist&&avgf("min")>0?Math.round(dist/avgf("min")*10)/10:avgf("mxm");
+        const h18=avg("ai18")||0;
+        const spr=avg("spr")||0;
+        const h15=Math.max(0,Math.round(jugs.reduce((a,j)=>a+Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0)),0)/n));
+        const acc=avg("acc");
+        const dsc=avg("dsc");
+        const ns=avg("ns");
+        const vmax=avgf("vmax");
+        return(
+          <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020",marginBottom:10}}>
+            <CT text="Promedio equipo"/>
+            <div style={{display:"flex",gap:10,flexWrap:"wrap",fontSize:12}}>
+              {[
+                ["Dist.",`${dist.toLocaleString()}m`,T.blue],
+                ["m/min",mxm,T.muted2],
+                ["15-18",`${h15}m`,T.green],
+                ["18-21",`${h18}m`,T.amber],
+                [">21",`${spr}m`,T.red],
+                ["ACC",acc,T.purple],
+                ["DSC",dsc,T.cyan],
+                ["N Spr",ns,"#06b6d4"],
+                ["Vmáx",`${vmax}km/h`,"#e879f9"]
+              ].map(([l,v,c])=>(
+                <div key={l} style={{textAlign:"center",minWidth:55}}>
+                  <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{l}</div>
+                  <div style={{fontSize:14,fontWeight:600,color:c}}>{v}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
+        );
+      })()}
+      {/* Radar */}
       {sess.length>0&&(
         <RadarChart player={player} sesion={selId?sess.find(s=>s.id===selId)||sess[0]:sess[0]}/>
       )}
