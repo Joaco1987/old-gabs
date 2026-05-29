@@ -1746,7 +1746,7 @@ function RadarChart({player,sesion}){
   if(!sesion||sesion.jugadoras.length<2)return null;
   const jd=sesion.jugadoras.find(j=>j.n===player);
   if(!jd)return null;
-  const labs=["Dist","m/min","HSR","ACC","Sprints"];
+  const labs=["Dist","m/min","HSR","ACC","N Spr"];
   const jV=[jd.dist||0,jd.mxm||0,jd.hsr||jd.ai15||0,jd.acc||0,jd.ns||0];
   const gA=k=>sesion.jugadoras.reduce((s,j)=>s+(j[k]||0),0)/sesion.jugadoras.length;
   const tV=[gA("dist"),gA("mxm"),gA("hsr")||gA("ai15")||0,gA("acc"),gA("ns")||0];
