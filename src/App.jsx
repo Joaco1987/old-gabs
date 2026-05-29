@@ -698,12 +698,9 @@ function GraficoHSR({sesiones,titulo}){
     if(s.jugadoras&&s.jugadoras.length){
       const n=s.jugadoras.length;
       const avg=k=>Math.round(s.jugadoras.reduce((a,j)=>a+(j[k]||0),0)/n);
-      const hasAi15=s.jugadoras.some(j=>j.ai15!=null&&j.ai15>0);
       const h18=avg("ai18")||0;
       const spr=avg("spr")||0;
-      const h15=hasAi15
-        ? avg("ai15")
-        : Math.max(0,Math.round(s.jugadoras.reduce((a,j)=>a+Math.max(0,(j.hsr||0)-(j.ai18||0)-(j.spr||0)),0)/n));
+      const h15=Math.max(0,Math.round(s.jugadoras.reduce((a,j)=>a+Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0)),0)/n));
       return h15+h18+spr;
     }
     if(s.prom)return(s.prom.hsr||0);
@@ -724,12 +721,9 @@ function GraficoHSR({sesiones,titulo}){
         } else if(s.jugadoras&&s.jugadoras.length){
           const n=s.jugadoras.length;
           const avg=k=>Math.round(s.jugadoras.reduce((a,j)=>a+(j[k]||0),0)/n);
-          const hasAi15=s.jugadoras.some(j=>j.ai15!=null&&j.ai15>0);
           h18=avg("ai18")||0;
           spr=avg("spr")||0;
-          h15=hasAi15
-            ? avg("ai15")
-            : Math.max(0,Math.round(s.jugadoras.reduce((a,j)=>a+Math.max(0,(j.hsr||0)-(j.ai18||0)-(j.spr||0)),0)/n));
+          h15=Math.max(0,Math.round(s.jugadoras.reduce((a,j)=>a+Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0)),0)/n));
         } else if(s.prom){
           // Para partidos: h18 viene del prom, spr viene del prom
           h18=s.prom.h18||0;
@@ -821,11 +815,8 @@ function StaffGPS(){
             const h18=avg("ai18")||0;
             const spr=avg("spr")||0;
             const ns=avg("ns");
-            // h15: si existe ai15 usarlo, sino derivar de hsr-(ai18+spr)
-            const hasAi15=jugs.some(j=>j.ai15!=null&&j.ai15>0);
-            const h15=hasAi15
-              ? avg("ai15")
-              : Math.max(0,Math.round(jugs.reduce((a,j)=>a+Math.max(0,(j.hsr||0)-(j.ai18||0)-(j.spr||0)),0)/n));
+            // h15 = zona 15-18 = hsr_total(>15) - ai18 - spr, para partidos y amistosos
+            const h15=Math.max(0,Math.round(jugs.reduce((a,j)=>a+Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0)),0)/n));
             const acc=avg("acc");
             const dsc=avg("dsc");
             const vmax=avgf("vmax");
