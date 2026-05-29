@@ -880,7 +880,7 @@ function StaffPuestos(){
         <CT text="Por puesto — partidos oficiales (≥48 min) — en vivo desde Drive"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Puesto","Nombre","Dist.","HSR","AI18","Spr","ACC","DSC","V.máx"]}/>
+            <TH cols={["Puesto","Nombre","Dist.","HSR","AI 18-21","AI >21","ACC","DSC","V.máx"]}/>
             <tbody>{puestos.map(p=>(
               <tr key={p.p} style={{background:p.p==="PROM"?"#0d1020":"transparent"}}>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:p.p==="PROM"?T.muted:T.blue,fontWeight:600}}>{p.p}</td>
