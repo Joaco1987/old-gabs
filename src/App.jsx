@@ -2066,10 +2066,14 @@ function PlayerAsistencia({player}){
           <table style={{borderCollapse:"collapse",fontSize:11}}>
             <thead>
               <tr>
-                {MESES_CAL.map(m=>{
-                  const cols=(byMes[m.key]||[]).length;
-                  if(!cols)return null;
-                  return<th key={m.key} colSpan={cols} style={{textAlign:"center",color:m.color,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>{m.label}</th>;
+                {diasData.map((d,i)=>{
+                  // Solo poner header de mes en la primera fecha de ese mes
+                  const mes=d.fecha.slice(0,7);
+                  const m=MESES_CAL.find(x=>x.key===mes);
+                  const isFirst=i===0||diasData[i-1].fecha.slice(0,7)!==mes;
+                  const cols=(byMes[mes]||[]).length;
+                  if(!isFirst)return null;
+                  return<th key={i} colSpan={cols} style={{textAlign:"center",color:m?m.color:T.muted,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>{m?m.label:mes}</th>;
                 })}
               </tr>
               <tr>
