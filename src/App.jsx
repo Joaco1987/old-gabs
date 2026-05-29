@@ -833,33 +833,70 @@ function StaffGPS(){
 }
 
 // ─── STAFF PUESTOS ────────────────────────────────────────────────────────────
+// ─── PUESTOS CONTEXT — carga desde Drive, disponible globalmente ──────────────
+const PuestosCtx=React.createContext(PUESTOS);
+function usePuestos(){return React.useContext(PuestosCtx);}
+
+function PuestosProvider({children}){
+  const [puestos,setPuestos]=useState(PUESTOS);
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Perfil Puestos"]||[];
+        if(sheet.length<2)return;
+        const headers=sheet[0].map(h=>String(h).trim());
+        const idx=k=>headers.indexOf(k);
+        const parsed=sheet.slice(1).map(r=>({
+          p:  String(r[idx("Puesto")]||"").trim(),
+          n:  String(r[idx("Nombre")]||"").trim(),
+          jugadoras: String(r[idx("Jugadoras")]||"").split(",").map(x=>x.trim()).filter(Boolean),
+          dist: +r[idx("Dist")]||0,
+          hsr:  +r[idx("HSR")]||0,
+          ai18: +r[idx("AI18")]||0,
+          spr:  +r[idx("Spr")]||0,
+          acc:  +r[idx("Acc")]||0,
+          dsc:  +r[idx("Dsc")]||0,
+          vmax: +r[idx("Vmax")]||0,
+        })).filter(r=>r.p);
+        if(parsed.length)setPuestos(parsed);
+      })
+      .catch(()=>{});
+  },[]);
+  return React.createElement(PuestosCtx.Provider,{value:puestos},children);
+}
+
 function StaffPuestos(){
+  const puestos=usePuestos();
+  const prom=puestos.find(p=>p.p==="PROM")||{dist:0,hsr:0,vmax:0};
   return(
     <>
       <MR>
-        <MetCard label="Dist. prom." value={`${PUESTOS.find(p=>p.p==="PROM").dist.toLocaleString()}m`} sub="Partidos oficiales"/>
-        <MetCard label="HSR prom." value={`${PUESTOS.find(p=>p.p==="PROM").hsr}m`}/>
-        <MetCard label="Vel. máx prom." value={`${PUESTOS.find(p=>p.p==="PROM").vmax} km/h`} sc={T.amber}/>
+        <MetCard label="Dist. prom." value={`${prom.dist.toLocaleString()}m`} sub="Partidos oficiales ≥48min"/>
+        <MetCard label="HSR prom." value={`${prom.hsr.toLocaleString()}m`}/>
+        <MetCard label="Vel. máx prom." value={`${prom.vmax} km/h`} sc={T.amber}/>
       </MR>
       <Card>
-        <CT text="Por puesto — partidos oficiales"/>
+        <CT text="Por puesto — partidos oficiales (≥48 min) — en vivo desde Drive"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Puesto","Nombre","Dist.","HSR","ACC","DSC","Nº Spr","V.máx"]}/>
-            <tbody>{PUESTOS.map(p=>(
+            <TH cols={["Puesto","Nombre","Dist.","HSR","AI18","Spr","ACC","DSC","V.máx"]}/>
+            <tbody>{puestos.map(p=>(
               <tr key={p.p} style={{background:p.p==="PROM"?"#0d1020":"transparent"}}>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:p.p==="PROM"?T.muted:T.blue,fontWeight:600}}>{p.p}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.n}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:p.p==="PROM"?700:400}}>{p.dist.toLocaleString()}m</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.green}}>{p.hsr.toLocaleString()}m</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{p.ai18}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.red}}>{p.spr}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{p.acc}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{p.dsc}</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{p.sprN}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{p.vmax}</td>
               </tr>
             ))}</tbody>
           </table>
         </div>
+        <div style={{color:T.muted,fontSize:10,marginTop:8}}>Actualizar: modificá la hoja "Perfil Puestos" en Drive y recargá la app</div>
       </Card>
     </>
   );
@@ -1701,6 +1738,7 @@ function StaffWellness(){
 }
 
 function RadarChart({player,sesion}){
+  const puestos=usePuestos();
   if(!sesion||sesion.jugadoras.length<2)return null;
   const jd=sesion.jugadoras.find(j=>j.n===player);
   if(!jd)return null;
@@ -1708,10 +1746,9 @@ function RadarChart({player,sesion}){
   const jV=[jd.dist||0,jd.mxm||0,jd.hsr||jd.ai15||0,jd.acc||0,jd.vmax||0];
   const gA=k=>sesion.jugadoras.reduce((s,j)=>s+(j[k]||0),0)/sesion.jugadoras.length;
   const tV=[gA("dist"),gA("mxm"),gA("hsr")||gA("ai15")||0,gA("acc"),gA("vmax")];
-  // Puesto de la jugadora
   const yoyoData=YOYO.find(y=>y.n===player);
-  const puestoRow=yoyoData?PUESTOS.find(p=>p.p===yoyoData.puesto):null;
-  const pV=puestoRow?[puestoRow.dist,puestoRow.hsr,0,puestoRow.acc,+puestoRow.vmax]:null;
+  const puestoRow=yoyoData?puestos.find(p=>p.p===yoyoData.puesto):null;
+  const pV=puestoRow?[puestoRow.dist,0,puestoRow.hsr,puestoRow.acc,+puestoRow.vmax]:null;
   const mx=jV.map((v,i)=>Math.max(v,tV[i],pV?pV[i]:0,0.1));
   const nr=arr=>arr.map((v,i)=>Math.min(v/mx[i],1.4));
   const jN=nr(jV);const tN=nr(tV);const pN=pV?nr(pV):null;
@@ -2381,6 +2418,7 @@ export default function App(){
   const PLAYER_TABS=["Mi GPS","Evolución GPS","Yo-Yo","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
+    <PuestosProvider>
     <div style={{background:T.bg,color:T.text,minHeight:"100vh",fontFamily:"system-ui,sans-serif"}}>
       {/* Header */}
       <div style={{background:"#080a0f",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 12px",height:46,position:"sticky",top:0,zIndex:100}}>
@@ -2415,6 +2453,7 @@ export default function App(){
         )}
       </div>
     </div>
+    </PuestosProvider>
   );
 // Asistencias — datos exactos del Drive hoja "Asistencias"
 // MAR: 2,4,6,9,11,13,16,18,20,23,25,27,30 (13 fechas)
