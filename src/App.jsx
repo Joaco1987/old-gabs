@@ -1744,13 +1744,13 @@ function RadarChart({player,sesion}){
   if(!sesion||sesion.jugadoras.length<2)return null;
   const jd=sesion.jugadoras.find(j=>j.n===player);
   if(!jd)return null;
-  const labs=["Dist","m/min","HSR","ACC","Vmáx"];
-  const jV=[jd.dist||0,jd.mxm||0,jd.hsr||jd.ai15||0,jd.acc||0,jd.vmax||0];
+  const labs=["Dist","m/min","HSR","ACC","Nº Spr"];
+  const jV=[jd.dist||0,jd.mxm||0,jd.hsr||jd.ai15||0,jd.acc||0,jd.ns||0];
   const gA=k=>sesion.jugadoras.reduce((s,j)=>s+(j[k]||0),0)/sesion.jugadoras.length;
-  const tV=[gA("dist"),gA("mxm"),gA("hsr")||gA("ai15")||0,gA("acc"),gA("vmax")];
+  const tV=[gA("dist"),gA("mxm"),gA("hsr")||gA("ai15")||0,gA("acc"),gA("ns")||0];
   const yoyoData=YOYO.find(y=>y.n===player);
   const puestoRow=yoyoData?puestos.find(p=>p.p===yoyoData.puesto):null;
-  const pV=puestoRow?[puestoRow.dist,0,puestoRow.hsr,puestoRow.acc,+puestoRow.vmax]:null;
+  const pV=puestoRow?[puestoRow.dist,0,puestoRow.hsr,puestoRow.acc,puestoRow.ns||0]:null;
   const mx=jV.map((v,i)=>Math.max(v,tV[i],pV?pV[i]:0,0.1));
   const nr=arr=>arr.map((v,i)=>Math.min(v/mx[i],1.4));
   const jN=nr(jV);const tN=nr(tV);const pN=pV?nr(pV):null;
