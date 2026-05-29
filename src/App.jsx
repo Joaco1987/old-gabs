@@ -854,7 +854,7 @@ function PuestosProvider({children}){
           dist: +r[idx("Dist")]||0,
           hsr:  +r[idx("HSR")]||0,
           ai18: +r[idx("AI18")]||0,
-          spr:  +r[idx("Spr")]||0,
+          spr:  +r[idx("AI21")]||0,
           ns:   +r[idx("NºSpr")]||0,
           acc:  +r[idx("Acc")]||0,
           dsc:  +r[idx("Dsc")]||0,
