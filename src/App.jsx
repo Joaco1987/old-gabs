@@ -1237,6 +1237,9 @@ function StaffAsistencia(){
 function StaffAsistenciaReporte({onTomar}){
   const [rows,setRows]=useState(null);
   const [loading,setLoading]=useState(true);
+  const [rawData,setRawData]=useState({});// {jugadora:{mes:{dias:[{fecha,est}]}}}
+  const [modal,setModal]=useState(null);// {jugadora, mes, label, color}
+
   React.useEffect(()=>{
     fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
       .then(r=>r.json())
@@ -1247,29 +1250,24 @@ function StaffAsistenciaReporte({onTomar}){
         const fechaIdx=headers.indexOf("Fecha");
         const jugIdx=headers.indexOf("Jugadora");
         const estIdx=headers.indexOf("Estado");
-        // Construir: { jugadora: { "2026-03": {total,pres}, ... } }
         const data={};
-        const fechasSet=new Set();
         sheet.slice(1).forEach(r=>{
           const fecha=String(r[fechaIdx]||"").trim();
           const jug=String(r[jugIdx]||"").trim();
           const est=String(r[estIdx]||"").trim();
           if(!fecha||!jug||!est)return;
-          // mes = "2026-03"
           const mes=fecha.slice(0,7);
-          fechasSet.add(fecha);
           if(!data[jug])data[jug]={};
-          if(!data[jug][mes])data[jug][mes]={total:0,pres:0};
+          if(!data[jug][mes])data[jug][mes]={total:0,pres:0,dias:[]};
           data[jug][mes].total++;
           if(est==="P")data[jug][mes].pres++;
+          data[jug][mes].dias.push({fecha,est});
         });
-        // Calcular % por mes y total
-        const meses=["2026-03","2026-04","2026-05"];
+        // ordenar días dentro de cada mes
+        Object.values(data).forEach(mdata=>Object.values(mdata).forEach(m=>m.dias.sort((a,b)=>a.fecha.localeCompare(b.fecha))));
+        setRawData(data);
         const result=Object.entries(data).map(([n,mdata])=>{
-          const pctMes=m=>{
-            const d=mdata[m];
-            return d&&d.total>0?Math.round(d.pres/d.total*100):null;
-          };
+          const pctMes=m=>{const d=mdata[m];return d&&d.total>0?Math.round(d.pres/d.total*100):null;};
           const mar=pctMes("2026-03");
           const abr=pctMes("2026-04");
           const may=pctMes("2026-05");
@@ -1283,9 +1281,55 @@ function StaffAsistenciaReporte({onTomar}){
       .finally(()=>setLoading(false));
   },[]);
 
-  const pctNum=s=>parseInt(String(s).replace("%",""))||0;
+  const MESES=[
+    {key:"2026-03",label:"Mar",color:T.green},
+    {key:"2026-04",label:"Abr",color:T.amber},
+    {key:"2026-05",label:"May",color:T.blue},
+  ];
+
+  const openModal=(jugadora,mesKey)=>{
+    const m=MESES.find(x=>x.key===mesKey);
+    if(!m)return;
+    const dias=(rawData[jugadora]&&rawData[jugadora][mesKey]&&rawData[jugadora][mesKey].dias)||[];
+    if(!dias.length)return;
+    setModal({jugadora,mes:mesKey,label:m.label,color:m.color,dias});
+  };
+
+  const fmtFecha=f=>{
+    // "2026-03-04" → "4 Mar"
+    const mnames=["","Ene","Feb","Mar","Apr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+    const parts=f.split("-");
+    return parseInt(parts[2],10)+" "+mnames[parseInt(parts[1],10)];
+  };
+
   return(
     <>
+      {/* Modal detalle días */}
+      {modal&&(
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.75)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setModal(null)}>
+          <div style={{background:"#1a1f2e",border:`1px solid ${modal.color}`,borderRadius:10,padding:20,minWidth:260,maxWidth:340,maxHeight:"80vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+              <div>
+                <div style={{color:modal.color,fontWeight:700,fontSize:13}}>{modal.label}</div>
+                <div style={{color:T.text,fontSize:12,marginTop:2}}>{modal.jugadora}</div>
+              </div>
+              <button onClick={()=>setModal(null)} style={{background:"none",border:"none",color:T.muted,fontSize:18,cursor:"pointer",lineHeight:1}}>×</button>
+            </div>
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+              {modal.dias.map((d,i)=>{
+                const isP=d.est==="P";
+                return(
+                  <div key={i} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"5px 10px",borderRadius:6,background:isP?"#0f2d1f":"#2d0f0f",border:`1px solid ${isP?"#1a4a2a":"#4a1a1a"}`}}>
+                    <span style={{color:T.text,fontSize:12}}>{fmtFecha(d.fecha)}</span>
+                    <span style={{color:isP?T.green:T.red,fontWeight:700,fontSize:12}}>{isP?"✓ Presente":"✗ Ausente"}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div style={{display:"flex",gap:8,marginBottom:10}}>
         <button onClick={()=>{}} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
         <button onClick={onTomar} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>✓ Tomar Asistencia</button>
@@ -1301,20 +1345,45 @@ function StaffAsistenciaReporte({onTomar}){
           <Card>
             <CT text="REPORTE ASISTENCIA — EN VIVO DESDE DRIVE"/>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-              <TH cols={["Jugadora","Mar","Abr","May","Total"]}/>
+              <thead>
+                <tr>
+                  <th style={{padding:"5px 6px",textAlign:"left",color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}`,fontSize:11}}>Jugadora</th>
+                  {MESES.map(m=>(
+                    <th key={m.key} style={{padding:"5px 6px",textAlign:"center",color:m.color,fontWeight:600,borderBottom:`1px solid ${T.border}`,fontSize:11}}>{m.label}</th>
+                  ))}
+                  <th style={{padding:"5px 6px",textAlign:"center",color:T.muted,fontWeight:600,borderBottom:`1px solid ${T.border}`,fontSize:11}}>Total</th>
+                </tr>
+              </thead>
               <tbody>{rows.map((r,i)=>{
                 const col=r.pct>=80?T.green:r.pct>=60?T.amber:T.red;
+                const mesVals={
+                  "2026-03":{val:r.mar,color:T.green},
+                  "2026-04":{val:r.abr,color:T.amber},
+                  "2026-05":{val:r.may,color:T.blue},
+                };
                 return(
                   <tr key={i}>
                     <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500}}>{r.n}</td>
-                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{r.mar}</td>
-                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.amber,textAlign:"center"}}>{r.abr}</td>
-                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.blue,textAlign:"center"}}>{r.may}</td>
+                    {MESES.map(m=>{
+                      const {val,color}=mesVals[m.key];
+                      const clickable=val!=="—"&&rawData[r.n]&&rawData[r.n][m.key];
+                      return(
+                        <td key={m.key} style={{padding:"6px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                          <span
+                            onClick={clickable?()=>openModal(r.n,m.key):undefined}
+                            style={{color,fontWeight:500,cursor:clickable?"pointer":"default",padding:"2px 6px",borderRadius:4,display:"inline-block",transition:"background 0.15s",background:clickable?"rgba(255,255,255,0.03)":"transparent"}}
+                            onMouseEnter={e=>{if(clickable)e.target.style.background="rgba(255,255,255,0.08)";}}
+                            onMouseLeave={e=>{if(clickable)e.target.style.background="rgba(255,255,255,0.03)";}}
+                          >{val}</span>
+                        </td>
+                      );
+                    })}
                     <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700,textAlign:"center"}}>{r.tot}</td>
                   </tr>
                 );
               })}</tbody>
             </table>
+            <div style={{color:T.muted,fontSize:10,marginTop:8,textAlign:"center"}}>Toca el % de un mes para ver el detalle de días</div>
           </Card>
         </>
       )}
