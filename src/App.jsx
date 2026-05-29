@@ -1893,45 +1893,55 @@ function PlayerGPS({player}){
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={selId?["Jugadora","Min","Dist.","m/min","HSR","ACC","DSC","Nº Spr","V.máx"]:["Sesión","Min","Dist.","m/min","HSR","ACC","DSC","Nº Spr","V.máx"]}/>
+            <TH cols={selId?["Jugadora","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]:["Sesión","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]}/>
             <tbody>{selId?(
-              // Sesión seleccionada: mostrar todas las jugadoras
               (()=>{
                 const selSess=sess.find(s=>s.id===selId);
                 if(!selSess)return null;
                 return [...selSess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
                   const isMe=j.n===player;
-                  const h15=j.hsr||j.ai15||0;
+                  const h15=Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0));
+                  const h18=j.ai18||0;
+                  const sp=j.spr||0;
                   return(
                     <tr key={j.n} style={{background:isMe?"#0d1f35":"transparent"}}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>{isMe?"▶ ":""}{j.n.split(" ")[0]}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{j.min}'</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?600:400}}>{j.dist.toLocaleString()}m</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{j.mxm}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.green:T.text}}>{h15}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green}}>{h15}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{h18}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400}}>{sp}m</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{j.dsc||0}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400}}>{j.ns||0}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
                     </tr>
                   );
                 });
               })()
             ):(
-              // Sin selección: una fila por sesión (datos propios)
-              sess.map(s=>(
-              <tr key={s.id}>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.data.min}'</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{s.data.dist.toLocaleString()}m</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text}}>{(s.data.hsr||s.data.ai15||0)}m</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{s.data.acc||0}</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{s.data.dsc||0}</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(s.data.ns||0)>0?T.text:T.muted,fontWeight:(s.data.ns||0)>0?600:400}}>{s.data.ns||0}</td>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
-              </tr>
-            ))
+              sess.map(s=>{
+                const jd=s.jugadoras?.find(j=>j.n===player);
+                const h15=jd?Math.max(0,(jd.hsr||jd.ai15||0)-(jd.ai18||0)-(jd.spr||0)):0;
+                const h18=jd?.ai18||0;
+                const sp=jd?.spr||0;
+                return(
+                  <tr key={s.id}>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.data.min}'</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{s.data.dist.toLocaleString()}m</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green}}>{h15}m</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{h18}m</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400}}>{sp}m</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{s.data.acc||0}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{s.data.dsc||0}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(s.data.ns||0)>0?T.text:T.muted,fontWeight:(s.data.ns||0)>0?600:400,textAlign:"center"}}>{s.data.ns||0}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
+                  </tr>
+                );
+              })
             )}</tbody>
           </table>
         </div>
