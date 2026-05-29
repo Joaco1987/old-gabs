@@ -698,7 +698,13 @@ function GraficoHSR({sesiones,titulo}){
     if(s.jugadoras&&s.jugadoras.length){
       const n=s.jugadoras.length;
       const avg=k=>Math.round(s.jugadoras.reduce((a,j)=>a+(j[k]||0),0)/n);
-      return (avg("ai15")||avg("hsr")||0)+avg("ai18")+avg("spr");
+      const hasAi15=s.jugadoras.some(j=>j.ai15!=null&&j.ai15>0);
+      const h18=avg("ai18")||0;
+      const spr=avg("spr")||0;
+      const h15=hasAi15
+        ? avg("ai15")
+        : Math.max(0,Math.round(s.jugadoras.reduce((a,j)=>a+Math.max(0,(j.hsr||0)-(j.ai18||0)-(j.spr||0)),0)/n));
+      return h15+h18+spr;
     }
     if(s.prom)return(s.prom.hsr||0);
     return 0;
@@ -716,12 +722,14 @@ function GraficoHSR({sesiones,titulo}){
           h18=Math.round(s.zonas.reduce((a,z)=>a+z.h18,0)/s.zonas.length);
           spr=s.prom_spr!==undefined?s.prom_spr:Math.round(s.zonas.reduce((a,z)=>a+z.spr,0)/s.zonas.length);
         } else if(s.jugadoras&&s.jugadoras.length){
-          // Calcular desde datos individuales
           const n=s.jugadoras.length;
           const avg=k=>Math.round(s.jugadoras.reduce((a,j)=>a+(j[k]||0),0)/n);
-          h15=avg("ai15")||avg("hsr")||0;
+          const hasAi15=s.jugadoras.some(j=>j.ai15!=null&&j.ai15>0);
           h18=avg("ai18")||0;
           spr=avg("spr")||0;
+          h15=hasAi15
+            ? avg("ai15")
+            : Math.max(0,Math.round(s.jugadoras.reduce((a,j)=>a+Math.max(0,(j.hsr||0)-(j.ai18||0)-(j.spr||0)),0)/n));
         } else if(s.prom){
           // Para partidos: h18 viene del prom, spr viene del prom
           h18=s.prom.h18||0;
@@ -808,15 +816,18 @@ function StaffGPS(){
             const n=jugs.length;
             const avg=k=>Math.round(jugs.reduce((a,j)=>a+(j[k]||0),0)/n);
             const avgf=k=>Math.round(jugs.reduce((a,j)=>a+(j[k]||0),0)/n*10)/10;
-            // hsr = ai15 (15-18), h18 = ai18 (18-21), spr = >21
             const dist=avg("dist");
-            const mxm=dist&&avg("min")>0?Math.round(dist/avgf("min")*10)/10:avgf("mxm");
-            const h15=avg("ai15")||avg("hsr")||0;
+            const mxm=dist&&avgf("min")>0?Math.round(dist/avgf("min")*10)/10:avgf("mxm");
             const h18=avg("ai18")||0;
             const spr=avg("spr")||0;
+            const ns=avg("ns");
+            // h15: si existe ai15 usarlo, sino derivar de hsr-(ai18+spr)
+            const hasAi15=jugs.some(j=>j.ai15!=null&&j.ai15>0);
+            const h15=hasAi15
+              ? avg("ai15")
+              : Math.max(0,Math.round(jugs.reduce((a,j)=>a+Math.max(0,(j.hsr||0)-(j.ai18||0)-(j.spr||0)),0)/n));
             const acc=avg("acc");
             const dsc=avg("dsc");
-            const ns=avg("ns");
             const vmax=avgf("vmax");
             return(
               <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020"}}>
