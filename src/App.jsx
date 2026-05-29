@@ -529,23 +529,23 @@ const YOYO=[
   {n:"Silva Victoria",   puesto:"VL", nivel:null,dist:null,vel:null, vo2:null, vam:null},
 ];
 
-// ─── PUESTOS — tabla resumen del Drive ────────────────────────────────────────
+// ─── PUESTOS — promedio partidos oficiales, jugadoras ≥48 min ────────────────
+// Actualizado: VS COGS, VS PWCC, VS MANQUEHUE, VS CATÓLICA B, VS OLD REDS
 const PUESTOS=[
-  // Calculados de partidos oficiales, jugadoras con ≥40 min
   {p:"DC",n:"Def. Central", jugadoras:["Muñoz Constanza","Pareja Camila"],
-   dist:6010,hsr:284,ai18:109,spr:5,acc:9,dsc:14,vmax:22.6},
+   dist:5872,hsr:417,ai18:118,spr:4,acc:10,dsc:16,vmax:20.7},
   {p:"LT",n:"Lateral",      jugadoras:["Gomez Camila","Gutierrez Renata","Hevia Valentina","Mateluna Florencia","Retamal Antonia"],
-   dist:5702,hsr:398,ai18:93,spr:9,acc:11,dsc:16,vmax:21.3},
+   dist:6243,hsr:592,ai18:121,spr:11,acc:11,dsc:18,vmax:21.4},
   {p:"MC",n:"Med. Central", jugadoras:["Sierra Julieta"],
-   dist:6599,hsr:467,ai18:220,spr:9,acc:22,dsc:37,vmax:22.9},
+   dist:6622,hsr:842,ai18:286,spr:0,acc:23,dsc:36,vmax:23.2},
   {p:"VL",n:"Volante",      jugadoras:["Carrasco Sofia","Gacitua Emilia","Silva Victoria"],
-   dist:6694,hsr:601,ai18:337,spr:82,acc:28,dsc:41,vmax:24.6},
+   dist:6982,hsr:1129,ai18:338,spr:102,acc:31,dsc:44,vmax:24.3},
   {p:"WG",n:"Wing",         jugadoras:["Alfaro Javiera","Errazu Sofia","Liu Macarena"],
-   dist:5184,hsr:487,ai18:212,spr:14,acc:17,dsc:18,vmax:22.5},
+   dist:5913,hsr:528,ai18:114,spr:0,acc:23,dsc:19,vmax:21.2},
   {p:"DL",n:"Del. Central", jugadoras:["Pollmann Marianne","Sepulveda Eileen"],
-   dist:6026,hsr:477,ai18:148,spr:4,acc:14,dsc:22,vmax:22.3},
+   dist:6266,hsr:638,ai18:150,spr:6,acc:18,dsc:18,vmax:22.4},
   {p:"PROM",n:"Promedio",   jugadoras:[],
-   dist:6075,hsr:458,ai18:198,spr:28,acc:17,dsc:26,vmax:22.9},
+   dist:6304,hsr:677,ai18:184,spr:26,acc:18,dsc:25,vmax:22.1},
 ];
 
 // ─── ASISTENCIA — hoja PF Old Gabs (datos previos del Drive) ─────────────────
