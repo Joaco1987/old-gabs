@@ -1983,21 +1983,81 @@ function PlayerMinutos({player}){
 }
 
 function PlayerAsistencia({player}){
-  const d=ASISTENCIA[player];
-  if(!d)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos de asistencia</div>;
-  const p=d.dias.filter(x=>x===1).length;
-  const ausencias=d.dias.filter(x=>x===0).length;
-  const validos=d.dias.filter(x=>x!==null).length;
-  const pct=validos>0?Math.round(p/validos*100):0;
-  const marF=ATT_FECHAS.filter(f=>f.includes("/3"));
-  const abrF=ATT_FECHAS.filter(f=>f.includes("/4"));
-  const mayF=ATT_FECHAS.filter(f=>f.includes("/5"));
+  const [loading,setLoading]=useState(true);
+  const [diasData,setDiasData]=useState(null);// [{fecha:"2026-03-04",est:"P"|"A"}]
+
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Asistencias App"]||[];
+        if(!sheet.length){setDiasData([]);return;}
+        const headers=sheet[0].map(h=>String(h));
+        const fechaIdx=headers.indexOf("Fecha");
+        const jugIdx=headers.indexOf("Jugadora");
+        const estIdx=headers.indexOf("Estado");
+        const dias=[];
+        sheet.slice(1).forEach(r=>{
+          const fecha=String(r[fechaIdx]||"").trim();
+          const jug=String(r[jugIdx]||"").trim();
+          const est=String(r[estIdx]||"").trim();
+          if(jug===player&&fecha&&est)dias.push({fecha,est});
+        });
+        dias.sort((a,b)=>a.fecha.localeCompare(b.fecha));
+        setDiasData(dias);
+      })
+      .catch(()=>setDiasData([]))
+      .finally(()=>setLoading(false));
+  },[player]);
+
+  if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Cargando asistencias...</div></Card>;
+  if(!diasData||!diasData.length)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos de asistencia</div>;
+
+  // Agrupar por mes
+  const byMes={};
+  diasData.forEach(({fecha,est})=>{
+    const mes=fecha.slice(0,7);
+    if(!byMes[mes])byMes[mes]=[];
+    byMes[mes].push({fecha,est});
+  });
+
+  const pctMes=mes=>{
+    const arr=byMes[mes]||[];
+    if(!arr.length)return null;
+    const pres=arr.filter(x=>x.est==="P").length;
+    return Math.round(pres/arr.length*100);
+  };
+
+  const totalPres=diasData.filter(x=>x.est==="P").length;
+  const totalAus=diasData.filter(x=>x.est==="A").length;
+  const totalVal=diasData.length;
+  const pct=totalVal>0?Math.round(totalPres/totalVal*100):0;
+
+  const mar=pctMes("2026-03");
+  const abr=pctMes("2026-04");
+  const may=pctMes("2026-05");
+  const vals=[mar,abr,may].filter(v=>v!==null);
+  const tot=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):pct;
+
+  // Construir filas del calendario: todas las fechas únicas en orden
+  const MESES_CAL=[
+    {key:"2026-03",label:"MARZO",color:T.green},
+    {key:"2026-04",label:"ABRIL",color:T.blue},
+    {key:"2026-05",label:"MAYO",color:T.amber},
+  ];
+
+  // Formato fecha columna: "4/3"
+  const fmtCol=fecha=>{
+    const p=fecha.split("-");
+    return parseInt(p[2])+"/"+parseInt(p[1]);
+  };
+
   return(
     <>
       <MR>
-        <MetCard label="Mi asistencia" value={`${pct}%`} sub={`${p}/${validos} sesiones`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
-        <MetCard label="Presencias" value={p} sc={T.green}/>
-        <MetCard label="Ausencias" value={ausencias} sc={T.red}/>
+        <MetCard label="Mi asistencia" value={`${pct}%`} sub={`${totalPres}/${totalVal} sesiones`} sc={pct>=80?T.green:pct>=60?T.amber:T.red}/>
+        <MetCard label="Presencias" value={totalPres} sc={T.green}/>
+        <MetCard label="Ausencias" value={totalAus} sc={T.red}/>
       </MR>
       {pct<60&&<div style={{background:"#2d0f0f",border:"1px solid #5a1f1f",borderRadius:6,padding:"7px 12px",marginBottom:10,fontSize:12,color:T.red}}>⚠ Asistencia menor al 60%</div>}
       <Card style={{marginBottom:10}}>
@@ -2006,21 +2066,39 @@ function PlayerAsistencia({player}){
           <table style={{borderCollapse:"collapse",fontSize:11}}>
             <thead>
               <tr>
-                <th colSpan={marF.length} style={{textAlign:"center",color:T.green,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>MARZO</th>
-                <th colSpan={abrF.length} style={{textAlign:"center",color:T.blue,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>ABRIL</th>
-                <th colSpan={mayF.length} style={{textAlign:"center",color:T.amber,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>MAYO</th>
+                {MESES_CAL.map(m=>{
+                  const cols=(byMes[m.key]||[]).length;
+                  if(!cols)return null;
+                  return<th key={m.key} colSpan={cols} style={{textAlign:"center",color:m.color,padding:"3px 4px",borderBottom:`1px solid ${T.border}`,fontSize:9,border:`1px solid ${T.border2}`}}>{m.label}</th>;
+                })}
               </tr>
-              <tr>{ATT_FECHAS.map((f,i)=><th key={i} style={{textAlign:"center",color:T.muted,padding:"2px 2px",borderBottom:`1px solid ${T.border}`,fontSize:7,minWidth:18}}>{f}</th>)}</tr>
+              <tr>
+                {diasData.map((d,i)=>(
+                  <th key={i} style={{textAlign:"center",color:T.muted,padding:"2px 2px",borderBottom:`1px solid ${T.border}`,fontSize:7,minWidth:18}}>{fmtCol(d.fecha)}</th>
+                ))}
+              </tr>
             </thead>
-            <tbody><tr>{d.dias.map((dia,i)=>(
-              <td key={i} style={{padding:"3px 2px",textAlign:"center"}}>
-                <div style={{borderRadius:4,background:dia===1?"#0f2d1f":dia===0?"#2d0f0f":"#1a1e2a",display:"flex",alignItems:"center",justifyContent:"center",color:dia===1?T.green:dia===0?T.red:T.muted,fontSize:12,padding:"5px 2px"}}>{dia===1?"✓":dia===0?"✗":"·"}</div>
-              </td>
-            ))}</tr></tbody>
+            <tbody>
+              <tr>
+                {diasData.map((d,i)=>{
+                  const isP=d.est==="P";
+                  return(
+                    <td key={i} style={{padding:"3px 2px",textAlign:"center"}}>
+                      <div style={{borderRadius:4,background:isP?"#0f2d1f":"#2d0f0f",display:"flex",alignItems:"center",justifyContent:"center",color:isP?T.green:T.red,fontSize:12,padding:"5px 2px"}}>{isP?"✓":"✗"}</div>
+                    </td>
+                  );
+                })}
+              </tr>
+            </tbody>
           </table>
         </div>
         <div style={{display:"flex",gap:10,marginTop:10,flexWrap:"wrap"}}>
-          {[{l:"Marzo",v:d.mar,c:T.green},{l:"Abril",v:d.abr,c:T.blue},{l:"Mayo",v:d.may,c:T.amber},{l:"Total",v:d.tot,c:pct>=80?T.green:pct>=60?T.amber:T.red}].map((m,i)=>(
+          {[
+            {l:"Marzo",v:mar!==null?mar+"%":"—",c:T.green},
+            {l:"Abril",v:abr!==null?abr+"%":"—",c:T.blue},
+            {l:"Mayo",v:may!==null?may+"%":"—",c:T.amber},
+            {l:"Total",v:tot+"%",c:pct>=80?T.green:pct>=60?T.amber:T.red}
+          ].map((m,i)=>(
             <div key={i} style={{background:"#0d1020",borderRadius:8,padding:"8px 14px",border:`1px solid ${m.c}33`}}>
               <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{m.l}</div>
               <div style={{fontSize:20,fontWeight:600,color:m.c}}>{m.v}</div>
