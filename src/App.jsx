@@ -696,12 +696,8 @@ function GraficoHSR({sesiones,titulo}){
       return h15+h18+spr;
     }
     if(s.jugadoras&&s.jugadoras.length){
-      const n=s.jugadoras.length;
-      const avg=k=>Math.round(s.jugadoras.reduce((a,j)=>a+(j[k]||0),0)/n);
-      const h18=avg("ai18")||0;
-      const spr=avg("spr")||0;
-      const h15=Math.max(0,Math.round(s.jugadoras.reduce((a,j)=>a+Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0)),0)/n));
-      return h15+h18+spr;
+      const tots=s.jugadoras.map(j=>calcZonas(j,s));
+      return Math.round(tots.reduce((a,z)=>a+z.h15+z.h18+z.sp,0)/tots.length);
     }
     if(s.prom)return(s.prom.hsr||0);
     return 0;
@@ -719,11 +715,10 @@ function GraficoHSR({sesiones,titulo}){
           h18=Math.round(s.zonas.reduce((a,z)=>a+z.h18,0)/s.zonas.length);
           spr=s.prom_spr!==undefined?s.prom_spr:Math.round(s.zonas.reduce((a,z)=>a+z.spr,0)/s.zonas.length);
         } else if(s.jugadoras&&s.jugadoras.length){
-          const n=s.jugadoras.length;
-          const avg=k=>Math.round(s.jugadoras.reduce((a,j)=>a+(j[k]||0),0)/n);
-          h18=avg("ai18")||0;
-          spr=avg("spr")||0;
-          h15=Math.max(0,Math.round(s.jugadoras.reduce((a,j)=>a+Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0)),0)/n));
+          const tots=s.jugadoras.map(j=>calcZonas(j,s));
+          h15=Math.round(tots.reduce((a,z)=>a+z.h15,0)/tots.length);
+          h18=Math.round(tots.reduce((a,z)=>a+z.h18,0)/tots.length);
+          spr=Math.round(tots.reduce((a,z)=>a+z.sp,0)/tots.length);
         } else if(s.prom){
           // Para partidos: h18 viene del prom, spr viene del prom
           h18=s.prom.h18||0;
@@ -748,6 +743,20 @@ function GraficoHSR({sesiones,titulo}){
       })}
     </Card>
   );
+}
+
+// ─── HELPER: calcula zonas HSR para una jugadora en una sesión ────────────────
+function calcZonas(j, sess){
+  if(sess.zonas){
+    const z=sess.zonas.find(z=>z.n===j.n);
+    if(z) return {h15:z.h15||0, h18:z.h18||0, sp:z.spr||0};
+  }
+  const h18=j.ai18||0;
+  const sp=j.spr||0;
+  const h15=sess.tipo==="entreno"
+    ? (j.hsr||0)
+    : Math.max(0,(j.hsr||j.ai15||0)-h18-sp);
+  return {h15, h18, sp};
 }
 
 // ─── STAFF GPS ────────────────────────────────────────────────────────────────
@@ -780,18 +789,7 @@ function StaffGPS(){
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
                 <TH cols={["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx"]}/>
                 <tbody>{[...sess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
-                const h15=sess.zonas
-                  ? (sess.zonas.find(z=>z.n===j.n)?.h15??0)
-                  : sess.tipo==="entreno"
-                    ? (j.hsr||0)
-                    : Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0));
-                const h18=sess.zonas
-                  ? (sess.zonas.find(z=>z.n===j.n)?.h18??j.ai18??0)
-                  : j.ai18||0;
-                const sp=sess.zonas
-                  ? (sess.zonas.find(z=>z.n===j.n)?.spr??j.spr??0)
-                  : j.spr||0;
-                  const hsr=j.hsr!=null?j.hsr:j.ai15!=null?j.ai15:null;
+                const {h15,h18,sp}=calcZonas(j,sess);
                   return(
                     <tr key={j.n}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{j.n}</td>
@@ -820,13 +818,10 @@ function StaffGPS(){
             const avgf=k=>Math.round(jugs.reduce((a,j)=>a+(j[k]||0),0)/n*10)/10;
             const dist=avg("dist");
             const mxm=dist&&avgf("min")>0?Math.round(dist/avgf("min")*10)/10:avgf("mxm");
-            const h18=avg("ai18")||0;
-            const spr=avg("spr")||0;
-            const ns=avg("ns");
             const isEntreno=sess.tipo==="entreno";
-            const h15=isEntreno
-              ? avg("hsr")
-              : Math.max(0,Math.round(jugs.reduce((a,j)=>a+Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0)),0)/n));
+            const h15=Math.round(jugs.reduce((a,j)=>a+calcZonas(j,sess).h15,0)/n);
+            const h18=Math.round(jugs.reduce((a,j)=>a+calcZonas(j,sess).h18,0)/n);
+            const spr=Math.round(jugs.reduce((a,j)=>a+calcZonas(j,sess).sp,0)/n);
             const acc=avg("acc");
             const dsc=avg("dsc");
             const vmax=avgf("vmax");
@@ -1911,14 +1906,7 @@ function PlayerGPS({player}){
                 return [...selSess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
                   const isMe=j.n===player;
                   const selSessData=selSess;
-                  const zonaJ=selSessData.zonas?.find(z=>z.n===j.n);
-                  const h15=zonaJ
-                    ? zonaJ.h15
-                    : selSessData.tipo==="entreno"
-                      ? (j.hsr||0)
-                      : Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0));
-                  const h18=zonaJ?zonaJ.h18:(j.ai18||0);
-                  const sp=zonaJ?zonaJ.spr:(j.spr||0);
+                  const {h15,h18,sp}=calcZonas(j,selSessData);
                   return(
                     <tr key={j.n} style={{background:isMe?"#0d1f35":"transparent"}}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>{isMe?"▶ ":""}{j.n.split(" ")[0]}</td>
@@ -1939,14 +1927,8 @@ function PlayerGPS({player}){
             ):(
               sess.map(s=>{
                 const jd=s.jugadoras?.find(j=>j.n===player);
-                const zonaJ=s.zonas?.find(z=>z.n===player);
-                const h15=zonaJ
-                  ? zonaJ.h15
-                  : s.tipo==="entreno"
-                    ? (jd?.hsr||0)
-                    : Math.max(0,(jd?.hsr||jd?.ai15||0)-(jd?.ai18||0)-(jd?.spr||0));
-                const h18=zonaJ?zonaJ.h18:(jd?.ai18||0);
-                const sp=zonaJ?zonaJ.spr:(jd?.spr||0);
+                if(!jd) return null;
+                const {h15,h18,sp}=calcZonas(jd,s);
                 return(
                   <tr key={s.id}>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
@@ -1977,12 +1959,10 @@ function PlayerGPS({player}){
         const avgf=k=>Math.round(jugs.reduce((a,j)=>a+(j[k]||0),0)/n*10)/10;
         const dist=avg("dist");
         const mxm=dist&&avgf("min")>0?Math.round(dist/avgf("min")*10)/10:avgf("mxm");
-        const h18=avg("ai18")||0;
-        const spr=avg("spr")||0;
-        const isEntreno=selSessObj.tipo==="entreno";
-        const h15=isEntreno
-          ? avg("hsr")
-          : Math.max(0,Math.round(jugs.reduce((a,j)=>a+Math.max(0,(j.hsr||j.ai15||0)-(j.ai18||0)-(j.spr||0)),0)/n));
+        const tots=jugs.map(j=>calcZonas(j,selSessObj));
+        const h15=Math.round(tots.reduce((a,z)=>a+z.h15,0)/n);
+        const h18=Math.round(tots.reduce((a,z)=>a+z.h18,0)/n);
+        const spr=Math.round(tots.reduce((a,z)=>a+z.sp,0)/n);
         const acc=avg("acc");
         const dsc=avg("dsc");
         const ns=avg("ns");
