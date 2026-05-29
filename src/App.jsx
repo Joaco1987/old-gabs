@@ -533,19 +533,19 @@ const YOYO=[
 // Actualizado: VS COGS, VS PWCC, VS MANQUEHUE, VS CATÓLICA B, VS OLD REDS
 const PUESTOS=[
   {p:"DC",n:"Def. Central", jugadoras:["Muñoz Constanza","Pareja Camila"],
-   dist:5872,hsr:417,ai18:118,spr:4,ns:0,acc:10,dsc:16,vmax:20.7},
+   dist:5872,mxm:91.6,hsr:417,ai18:118,spr:4,ns:0,acc:10,dsc:16,vmax:20.7},
   {p:"LT",n:"Lateral",      jugadoras:["Gomez Camila","Gutierrez Renata","Hevia Valentina","Mateluna Florencia","Retamal Antonia"],
-   dist:6243,hsr:592,ai18:121,spr:11,ns:2,acc:11,dsc:18,vmax:21.4},
+   dist:6243,mxm:100.7,hsr:592,ai18:121,spr:11,ns:2,acc:11,dsc:18,vmax:21.4},
   {p:"MC",n:"Med. Central", jugadoras:["Sierra Julieta"],
-   dist:6622,hsr:842,ai18:286,spr:0,ns:1,acc:23,dsc:36,vmax:23.2},
+   dist:6622,mxm:101.6,hsr:842,ai18:286,spr:0,ns:1,acc:23,dsc:36,vmax:23.2},
   {p:"VL",n:"Volante",      jugadoras:["Carrasco Sofia","Gacitua Emilia","Silva Victoria"],
-   dist:6982,hsr:1129,ai18:338,spr:102,ns:9,acc:31,dsc:44,vmax:24.3},
+   dist:6982,mxm:108.1,hsr:1129,ai18:338,spr:102,ns:9,acc:31,dsc:44,vmax:24.3},
   {p:"WG",n:"Wing",         jugadoras:["Alfaro Javiera","Errazu Sofia","Liu Macarena"],
-   dist:5913,hsr:528,ai18:114,spr:0,ns:0,acc:23,dsc:19,vmax:21.2},
+   dist:5913,mxm:109.9,hsr:528,ai18:114,spr:0,ns:0,acc:23,dsc:19,vmax:21.2},
   {p:"DL",n:"Del. Central", jugadoras:["Pollmann Marianne","Sepulveda Eileen"],
-   dist:6266,hsr:638,ai18:150,spr:6,ns:1,acc:18,dsc:18,vmax:22.4},
+   dist:6266,mxm:103.7,hsr:638,ai18:150,spr:6,ns:1,acc:18,dsc:18,vmax:22.4},
   {p:"PROM",n:"Promedio",   jugadoras:[],
-   dist:6304,hsr:677,ai18:184,spr:26,ns:3,acc:18,dsc:25,vmax:22.1},
+   dist:6304,mxm:100.5,hsr:677,ai18:184,spr:26,ns:3,acc:18,dsc:25,vmax:22.1},
 ];
 
 // ─── ASISTENCIA — hoja PF Old Gabs (datos previos del Drive) ─────────────────
@@ -852,6 +852,7 @@ function PuestosProvider({children}){
           n:  String(r[idx("Nombre")]||"").trim(),
           jugadoras: String(r[idx("Jugadoras")]||"").split(",").map(x=>x.trim()).filter(Boolean),
           dist: +r[idx("Dist")]||0,
+          mxm:  +r[idx("Mxm")]||0,
           hsr:  +r[idx("HSR")]||0,
           ai18: +r[idx("AI18")]||0,
           spr:  +r[idx("AI21")]||0,
@@ -881,12 +882,13 @@ function StaffPuestos(){
         <CT text="Por puesto — partidos oficiales (≥48 min) — en vivo desde Drive"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Puesto","Nombre","Dist.","HSR","AI 18-21","AI >21","Nº Spr","ACC","DSC","V.máx"]}/>
+            <TH cols={["Puesto","Nombre","Dist.","M/min","HSR","AI 18-21","AI >21","Nº Spr","ACC","DSC","V.máx"]}/>
             <tbody>{puestos.map(p=>(
               <tr key={p.p} style={{background:p.p==="PROM"?"#0d1020":"transparent"}}>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:p.p==="PROM"?T.muted:T.blue,fontWeight:600}}>{p.p}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.n}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:p.p==="PROM"?700:400}}>{p.dist.toLocaleString()}m</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{p.mxm}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.green}}>{p.hsr.toLocaleString()}m</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{p.ai18}m</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.red}}>{p.spr}m</td>
@@ -1750,7 +1752,7 @@ function RadarChart({player,sesion}){
   const tV=[gA("dist"),gA("mxm"),gA("hsr")||gA("ai15")||0,gA("acc"),gA("ns")||0];
   const yoyoData=YOYO.find(y=>y.n===player);
   const puestoRow=yoyoData?puestos.find(p=>p.p===yoyoData.puesto):null;
-  const pV=puestoRow?[puestoRow.dist,0,puestoRow.hsr,puestoRow.acc,puestoRow.ns||0]:null;
+  const pV=puestoRow?[puestoRow.dist,puestoRow.mxm||0,puestoRow.hsr,puestoRow.acc,puestoRow.ns||0]:null;
   const mx=jV.map((v,i)=>Math.max(v,tV[i],pV?pV[i]:0,0.1));
   const nr=arr=>arr.map((v,i)=>Math.min(v/mx[i],1.4));
   const jN=nr(jV);const tN=nr(tV);const pN=pV?nr(pV):null;
