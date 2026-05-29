@@ -692,8 +692,13 @@ function GraficoHSR({sesiones,titulo}){
     if(s.zonas&&s.zonas.length){
       const h15=Math.round(s.zonas.reduce((a,z)=>a+(z.h15||0),0)/s.zonas.length);
       const h18=Math.round(s.zonas.reduce((a,z)=>a+(z.h18||0),0)/s.zonas.length);
-      const spr=s.prom_spr!==undefined?s.prom_spr:Math.round(s.zonas.reduce((a,z)=>a+(z.spr||0),0)/s.zonas.length);
+      const spr=Math.round(s.zonas.reduce((a,z)=>a+(z.spr||0),0)/s.zonas.length);
       return h15+h18+spr;
+    }
+    if(s.jugadoras&&s.jugadoras.length){
+      const n=s.jugadoras.length;
+      const avg=k=>Math.round(s.jugadoras.reduce((a,j)=>a+(j[k]||0),0)/n);
+      return (avg("ai15")||avg("hsr")||0)+avg("ai18")+avg("spr");
     }
     if(s.prom)return(s.prom.hsr||0);
     return 0;
@@ -710,6 +715,13 @@ function GraficoHSR({sesiones,titulo}){
           h15=Math.round(s.zonas.reduce((a,z)=>a+z.h15,0)/s.zonas.length);
           h18=Math.round(s.zonas.reduce((a,z)=>a+z.h18,0)/s.zonas.length);
           spr=s.prom_spr!==undefined?s.prom_spr:Math.round(s.zonas.reduce((a,z)=>a+z.spr,0)/s.zonas.length);
+        } else if(s.jugadoras&&s.jugadoras.length){
+          // Calcular desde datos individuales
+          const n=s.jugadoras.length;
+          const avg=k=>Math.round(s.jugadoras.reduce((a,j)=>a+(j[k]||0),0)/n);
+          h15=avg("ai15")||avg("hsr")||0;
+          h18=avg("ai18")||0;
+          spr=avg("spr")||0;
         } else if(s.prom){
           // Para partidos: h18 viene del prom, spr viene del prom
           h18=s.prom.h18||0;
@@ -790,20 +802,46 @@ function StaffGPS(){
               </table>
             </div>
           </Card>
-          {/* Promedio del sheet si existe */}
-          {sess.prom&&(
-            <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020"}}>
-              <CT text="Promedio equipo (fila Promedio del sheet)"/>
-              <div style={{display:"flex",gap:10,flexWrap:"wrap",fontSize:12}}>
-                {[["Dist.",`${sess.prom.dist?.toLocaleString()}m`,T.blue],["m/min",sess.prom.mxm,T.muted2],["HSR",`${sess.prom.hsr}m`,T.text],["18-21",`${sess.prom.h18}m`,T.amber],["Spr>21",`${sess.prom.spr}m`,T.red],["ACC",sess.prom.acc,T.purple],["DSC",sess.prom.dsc,T.cyan],["Nº Spr",(()=>{return sess.jugadoras?.reduce((a,j)=>a+(j.ns||0),0)||0;})(),"#06b6d4"],["Vmáx",`${sess.prom.vmax}km/h`,"#e879f9"]].map(([l,v,c])=>(
-                  <div key={l} style={{textAlign:"center",minWidth:55}}>
-                    <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{l}</div>
-                    <div style={{fontSize:14,fontWeight:600,color:c}}>{v}</div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
+          {/* Promedio equipo — calculado desde datos individuales */}
+          {sess.jugadoras&&sess.jugadoras.length>0&&(()=>{
+            const jugs=sess.jugadoras;
+            const n=jugs.length;
+            const avg=k=>Math.round(jugs.reduce((a,j)=>a+(j[k]||0),0)/n);
+            const avgf=k=>Math.round(jugs.reduce((a,j)=>a+(j[k]||0),0)/n*10)/10;
+            // hsr = ai15 (15-18), h18 = ai18 (18-21), spr = >21
+            const dist=avg("dist");
+            const mxm=dist&&avg("min")>0?Math.round(dist/avgf("min")*10)/10:avgf("mxm");
+            const h15=avg("ai15")||avg("hsr")||0;
+            const h18=avg("ai18")||0;
+            const spr=avg("spr")||0;
+            const acc=avg("acc");
+            const dsc=avg("dsc");
+            const ns=avg("ns");
+            const vmax=avgf("vmax");
+            return(
+              <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020"}}>
+                <CT text="Promedio equipo"/>
+                <div style={{display:"flex",gap:10,flexWrap:"wrap",fontSize:12}}>
+                  {[
+                    ["Dist.",`${dist.toLocaleString()}m`,T.blue],
+                    ["m/min",mxm,T.muted2],
+                    ["15-18",`${h15}m`,T.text],
+                    ["18-21",`${h18}m`,T.amber],
+                    [">21",`${spr}m`,T.red],
+                    ["ACC",acc,T.purple],
+                    ["DSC",dsc,T.cyan],
+                    ["N Spr",ns,"#06b6d4"],
+                    ["Vmáx",`${vmax}km/h`,"#e879f9"]
+                  ].map(([l,v,c])=>(
+                    <div key={l} style={{textAlign:"center",minWidth:55}}>
+                      <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{l}</div>
+                      <div style={{fontSize:14,fontWeight:600,color:c}}>{v}</div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            );
+          })()}
         </>
       ):(
         <>
