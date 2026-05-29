@@ -2041,6 +2041,7 @@ function PlayerAsistencia({player}){
 
   // Construir filas del calendario: todas las fechas únicas en orden
   const MESES_CAL=[
+    {key:"2026-02",label:"FEBRERO",color:T.purple||"#a78bfa"},
     {key:"2026-03",label:"MARZO",color:T.green},
     {key:"2026-04",label:"ABRIL",color:T.blue},
     {key:"2026-05",label:"MAYO",color:T.amber},
