@@ -1277,28 +1277,364 @@ function StaffYoyo(){
   );
 }
 
-function StaffMinutos(){
-  const partidos=["COGS","PWCC","MANQ A","UC B"];
-  const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
+// ─── STAFF MINUTOS ────────────────────────────────────────────────────────────
+const SISTEMAS={
+  "4-3-3":  {def:4,med:3,del:3},
+  "4-4-2":  {def:4,med:4,del:2},
+  "4-2-3-1":{def:4,med:6,del:1},
+  "3-4-3":  {def:3,med:4,del:3},
+  "3-5-2":  {def:3,med:5,del:2},
+  "5-3-2":  {def:5,med:3,del:2},
+  "4-5-1":  {def:4,med:5,del:1},
+};
+
+const ALL_JUGADORAS=["Alfaro Javiera","Arau María Paz","Carrasco Sofia","Errazu Sofia","Gacitua Emilia","Gomez Camila","Gutierrez Renata","Hevia Valentina","Liu Macarena","Manriquez Fernanda","Martinez Amanda","Mateluna Florencia","Muñoz Constanza","Pareja Camila","Pollmann Marianne","Retamal Antonia","Sepulveda Eileen","Sierra Julieta","Silva Victoria"];
+
+function TiempoDisplay({seg}){
+  const m=Math.floor(seg/60).toString().padStart(2,"0");
+  const s=(seg%60).toString().padStart(2,"0");
+  return<span>{m}:{s}</span>;
+}
+
+function StaffMinutosTracker({onVolver,rival,sistema,seleccion,onGuardar}){
+  const CUARTOS=4;
+  const DURACION=15*60;// 15 min en segundos
+  const [cuarto,setCuarto]=useState(1);
+  const [corriendo,setCorriendo]=useState(false);
+  const [segCuarto,setSegCuarto]=useState(0);// segundos del cuarto actual
+  const [enCancha,setEnCancha]=useState(()=>seleccion.slice(0,11));
+  const [banco,setBanco]=useState(()=>seleccion.slice(11));
+  // minutos acumulados por jugadora {nombre: segundos_totales}
+  const [acum,setAcum]=useState(()=>{
+    const a={};seleccion.forEach(j=>a[j]=0);return a;
+  });
+  // segundos en cancha desde inicio del stint actual
+  const [stintStart,setStintStart]=useState(()=>{
+    const s={};seleccion.slice(0,11).forEach(j=>s[j]=0);return s;
+  });
+  const [historial,setHistorial]=useState([]);// [{cuarto,minuto,sale,entra}]
+  const [selDragging,setSelDragging]=useState(null);
+  const [cuartosData,setCuartosData]=useState({});// {1:{nombre:segs}, 2:...}
+  const [finalizado,setFinalizado]=useState(false);
+  const [confirmFin,setConfirmFin]=useState(false);
+  const [saving,setSaving]=useState(false);
+
+  // Tick
+  React.useEffect(()=>{
+    if(!corriendo||finalizado)return;
+    const t=setInterval(()=>{
+      setSegCuarto(s=>{
+        const ns=s+1;
+        // Acumular tiempo a jugadoras en cancha
+        setAcum(prev=>{
+          const n={...prev};
+          enCancha.forEach(j=>{n[j]=(n[j]||0)+1;});
+          return n;
+        });
+        return ns;
+      });
+    },1000);
+    return()=>clearInterval(t);
+  },[corriendo,enCancha,finalizado]);
+
+  const toggleCronometro=()=>setCorriendo(v=>!v);
+
+  const finCuarto=()=>{
+    setCorriendo(false);
+    // Guardar datos del cuarto
+    const mins={};
+    enCancha.forEach(j=>{mins[j]=Math.round((acum[j]||0)/60);});
+    setCuartosData(prev=>({...prev,[cuarto]:mins}));
+    if(cuarto<CUARTOS){setCuarto(c=>c+1);setSegCuarto(0);}
+    else{setConfirmFin(true);}
+  };
+
+  const cambio=(jugBanco)=>{
+    if(!selDragging)return;
+    const jugSale=selDragging;
+    // Swap
+    setEnCancha(prev=>prev.map(j=>j===jugSale?jugBanco:j));
+    setBanco(prev=>prev.map(j=>j===jugBanco?jugSale:j));
+    // Registrar historial
+    setHistorial(prev=>[...prev,{cuarto,min:Math.floor(segCuarto/60),sale:jugSale,entra:jugBanco}]);
+    setSelDragging(null);
+  };
+
+  const confirmarFin=async()=>{
+    setSaving(true);
+    // Construir payload: minutos por jugadora por cuarto
+    const reporte={};
+    ALL_JUGADORAS.forEach(j=>{
+      reporte[j]={c1:cuartosData[1]?.[j]||0,c2:cuartosData[2]?.[j]||0,c3:cuartosData[3]?.[j]||0,c4:cuartosData[4]?.[j]||0};
+      reporte[j].tot=reporte[j].c1+reporte[j].c2+reporte[j].c3+reporte[j].c4;
+    });
+    // POST al Apps Script
+    const params=new URLSearchParams({accion:"minutos",rival,datos:JSON.stringify(reporte)});
+    await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
+    setSaving(false);
+    setFinalizado(true);
+    setConfirmFin(false);
+    onGuardar(reporte,rival);
+  };
+
+  const pct=Math.min(100,Math.round(segCuarto/DURACION*100));
+  const segRestante=Math.max(0,DURACION-segCuarto);
+
+  if(finalizado){
+    return(
+      <>
+        <div style={{textAlign:"center",padding:"20px 0 10px"}}>
+          <div style={{fontSize:28,marginBottom:6}}>🏆</div>
+          <div style={{color:T.green,fontWeight:700,fontSize:16}}>Partido finalizado</div>
+          <div style={{color:T.muted,fontSize:12,marginTop:4}}>vs {rival} — datos guardados en Drive</div>
+        </div>
+        <Card>
+          <CT text="Reporte final — minutos por jugadora"/>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <TH cols={["Jugadora","C1","C2","C3","C4","Total"]}/>
+            <tbody>{ALL_JUGADORAS.map(j=>{
+              const d={c1:cuartosData[1]?.[j]||0,c2:cuartosData[2]?.[j]||0,c3:cuartosData[3]?.[j]||0,c4:cuartosData[4]?.[j]||0};
+              const tot=d.c1+d.c2+d.c3+d.c4;
+              if(!tot)return null;
+              const col=tot>=45?T.green:tot>=30?T.amber:T.muted;
+              return(
+                <tr key={j}>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{j}</td>
+                  {[d.c1,d.c2,d.c3,d.c4].map((v,i)=>(
+                    <td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v?`${v}'`:"—"}</td>
+                  ))}
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700,textAlign:"center"}}>{tot}'</td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
+        </Card>
+        <Card>
+          <CT text="Historial de cambios"/>
+          {historial.length===0?<div style={{color:T.muted,fontSize:12}}>Sin cambios registrados</div>:
+          historial.map((h,i)=>(
+            <div key={i} style={{fontSize:12,color:T.text,padding:"4px 0",borderBottom:"1px solid #141824"}}>
+              <span style={{color:T.muted}}>C{h.cuarto} min {h.min}'</span> — <span style={{color:T.red}}>↓ {h.sale.split(" ")[0]}</span> / <span style={{color:T.green}}>↑ {h.entra.split(" ")[0]}</span>
+            </div>
+          ))}
+        </Card>
+        <button onClick={onVolver} style={{width:"100%",padding:12,background:T.blue,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit",marginTop:8}}>← Volver a Minutos</button>
+      </>
+    );
+  }
+
   return(
     <>
+      {/* Modal confirmar fin */}
+      {confirmFin&&(
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setConfirmFin(false)}>
+          <div style={{background:"#1a1f2e",border:`1px solid ${T.border2}`,borderRadius:12,padding:24,maxWidth:300,width:"90%",textAlign:"center"}} onClick={e=>e.stopPropagation()}>
+            <div style={{fontSize:24,marginBottom:12}}>🏁</div>
+            <div style={{color:T.text,fontWeight:700,fontSize:16,marginBottom:8}}>¿Terminar partido?</div>
+            <div style={{color:T.muted,fontSize:12,marginBottom:20}}>Se guardará el reporte de minutos en Drive.</div>
+            <div style={{display:"flex",gap:10}}>
+              <button onClick={()=>setConfirmFin(false)} style={{flex:1,padding:10,background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>Cancelar</button>
+              <button onClick={confirmarFin} disabled={saving} style={{flex:1,padding:10,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"Sí, terminar"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header cronómetro */}
+      <Card style={{marginBottom:8}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
+          <div>
+            <div style={{fontSize:10,color:T.muted}}>vs {rival} — {sistema}</div>
+            <div style={{fontSize:28,fontWeight:700,color:corriendo?T.green:T.amber,fontVariantNumeric:"tabular-nums"}}>
+              <TiempoDisplay seg={segCuarto}/>
+            </div>
+            <div style={{fontSize:11,color:T.muted}}>Cuarto {cuarto} / {CUARTOS} — Restante: <TiempoDisplay seg={segRestante}/></div>
+          </div>
+          <div style={{display:"flex",gap:8,flexDirection:"column",alignItems:"flex-end"}}>
+            <div style={{display:"flex",gap:6}}>
+              {[1,2,3,4].map(q=>(
+                <div key={q} style={{width:28,height:28,borderRadius:6,background:q<cuarto?T.green:q===cuarto?"#1a3a5f":"#1e2535",border:`1px solid ${q===cuarto?T.blue:T.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,color:q<cuarto?T.green:q===cuarto?T.blue:T.muted,fontWeight:600}}>Q{q}</div>
+              ))}
+            </div>
+            <div style={{display:"flex",gap:6}}>
+              <button onClick={toggleCronometro} style={{padding:"8px 16px",borderRadius:8,border:"none",background:corriendo?T.amber:T.green,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                {corriendo?"⏸ Pausa":"▶ Play"}
+              </button>
+              <button onClick={finCuarto} style={{padding:"8px 16px",borderRadius:8,border:`1px solid ${T.border}`,background:"transparent",color:T.text,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                {cuarto<CUARTOS?`Fin Q${cuarto}`:"🏁 Final"}
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* Barra progreso cuarto */}
+        <div style={{marginTop:10,background:"#1e2535",borderRadius:4,height:6}}>
+          <div style={{width:`${pct}%`,height:6,borderRadius:4,background:corriendo?T.green:T.amber,transition:"width 1s linear"}}/>
+        </div>
+      </Card>
+
+      {/* Instrucción cambio */}
+      {selDragging&&(
+        <div style={{background:"#1a3a5f",border:`1px solid ${T.blue}`,borderRadius:8,padding:"8px 12px",marginBottom:8,fontSize:12,color:T.blue,textAlign:"center"}}>
+          <strong>{selDragging.split(" ")[0]}</strong> seleccionada — tocá una jugadora del banco para hacer el cambio
+        </div>
+      )}
+
+      {/* Cancha */}
+      <Card style={{marginBottom:8,padding:8}}>
+        <CT text="En cancha — tocá una jugadora para seleccionarla"/>
+        {/* Representación cancha hockey */}
+        <div style={{background:"#0a1f0a",borderRadius:8,padding:8,position:"relative",minHeight:320}}>
+          {/* Líneas cancha */}
+          <div style={{position:"absolute",inset:8,border:"1px solid #1a3a1a",borderRadius:4,pointerEvents:"none"}}/>
+          <div style={{position:"absolute",top:"50%",left:8,right:8,height:1,background:"#1a3a1a",pointerEvents:"none"}}/>
+          {/* Jugadoras en cancha agrupadas por línea */}
+          {(()=>{
+            const sis=SISTEMAS[sistema]||{def:4,med:4,del:2};
+            const lineas=[
+              {label:"DEL",count:sis.del,top:"8%"},
+              {label:"MED",count:sis.med,top:"35%"},
+              {label:"DEF",count:sis.def,top:"62%"},
+              {label:"GK", count:1,     top:"85%"},
+            ];
+            let idx=0;
+            return lineas.map(({label,count,top})=>(
+              <div key={label} style={{position:"absolute",top,left:0,right:0,display:"flex",justifyContent:"center",gap:8,flexWrap:"wrap"}}>
+                {Array.from({length:count}).map((_,i)=>{
+                  const j=enCancha[idx++];
+                  if(!j)return null;
+                  const sel=selDragging===j;
+                  const segs=acum[j]||0;
+                  const mins=Math.floor(segs/60);
+                  return(
+                    <div key={j} onClick={()=>setSelDragging(sel?null:j)}
+                      style={{background:sel?"#1a3a5f":"#0d2a0d",border:`2px solid ${sel?T.blue:T.green}`,borderRadius:8,padding:"4px 8px",cursor:"pointer",textAlign:"center",minWidth:70,maxWidth:90}}>
+                      <div style={{fontSize:9,color:T.muted,fontWeight:500}}>{label}</div>
+                      <div style={{fontSize:11,color:T.text,fontWeight:600,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{j.split(" ")[0]}</div>
+                      <div style={{fontSize:10,color:T.green,fontWeight:500}}>{mins}'</div>
+                    </div>
+                  );
+                })}
+              </div>
+            ));
+          })()}
+        </div>
+      </Card>
+
+      {/* Banco */}
+      <Card>
+        <CT text="Banco — tocá una jugadora para hacer el cambio"/>
+        <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+          {banco.map(j=>{
+            const mins=Math.floor((acum[j]||0)/60);
+            const activo=selDragging!==null;
+            return(
+              <div key={j} onClick={()=>activo?cambio(j):null}
+                style={{background:activo?"#1a2a1a":"#0d1020",border:`1px solid ${activo?T.green:T.border}`,borderRadius:8,padding:"6px 10px",cursor:activo?"pointer":"default",textAlign:"center",minWidth:80,transition:"all 0.15s"}}>
+                <div style={{fontSize:12,color:T.text,fontWeight:500}}>{j.split(" ")[0]}</div>
+                <div style={{fontSize:10,color:T.muted}}>{j.split(" ")[1]||""}</div>
+                <div style={{fontSize:11,color:T.amber,fontWeight:500}}>{mins}'</div>
+              </div>
+            );
+          })}
+          {banco.length===0&&<div style={{color:T.muted,fontSize:12,padding:8}}>Sin jugadoras en banco</div>}
+        </div>
+      </Card>
+    </>
+  );
+}
+
+function StaffMinutos(){
+  const [vista,setVista]=useState("reporte");// reporte | setup | tracker
+  const [rival,setRival]=useState("");
+  const [sistema,setSistema]=useState("4-3-3");
+  const [seleccion,setSeleccion]=useState([]);
+  const [reporteGuardado,setReporteGuardado]=useState(null);
+  const partidos=["COGS","PWCC","MANQ A","UC B","OLD REDS"];
+  const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
+
+  const toggleJugadora=j=>{
+    setSeleccion(prev=>prev.includes(j)?prev.filter(x=>x!==j):[...prev,j]);
+  };
+
+  if(vista==="tracker"){
+    return<StaffMinutosTracker
+      onVolver={()=>setVista("reporte")}
+      rival={rival} sistema={sistema} seleccion={seleccion}
+      onGuardar={(rep,rv)=>{setReporteGuardado({rep,rv});setVista("reporte");}}
+    />;
+  }
+
+  if(vista==="setup"){
+    const enCancha=seleccion.slice(0,11);
+    const enBanco=seleccion.slice(11);
+    return(
+      <>
+        <button onClick={()=>setVista("reporte")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit",marginBottom:10}}>← Volver</button>
+        <Card style={{marginBottom:10}}>
+          <CT text="Configurar partido"/>
+          <div style={{marginBottom:12}}>
+            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Rival</div>
+            <input value={rival} onChange={e=>setRival(e.target.value)} placeholder="ej: COGS, PWCC..." style={{background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"8px 12px",fontSize:13,width:"100%",boxSizing:"border-box",fontFamily:"inherit"}}/>
+          </div>
+          <div style={{marginBottom:12}}>
+            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Sistema de juego</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+              {Object.keys(SISTEMAS).map(s=>(
+                <button key={s} onClick={()=>setSistema(s)} style={{padding:"6px 12px",borderRadius:6,border:`1px solid ${sistema===s?T.blue:T.border}`,background:sistema===s?"#1a3a5f":"transparent",color:sistema===s?T.blue:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>{s}</button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Elegí las jugadoras <span style={{color:enCancha.length===11?T.green:T.amber}}>({seleccion.length} sel. — {enCancha.length}/11 en cancha)</span></div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+              {ALL_JUGADORAS.map(j=>{
+                const idx=seleccion.indexOf(j);
+                const esCancha=idx>=0&&idx<11;
+                const esBanco=idx>=11;
+                return(
+                  <button key={j} onClick={()=>toggleJugadora(j)}
+                    style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${esCancha?T.green:esBanco?T.amber:T.border}`,background:esCancha?"#0f2d1f":esBanco?"#2d1f0f":"transparent",color:esCancha?T.green:esBanco?T.amber:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>
+                    {j.split(" ")[0]}{esCancha?` (${idx+1})`:""}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{fontSize:10,color:T.muted,marginTop:8}}>Verde = en cancha (primeras 11) · Naranja = banco · Las primeras 11 seleccionadas van a cancha</div>
+          </div>
+        </Card>
+        <button onClick={()=>{if(!rival.trim()){alert("Ingresá el rival");return;}if(seleccion.length<11){alert("Seleccioná al menos 11 jugadoras");return;}setVista("tracker");}}
+          style={{width:"100%",padding:13,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+          ▶ Iniciar partido
+        </button>
+      </>
+    );
+  }
+
+  // Vista reporte
+  return(
+    <>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
+        <div style={{fontSize:13,color:T.text,fontWeight:600}}>Minutos de juego</div>
+        <button onClick={()=>{setSeleccion([]);setRival("");setVista("setup");}} style={{padding:"8px 16px",borderRadius:8,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+          ⏱ Nuevo partido
+        </button>
+      </div>
       <MR>
         <MetCard label="Jugadoras" value={MINUTOS.length}/>
-        <MetCard label="Máx. minutos" value={`${Math.max(...MINUTOS.map(m=>m.tot))} min`} sub="Arau/Gutierrez/Pareja" sc={T.green}/>
+        <MetCard label="Máx. minutos" value={`${Math.max(...MINUTOS.map(m=>m.tot))} min`} sc={T.green}/>
         <MetCard label="Prom. equipo" value={`${Math.round(avg(MINUTOS.map(m=>m.tot)))} min`} sub="Total temporada"/>
-        <MetCard label="Partidos" value={4} sub="COGS · PWCC · MANQ · UC B · OLD REDS"/>
+        <MetCard label="Partidos" value={5}/>
       </MR>
       <Card>
-        <CT text="Minutos de juego por jugadora — hoja Minutos de Juego"/>
+        <CT text="Minutos de juego por jugadora"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Jugadora","Div","COGS","PWCC","MANQ","UC B","OLD REDS","Total","Prom."]}/>
+            <TH cols={["Jugadora","COGS","PWCC","MANQ","UC B","OLD REDS","Total","Prom."]}/>
             <tbody>{[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
               const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
               return(
                 <tr key={m.n}>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{m.n}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}><Chip text={m.div} color={m.div==="S16"?T.purple:T.blue}/></td>
                   {[m.cogs,m.pwcc,m.manq,m.catb,m.reds].map((v,i)=>(
                     <td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v!=null?`${v}'`:"—"}</td>
                   ))}
