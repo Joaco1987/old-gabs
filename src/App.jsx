@@ -1417,11 +1417,31 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
   const [saving,setSaving]=useState(false);
 
   const enCanchaNames=posiciones.map(p=>p.nombre).filter(Boolean);
+  const lastVisibleRef=React.useRef(null);
 
+  // Mantener cronómetro corriendo aunque la app quede en segundo plano
   React.useEffect(()=>{
-    if(!corriendo||finalizado)return;
-    const t=setInterval(()=>{
-      setSegCuarto(s=>s+1);
+    const handleVisibility=()=>{
+      if(document.hidden){
+        lastVisibleRef.current=corriendo?Date.now():null;
+      } else {
+        if(corriendo&&lastVisibleRef.current){
+          const elapsed=Math.floor((Date.now()-lastVisibleRef.current)/1000);
+          if(elapsed>0){
+            setSegCuarto(s=>s+elapsed);
+            setAcum(prev=>{
+              const n={...prev};
+              enCanchaNames.forEach(j=>{n[j]=(n[j]||0)+elapsed;});
+              return n;
+            });
+          }
+          lastVisibleRef.current=null;
+        }
+      }
+    };
+    document.addEventListener("visibilitychange",handleVisibility);
+    return()=>document.removeEventListener("visibilitychange",handleVisibility);
+  },[corriendo,enCanchaNames.join(",")]);
       setAcum(prev=>{const n={...prev};enCanchaNames.forEach(j=>{n[j]=(n[j]||0)+1;});return n;});
     },1000);
     return()=>clearInterval(t);
