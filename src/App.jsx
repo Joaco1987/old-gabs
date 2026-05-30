@@ -1341,14 +1341,12 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
       <line x1={fx-3} y1={y25propia} x2={fx+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
       <line x1={fx+fw-3} y1={y25propia} x2={fx+fw+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
 
-      {/* Área propia — semicírculo sólido centrado hacia arriba */}
-      <path d={`M ${cx-arcR} ${fy+fh} A ${arcR} ${arcR} 0 0 0 ${cx+arcR} ${fy+fh}`}
-        fill="none" stroke="white" strokeWidth="1.8" clipPath="url(#fieldClip)"/>
+      {/* Área propia — semicírculo centrado, se eleva desde el fondo hacia arriba */}
+      <circle cx={cx} cy={fy+fh} r={arcR} fill="none" stroke="white" strokeWidth="1.8" clipPath="url(#fieldClip)"/>
       {/* Área punteada exterior */}
-      <path d={`M ${cx-arcR2} ${fy+fh} A ${arcR2} ${arcR2} 0 0 0 ${cx+arcR2} ${fy+fh}`}
-        fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4" clipPath="url(#fieldClip)"/>
+      <circle cx={cx} cy={fy+fh} r={arcR2} fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4" clipPath="url(#fieldClip)"/>
       {/* Punto penal */}
-      <circle cx={cx} cy={fy+fh-arcR*0.6} r={2.5} fill="white"/>
+      <circle cx={cx} cy={fy+fh-arcR*0.55} r={2.5} fill="white"/>
 
       {/* Portería propia */}
       <rect x={cx-fw*0.14} y={fy+fh-1} width={fw*0.28} height={7} fill="none" stroke="white" strokeWidth="2"/>
