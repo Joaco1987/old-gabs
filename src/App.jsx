@@ -747,16 +747,21 @@ function GraficoHSR({sesiones,titulo}){
 
 // ─── HELPER: calcula zonas HSR para una jugadora en una sesión ────────────────
 function calcZonas(j, sess){
+  // Prioridad 1: sub-tabla zonas hardcodeada (entrenos principalmente)
   if(sess.zonas){
     const z=sess.zonas.find(z=>z.n===j.n);
     if(z) return {h15:z.h15||0, h18:z.h18||0, sp:z.spr||0};
   }
   const h18=j.ai18||0;
   const sp=j.spr||0;
-  const h15=sess.tipo==="entreno"
-    ? (j.hsr||0)
-    : Math.max(0,(j.hsr||j.ai15||0)-h18-sp);
-  return {h15, h18, sp};
+  if(sess.tipo==="entreno"){
+    // entrenos: hsr ya ES la zona 15-18
+    return {h15:j.hsr||0, h18, sp};
+  }
+  // partidos: hsr = total >15 → h15 = hsr - ai18 - spr
+  // amistosos: ai15 = total >15 → h15 = ai15 - ai18 - spr
+  const total=j.hsr||j.ai15||0;
+  return {h15:Math.max(0,total-h18-sp), h18, sp};
 }
 
 // ─── STAFF GPS ────────────────────────────────────────────────────────────────
@@ -1863,10 +1868,8 @@ function PlayerGPS({player}){
         const vals=sessConDatos.map(s=>{
           const jd=s.jugadoras.find(j=>j.n===player);
           if(!jd)return{h15:0,h18:0,spr:0};
-          const h15=jd.hsr||0;
-          const h18=jd.ai18||0;
-          const spr=jd.spr||0;
-          return{h15,h18,spr};
+          const {h15,h18,sp}=calcZonas(jd,s);
+          return{h15,h18,spr:sp};
         });
         const mx=Math.max(...vals.map(v=>v.h15+v.h18+v.spr),1);
         return(
