@@ -2237,10 +2237,14 @@ function StaffWellness(){
   const WellnessTable=({recs})=>(
     <div style={{overflowX:"auto"}}>
       <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,minWidth:480}}>
-        <TH cols={["Jugadora","Sueño","Horas","Fatiga","Dolor","Zona","Estrés","Ánimo"]}/>
+        <thead><tr>
+          {["Jugadora","Sueño","Horas","Fatiga","Dolor","Zona","Estrés","Ánimo"].map((c,i)=>(
+            <th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap",...(i===0?{position:"sticky",left:0,background:T.surf,zIndex:2}:{})}}>{c}</th>
+          ))}
+        </tr></thead>
         <tbody>{recs.map((r,i)=>(
           <tr key={i}>
-            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{r.Jugadora}</td>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",position:"sticky",left:0,background:T.surf,zIndex:1}}>{r.Jugadora}</td>
             <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Calidad Sueño"]),fontWeight:600,textAlign:"center"}}>{r["Calidad Sueño"]}</td>
             <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{r["Horas Sueño"]}</td>
             <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r.Fatiga),fontWeight:600,textAlign:"center"}}>{r.Fatiga}</td>
