@@ -754,12 +754,11 @@ function calcZonas(j, sess){
   }
   const h18=j.ai18||0;
   const sp=j.spr||0;
-  if(sess.tipo==="amistoso"){
-    // amistosos: ai15 = total >15 → h15 = ai15 - ai18 - spr
-    return {h15:Math.max(0,(j.ai15||0)-h18-sp), h18, sp};
-  }
-  // partidos y entrenos: hsr YA ES la zona 15-18
-  return {h15:j.hsr||0, h18, sp};
+  // Siempre: h15 = AI>15 - AI18 - Spr
+  // partidos/entrenos: AI>15 = hsr
+  // amistosos: AI>15 = ai15
+  const total=j.hsr||j.ai15||0;
+  return {h15:Math.max(0,total-h18-sp), h18, sp};
 }
 
 // ─── STAFF GPS ────────────────────────────────────────────────────────────────
@@ -1499,6 +1498,26 @@ function StaffTomarAsistencia({onVolver}){
   const [pres,setPres]=useState({});
   const [saving,setSaving]=useState(false);
   const [saved,setSaved]=useState(false);
+  const [yaRegistrada,setYaRegistrada]=useState(null);// null=cargando, false=libre, string=fecha registrada
+  const [checkando,setCheckando]=useState(true);
+
+  // Verificar si ya existe asistencia para la fecha seleccionada
+  React.useEffect(()=>{
+    setCheckando(true);
+    setYaRegistrada(null);
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Asistencias App"]||[];
+        const headers=sheet[0]||[];
+        const fechaIdx=headers.indexOf("Fecha");
+        const existe=sheet.slice(1).some(r=>String(r[fechaIdx]||"").trim()===fecha);
+        setYaRegistrada(existe?fecha:false);
+      })
+      .catch(()=>setYaRegistrada(false))
+      .finally(()=>setCheckando(false));
+  },[fecha]);
+
   const toggle=j=>setPres(p=>{const n={...p};n[j]=n[j]===1?0:n[j]===0?null:1;return n;});
   const marcarTodas=v=>{const n={};JUGADORAS.forEach(j=>n[j]=v);setPres(n);};
   const col=j=>pres[j]===1?"#3ecf7a":pres[j]===0?"#e05555":T.muted;
@@ -1508,7 +1527,7 @@ function StaffTomarAsistencia({onVolver}){
     const datos=JSON.stringify(JUGADORAS.map(j=>({jugadora:j,estado:pres[j]===1?"P":pres[j]===0?"A":""})));
     const params=new URLSearchParams({accion:"asistencia",fecha,datos});
     await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
-    setSaving(false);setSaved(true);setTimeout(()=>setSaved(false),3000);
+    setSaving(false);setSaved(true);setYaRegistrada(fecha);
   };
   return(
     <>
@@ -1518,29 +1537,43 @@ function StaffTomarAsistencia({onVolver}){
         <div style={{display:"flex",gap:8,alignItems:"flex-end",marginBottom:12,flexWrap:"wrap"}}>
           <div>
             <div style={{fontSize:10,color:T.muted,marginBottom:3}}>Fecha</div>
-            <input type="date" value={fecha} onChange={e=>{setFecha(e.target.value);setSaved(false);}}
+            <input type="date" value={fecha} onChange={e=>{setFecha(e.target.value);setSaved(false);setPres({});}}
               style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,color:T.text,padding:"6px 10px",fontSize:13,fontFamily:"inherit"}}/>
           </div>
-          <button onClick={()=>marcarTodas(1)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #3ecf7a",background:"#0f2d1f",color:"#3ecf7a",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✓ Todas P</button>
-          <button onClick={()=>marcarTodas(0)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #e05555",background:"#2d0f0f",color:"#e05555",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✗ Todas A</button>
-          <button onClick={()=>setPres({})} style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Reset</button>
+          {!yaRegistrada&&<>
+            <button onClick={()=>marcarTodas(1)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #3ecf7a",background:"#0f2d1f",color:"#3ecf7a",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✓ Todas P</button>
+            <button onClick={()=>marcarTodas(0)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #e05555",background:"#2d0f0f",color:"#e05555",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✗ Todas A</button>
+            <button onClick={()=>setPres({})} style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Reset</button>
+          </>}
         </div>
-        <table style={{width:"100%",borderCollapse:"collapse"}}>
-          <tbody>{JUGADORAS.map((j,i)=>(
-            <tr key={i} onClick={()=>toggle(j)} style={{cursor:"pointer",background:pres[j]===1?"#0f2d1f33":pres[j]===0?"#2d0f0f33":"transparent"}}>
-              <td style={{padding:"9px 8px",borderBottom:`1px solid ${T.border}`,color:T.text,fontWeight:500,fontSize:13}}>{j}</td>
-              <td style={{padding:"9px 8px",borderBottom:`1px solid ${T.border}`,textAlign:"right"}}>
-                <span style={{fontSize:18,fontWeight:800,color:col(j)}}>{lbl(j)}</span>
-              </td>
-            </tr>
-          ))}</tbody>
-        </table>
+        {checkando?(
+          <div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Verificando...</div>
+        ):yaRegistrada?(
+          <div style={{background:"#0f2d1f",border:"1px solid #1a4a2a",borderRadius:8,padding:"16px 20px",textAlign:"center"}}>
+            <div style={{fontSize:20,marginBottom:6}}>✓</div>
+            <div style={{color:T.green,fontWeight:600,fontSize:14}}>Asistencia ya registrada</div>
+            <div style={{color:T.muted,fontSize:12,marginTop:4}}>La asistencia del {fecha} ya fue cargada en Drive.</div>
+          </div>
+        ):(
+          <table style={{width:"100%",borderCollapse:"collapse"}}>
+            <tbody>{JUGADORAS.map((j,i)=>(
+              <tr key={i} onClick={()=>toggle(j)} style={{cursor:"pointer",background:pres[j]===1?"#0f2d1f33":pres[j]===0?"#2d0f0f33":"transparent"}}>
+                <td style={{padding:"9px 8px",borderBottom:`1px solid ${T.border}`,color:T.text,fontWeight:500,fontSize:13}}>{j}</td>
+                <td style={{padding:"9px 8px",borderBottom:`1px solid ${T.border}`,textAlign:"right"}}>
+                  <span style={{fontSize:18,fontWeight:800,color:col(j)}}>{lbl(j)}</span>
+                </td>
+              </tr>
+            ))}</tbody>
+          </table>
+        )}
       </Card>
-      <button onClick={guardar} disabled={saving}
-        style={{width:"100%",padding:"13px",background:saved?"#0f2d1f":T.blue,border:"none",borderRadius:8,
-          color:saved?"#3ecf7a":"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-        {saving?"Guardando...":saved?"✓ Guardado en Drive":"Guardar Asistencia"}
-      </button>
+      {!checkando&&!yaRegistrada&&(
+        <button onClick={guardar} disabled={saving}
+          style={{width:"100%",padding:"13px",background:saved?"#0f2d1f":T.blue,border:"none",borderRadius:8,
+            color:saved?"#3ecf7a":"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+          {saving?"Guardando...":saved?"✓ Guardado en Drive":"Guardar Asistencia"}
+        </button>
+      )}
     </>
   );
 }
