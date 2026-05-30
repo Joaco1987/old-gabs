@@ -1697,50 +1697,100 @@ function StaffMinutos(){
     );
   }
 
-  // Vista reporte
-  const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
+  // Vista reporte — en vivo desde Drive
+  const [driveData,setDriveData]=useState(null);
+  const [loadingDrive,setLoadingDrive]=useState(true);
+
+  React.useEffect(()=>{
+    if(vista!=="reporte")return;
+    setLoadingDrive(true);
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Minutos App"]||[];
+        if(sheet.length<2){setDriveData({partidos:[],jugadoras:{}});return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
+        // Recolectar partidos únicos (en orden de aparición)
+        const partidos=[],partSet=new Set();
+        const jugMap={};// {jugadora:{rival:total}}
+        sheet.slice(1).forEach(r=>{
+          const rival=String(r[iR]||"").trim();
+          const jug=String(r[iJ]||"").trim();
+          const tot=Number(r[iT])||0;
+          if(!rival||!jug||!tot)return;
+          if(!partSet.has(rival)){partSet.add(rival);partidos.push(rival);}
+          if(!jugMap[jug])jugMap[jug]={};
+          jugMap[jug][rival]=(jugMap[jug][rival]||0)+tot;
+        });
+        setDriveData({partidos,jugMap});
+      })
+      .catch(()=>setDriveData({partidos:[],jugMap:{}}))
+      .finally(()=>setLoadingDrive(false));
+  },[vista]);
+
+  const partidos=driveData?.partidos||[];
+  const jugMap=driveData?.jugMap||{};
+  const jugadoras=Object.keys(jugMap).sort((a,b)=>{
+    const totA=Object.values(jugMap[a]).reduce((s,v)=>s+v,0);
+    const totB=Object.values(jugMap[b]).reduce((s,v)=>s+v,0);
+    return totB-totA;
+  });
+  const getTot=j=>Object.values(jugMap[j]||{}).reduce((s,v)=>s+v,0);
+  const maxTot=jugadoras.length?Math.max(...jugadoras.map(getTot),1):1;
+
   return(
     <>
       <div style={{display:"flex",gap:8,marginBottom:10}}>
         <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>📊 Reporte</button>
         <button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>⏱ Tomar Minutos</button>
       </div>
-      <MR>
-        <MetCard label="Jugadoras" value={MINUTOS.length}/>
-        <MetCard label="Máx. minutos" value={`${Math.max(...MINUTOS.map(m=>m.tot))} min`} sc={T.green}/>
-        <MetCard label="Prom. equipo" value={`${Math.round(avg(MINUTOS.map(m=>m.tot)))} min`} sub="Total temporada"/>
-        <MetCard label="Partidos" value={5}/>
-      </MR>
-      <Card>
-        <CT text="Minutos de juego por jugadora"/>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Jugadora","COGS","PWCC","MANQ","UC B","OLD REDS","Total","Prom."]}/>
-            <tbody>{[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
-              const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
-              return(<tr key={m.n}>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{m.n}</td>
-                {[m.cogs,m.pwcc,m.manq,m.catb,m.reds].map((v,i)=>(
-                  <td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v!=null?`${v}'`:"—"}</td>
-                ))}
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700}}>{m.tot}'</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{m.prom.toFixed(1)}'</td>
-              </tr>);
-            })}</tbody>
-          </table>
-        </div>
-        <div style={{marginTop:12}}>
-          <CT text="Minutos totales — barra"/>
-          {[...MINUTOS].sort((a,b)=>b.tot-a.tot).map(m=>{
-            const col=m.tot>=200?T.green:m.tot>=100?T.amber:T.muted;
-            return(<div key={m.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}>
-              <span style={{fontSize:11,color:T.text,width:130,flexShrink:0,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{m.n.split(" ")[0]}</span>
-              <div style={{flex:1,background:"#1e2535",borderRadius:3,height:8}}><div style={{width:`${Math.round(m.tot/maxTot*100)}%`,height:8,borderRadius:3,background:col}}/></div>
-              <span style={{fontSize:11,color:col,width:40,textAlign:"right",fontWeight:500}}>{m.tot}'</span>
-            </div>);
-          })}
-        </div>
-      </Card>
+      {loadingDrive?(
+        <Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Cargando minutos desde Drive...</div></Card>
+      ):(
+        <>
+          <MR>
+            <MetCard label="Jugadoras" value={jugadoras.length}/>
+            <MetCard label="Máx. minutos" value={jugadoras.length?`${maxTot} min`:"—"} sc={T.green}/>
+            <MetCard label="Prom. equipo" value={jugadoras.length?`${Math.round(jugadoras.reduce((s,j)=>s+getTot(j),0)/jugadoras.length)} min`:"—"} sub="Total temporada"/>
+            <MetCard label="Partidos" value={partidos.length}/>
+          </MR>
+          <Card>
+            <CT text="Minutos de juego por jugadora — en vivo desde Drive"/>
+            <div style={{overflowX:"auto"}}>
+              <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+                <TH cols={["Jugadora",...partidos,"Total","Prom."]}/>
+                <tbody>{jugadoras.map(j=>{
+                  const tot=getTot(j);
+                  const col=tot>=200?T.green:tot>=100?T.amber:T.muted;
+                  const np=partidos.filter(p=>jugMap[j][p]).length;
+                  return(<tr key={j}>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{j}</td>
+                    {partidos.map(p=>{
+                      const v=jugMap[j][p];
+                      return<td key={p} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v?`${v}'`:"—"}</td>;
+                    })}
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700}}>{tot}'</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{np?`${Math.round(tot/np*10)/10}'`:"—"}</td>
+                  </tr>);
+                })}</tbody>
+              </table>
+            </div>
+            <div style={{marginTop:12}}>
+              <CT text="Minutos totales — barra"/>
+              {jugadoras.map(j=>{
+                const tot=getTot(j);
+                const col=tot>=200?T.green:tot>=100?T.amber:T.muted;
+                return(<div key={j} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}>
+                  <span style={{fontSize:11,color:T.text,width:130,flexShrink:0,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{j.split(" ")[0]}</span>
+                  <div style={{flex:1,background:"#1e2535",borderRadius:3,height:8}}><div style={{width:`${Math.round(tot/maxTot*100)}%`,height:8,borderRadius:3,background:col}}/></div>
+                  <span style={{fontSize:11,color:col,width:40,textAlign:"right",fontWeight:500}}>{tot}'</span>
+                </div>);
+              })}
+            </div>
+          </Card>
+        </>
+      )}
     </>
   );
 }
