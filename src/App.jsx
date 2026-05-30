@@ -1454,6 +1454,8 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
     if(menuJug===j){setMenuJug(null);setSelCancha(null);}
     else{setMenuJug(j);setSelCancha(j);}
   };
+
+  const confirmarFin=async()=>{
     setSaving(true);
     const reporte={};
     ALL_JUGADORAS.forEach(j=>{
