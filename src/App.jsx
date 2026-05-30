@@ -1498,15 +1498,14 @@ function StaffAsistenciaReporte({onTomar,onFechas}){
 
 function StaffTomarAsistencia({onVolver, fechasRegistradas}){
   const JUGADORAS=["Alfaro Javiera","Arau María Paz","Carrasco Sofia","Errazu Sofia","Gacitua Emilia","Gomez Camila","Gutierrez Renata","Hevia Valentina","Liu Macarena","Manriquez Fernanda","Martinez Amanda","Mateluna Florencia","Muñoz Constanza","Pareja Camila","Pollmann Marianne","Retamal Antonia","Sepulveda Eileen","Sierra Julieta","Silva Victoria"];
-  const hoy=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
-  const [fecha,setFecha]=useState(hoy);
+  const [fecha,setFecha]=useState("");
   const [pres,setPres]=useState({});
   const [saving,setSaving]=useState(false);
-  const [saved,setSaved]=useState(false);
-  const [extraFechas,setExtraFechas]=useState(new Set());// fechas guardadas en esta sesión
+  const [extraFechas,setExtraFechas]=useState(new Set());
 
   const todasFechas=new Set([...(fechasRegistradas||[]),...extraFechas]);
-  const yaRegistrada=todasFechas.has(fecha);
+  const yaRegistrada=fecha&&todasFechas.has(fecha);
+  const listaVisible=fecha&&!yaRegistrada;
 
   const toggle=j=>setPres(p=>{const n={...p};n[j]=n[j]===1?0:n[j]===0?null:1;return n;});
   const marcarTodas=v=>{const n={};JUGADORAS.forEach(j=>n[j]=v);setPres(n);};
@@ -1517,7 +1516,7 @@ function StaffTomarAsistencia({onVolver, fechasRegistradas}){
     const datos=JSON.stringify(JUGADORAS.map(j=>({jugadora:j,estado:pres[j]===1?"P":pres[j]===0?"A":""})));
     const params=new URLSearchParams({accion:"asistencia",fecha,datos});
     await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
-    setSaving(false);setSaved(true);
+    setSaving(false);
     setExtraFechas(prev=>new Set([...prev,fecha]));
   };
 
@@ -1529,16 +1528,18 @@ function StaffTomarAsistencia({onVolver, fechasRegistradas}){
         <div style={{display:"flex",gap:8,alignItems:"flex-end",marginBottom:12,flexWrap:"wrap"}}>
           <div>
             <div style={{fontSize:10,color:T.muted,marginBottom:3}}>Fecha</div>
-            <input type="date" value={fecha} onChange={e=>{setFecha(e.target.value);setSaved(false);setPres({});}}
+            <input type="date" value={fecha} onChange={e=>{setFecha(e.target.value);setPres({});}}
               style={{background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"6px 10px",fontSize:13,fontFamily:"inherit",colorScheme:"dark"}}/>
           </div>
-          {!yaRegistrada&&<>
+          {listaVisible&&<>
             <button onClick={()=>marcarTodas(1)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #3ecf7a",background:"#0f2d1f",color:"#3ecf7a",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✓ Todas P</button>
             <button onClick={()=>marcarTodas(0)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #e05555",background:"#2d0f0f",color:"#e05555",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✗ Todas A</button>
             <button onClick={()=>setPres({})} style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Reset</button>
           </>}
         </div>
-        {yaRegistrada?(
+        {!fecha?(
+          <div style={{color:T.muted,textAlign:"center",padding:24,fontSize:13}}>Seleccioná una fecha para continuar</div>
+        ):yaRegistrada?(
           <div style={{background:"#0f2d1f",border:"1px solid #1a4a2a",borderRadius:8,padding:"16px 20px",textAlign:"center"}}>
             <div style={{fontSize:20,marginBottom:6}}>✓</div>
             <div style={{color:T.green,fontWeight:600,fontSize:14}}>Asistencia ya registrada</div>
@@ -1557,7 +1558,7 @@ function StaffTomarAsistencia({onVolver, fechasRegistradas}){
           </table>
         )}
       </Card>
-      {!yaRegistrada&&(
+      {listaVisible&&(
         <button onClick={guardar} disabled={saving}
           style={{width:"100%",padding:"13px",background:saving?"#1a3a5f":T.blue,border:"none",borderRadius:8,
             color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
