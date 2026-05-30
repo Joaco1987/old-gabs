@@ -832,6 +832,7 @@ function StaffGPS(){
             const spr=Math.round(jugs.reduce((a,j)=>a+calcZonas(j,sess).sp,0)/n);
             const acc=avg("acc");
             const dsc=avg("dsc");
+            const ns=avg("ns");
             const vmax=avgf("vmax");
             return(
               <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020"}}>
