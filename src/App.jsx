@@ -1279,15 +1279,14 @@ function StaffYoyo(){
 
 // ─── STAFF MINUTOS ────────────────────────────────────────────────────────────
 const SISTEMAS={
-  // x = posición izq-der (0-100), y = posición arriba-abajo en el campo (0-100)
-  // GK cerca del arco izquierdo, atacantes cerca del arco derecho
-  "4-3-3":  [{rol:"GK",x:6,y:50},{rol:"LD",x:25,y:18},{rol:"DC",x:25,y:38},{rol:"DC",x:25,y:62},{rol:"LI",x:25,y:82},{rol:"MC",x:50,y:25},{rol:"MC",x:50,y:50},{rol:"MC",x:50,y:75},{rol:"EX",x:76,y:18},{rol:"DC",x:80,y:50},{rol:"EX",x:76,y:82}],
-  "4-4-2":  [{rol:"GK",x:6,y:50},{rol:"LD",x:25,y:18},{rol:"DC",x:25,y:38},{rol:"DC",x:25,y:62},{rol:"LI",x:25,y:82},{rol:"MC",x:50,y:20},{rol:"MC",x:50,y:40},{rol:"MC",x:50,y:60},{rol:"MC",x:50,y:80},{rol:"DC",x:78,y:35},{rol:"DC",x:78,y:65}],
-  "4-2-3-1":[{rol:"GK",x:6,y:50},{rol:"LD",x:24,y:18},{rol:"DC",x:24,y:38},{rol:"DC",x:24,y:62},{rol:"LI",x:24,y:82},{rol:"MC",x:44,y:38},{rol:"MC",x:44,y:62},{rol:"EX",x:62,y:18},{rol:"MC",x:62,y:50},{rol:"EX",x:62,y:82},{rol:"DC",x:82,y:50}],
-  "3-5-2":  [{rol:"GK",x:6,y:50},{rol:"DC",x:24,y:25},{rol:"DC",x:24,y:50},{rol:"DC",x:24,y:75},{rol:"MO",x:48,y:12},{rol:"MC",x:44,y:30},{rol:"MC",x:44,y:50},{rol:"MC",x:44,y:70},{rol:"MO",x:48,y:88},{rol:"DC",x:78,y:35},{rol:"DC",x:78,y:65}],
-  "3-4-3":  [{rol:"GK",x:6,y:50},{rol:"DC",x:24,y:25},{rol:"DC",x:24,y:50},{rol:"DC",x:24,y:75},{rol:"MC",x:48,y:20},{rol:"MC",x:48,y:42},{rol:"MC",x:48,y:58},{rol:"MC",x:48,y:80},{rol:"EX",x:76,y:18},{rol:"DC",x:80,y:50},{rol:"EX",x:76,y:82}],
-  "5-3-2":  [{rol:"GK",x:6,y:50},{rol:"MO",x:22,y:8},{rol:"DC",x:26,y:28},{rol:"DC",x:26,y:50},{rol:"DC",x:26,y:72},{rol:"MO",x:22,y:92},{rol:"MC",x:50,y:25},{rol:"MC",x:50,y:50},{rol:"MC",x:50,y:75},{rol:"DC",x:78,y:35},{rol:"DC",x:78,y:65}],
-  "4-5-1":  [{rol:"GK",x:6,y:50},{rol:"LD",x:24,y:18},{rol:"DC",x:24,y:38},{rol:"DC",x:24,y:62},{rol:"LI",x:24,y:82},{rol:"EX",x:50,y:12},{rol:"MC",x:50,y:30},{rol:"MC",x:50,y:50},{rol:"MC",x:50,y:70},{rol:"EX",x:50,y:88},{rol:"DC",x:80,y:50}],
+  // x=izq-der (0-100), y=arriba-abajo (0=arr/del, 100=abajo/GK)
+  "4-3-3":  [{rol:"GK",x:50,y:92},{rol:"LD",x:10,y:74},{rol:"DC",x:33,y:74},{rol:"DC",x:67,y:74},{rol:"LI",x:90,y:74},{rol:"MC",x:20,y:52},{rol:"MC",x:50,y:52},{rol:"MC",x:80,y:52},{rol:"EX",x:12,y:22},{rol:"DC",x:50,y:16},{rol:"EX",x:88,y:22}],
+  "4-4-2":  [{rol:"GK",x:50,y:92},{rol:"LD",x:10,y:74},{rol:"DC",x:33,y:74},{rol:"DC",x:67,y:74},{rol:"LI",x:90,y:74},{rol:"MC",x:12,y:50},{rol:"MC",x:37,y:50},{rol:"MC",x:63,y:50},{rol:"MC",x:88,y:50},{rol:"DC",x:32,y:20},{rol:"DC",x:68,y:20}],
+  "4-2-3-1":[{rol:"GK",x:50,y:92},{rol:"LD",x:10,y:74},{rol:"DC",x:33,y:74},{rol:"DC",x:67,y:74},{rol:"LI",x:90,y:74},{rol:"MC",x:33,y:58},{rol:"MC",x:67,y:58},{rol:"EX",x:10,y:38},{rol:"MC",x:50,y:35},{rol:"EX",x:90,y:38},{rol:"DC",x:50,y:15}],
+  "3-5-2":  [{rol:"GK",x:50,y:92},{rol:"DC",x:25,y:74},{rol:"DC",x:50,y:74},{rol:"DC",x:75,y:74},{rol:"MO",x:8,y:52},{rol:"MC",x:28,y:50},{rol:"MC",x:50,y:50},{rol:"MC",x:72,y:50},{rol:"MO",x:92,y:52},{rol:"DC",x:30,y:18},{rol:"DC",x:70,y:18}],
+  "3-4-3":  [{rol:"GK",x:50,y:92},{rol:"DC",x:25,y:74},{rol:"DC",x:50,y:74},{rol:"DC",x:75,y:74},{rol:"MC",x:12,y:52},{rol:"MC",x:37,y:52},{rol:"MC",x:63,y:52},{rol:"MC",x:88,y:52},{rol:"EX",x:12,y:20},{rol:"DC",x:50,y:15},{rol:"EX",x:88,y:20}],
+  "5-3-2":  [{rol:"GK",x:50,y:92},{rol:"MO",x:6,y:70},{rol:"DC",x:24,y:76},{rol:"DC",x:50,y:76},{rol:"DC",x:76,y:76},{rol:"MO",x:94,y:70},{rol:"MC",x:22,y:50},{rol:"MC",x:50,y:50},{rol:"MC",x:78,y:50},{rol:"DC",x:32,y:18},{rol:"DC",x:68,y:18}],
+  "4-5-1":  [{rol:"GK",x:50,y:92},{rol:"LD",x:10,y:74},{rol:"DC",x:33,y:74},{rol:"DC",x:67,y:74},{rol:"LI",x:90,y:74},{rol:"EX",x:8,y:50},{rol:"MC",x:28,y:50},{rol:"MC",x:50,y:50},{rol:"MC",x:72,y:50},{rol:"EX",x:92,y:50},{rol:"DC",x:50,y:15}],
 };
 
 const ALL_JUGADORAS=["Alfaro Javiera","Arau María Paz","Carrasco Sofia","Errazu Sofia","Gacitua Emilia","Gomez Camila","Gutierrez Renata","Hevia Valentina","Liu Macarena","Manriquez Fernanda","Martinez Amanda","Mateluna Florencia","Muñoz Constanza","Pareja Camila","Pollmann Marianne","Retamal Antonia","Sepulveda Eileen","Sierra Julieta","Silva Victoria"];
@@ -1298,90 +1297,73 @@ function TiempoDisplay({seg}){
   return<span>{m}:{s}</span>;
 }
 
-// SVG Cancha Hockey — horizontal, verde, con semicírculos de arco y líneas correctas
+// SVG Cancha Hockey — vertical (portrait), líneas horizontales, GK abajo, del arriba
 function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modoSetup,jugPendiente,onClickSlot}){
-  const W=480,H=300;
-  const pad=14;
-  const fw=W-pad*2, fh=H-pad*2; // campo interior
+  const W=300,H=480;
+  const pad=12;
+  const fw=W-pad*2, fh=H-pad*2;
   const fx=pad, fy=pad;
-  // Semicírculo de arco: radio ~14% del ancho del campo
-  const arcR=fw*0.16;
-  // Línea de 25 yardas: 25% desde cada extremo
-  const y25L=fy+fh*0.25;
-  const y25R=fy+fh*0.75;
-  // Centro del arco (en los extremos del eje largo)
-  const arcLx=fx, arcRx=fx+fw;
-  const arcCy=fy+fh/2;
+  const cx=fx+fw/2, cy=fy+fh/2;
+  const arcR=fw*0.42; // semicírculo arco
+  const arcR2=fw*0.55; // semicírculo punteado
 
   return(
-    <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:520,display:"block",margin:"0 auto",borderRadius:8}}
+    <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:360,display:"block",margin:"0 auto",borderRadius:8}}
       xmlns="http://www.w3.org/2000/svg">
       {/* Fondo verde */}
       <rect width={W} height={H} fill="#2E7D32" rx="6"/>
-      {/* Fondo campo */}
-      <rect x={fx} y={fy} width={fw} height={fh} fill="#388E3C" rx="2"/>
+      <rect x={fx} y={fy} width={fw} height={fh} fill="#388E3C"/>
 
       {/* Borde campo */}
       <rect x={fx} y={fy} width={fw} height={fh} fill="none" stroke="white" strokeWidth="1.8"/>
 
-      {/* Línea central (vertical) */}
-      <line x1={fx+fw/2} y1={fy} x2={fx+fw/2} y2={fy+fh} stroke="white" strokeWidth="1.5"/>
+      {/* Línea central horizontal */}
+      <line x1={fx} y1={cy} x2={fx+fw} y2={cy} stroke="white" strokeWidth="1.5"/>
 
       {/* Círculo central */}
-      <circle cx={fx+fw/2} cy={fy+fh/2} r={fh*0.13} fill="none" stroke="white" strokeWidth="1.5"/>
-      <circle cx={fx+fw/2} cy={fy+fh/2} r={2.5} fill="white"/>
+      <circle cx={cx} cy={cy} r={fw*0.14} fill="none" stroke="white" strokeWidth="1.5"/>
+      <circle cx={cx} cy={cy} r={2.5} fill="white"/>
 
       {/* Líneas de 25 yardas */}
-      <line x1={fx} y1={y25L} x2={fx+fw} y2={y25L} stroke="white" strokeWidth="1.2"/>
-      <line x1={fx} y1={y25R} x2={fx+fw} y2={y25R} stroke="white" strokeWidth="1.2"/>
+      <line x1={fx} y1={fy+fh*0.25} x2={fx+fw} y2={fy+fh*0.25} stroke="white" strokeWidth="1.2"/>
+      <line x1={fx} y1={fy+fh*0.75} x2={fx+fw} y2={fy+fh*0.75} stroke="white" strokeWidth="1.2"/>
 
-      {/* Marcas de 25 yardas en borde */}
-      {[y25L,y25R].map((y,i)=>(
+      {/* Marcas laterales en 25y */}
+      {[fy+fh*0.25, fy+fh*0.75].map((y,i)=>(
         <g key={i}>
-          <line x1={fx-4} y1={y} x2={fx+4} y2={y} stroke="white" strokeWidth="1.5"/>
-          <line x1={fx+fw-4} y1={y} x2={fx+fw+4} y2={y} stroke="white" strokeWidth="1.5"/>
+          <line x1={fx} y1={y-4} x2={fx} y2={y+4} stroke="white" strokeWidth="1.5"/>
+          <line x1={fx+fw} y1={y-4} x2={fx+fw} y2={y+4} stroke="white" strokeWidth="1.5"/>
         </g>
       ))}
 
-      {/* Marcas laterales en 5y desde cada extremo */}
-      {[fy+fh*0.083,fy+fh*0.917].map((y,i)=>(
-        <g key={i}>
-          <line x1={fx} y1={y} x2={fx+6} y2={y} stroke="white" strokeWidth="1"/>
-          <line x1={fx+fw-6} y1={y} x2={fx+fw} y2={y} stroke="white" strokeWidth="1"/>
-        </g>
+      {/* Arco arriba (delanteros atacan) — semicírculo hacia adentro */}
+      <path d={`M ${cx-arcR} ${fy} A ${arcR} ${arcR} 0 0 1 ${cx+arcR} ${fy}`}
+        fill="none" stroke="white" strokeWidth="1.5" clipPath="url(#topClip)"/>
+      <path d={`M ${cx-arcR2} ${fy} A ${arcR2} ${arcR2} 0 0 1 ${cx+arcR2} ${fy}`}
+        fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4" clipPath="url(#topClip)"/>
+      <clipPath id="topClip"><rect x={fx} y={fy} width={fw} height={fh*0.4}/></clipPath>
+
+      {/* Portería arriba */}
+      <rect x={cx-fw*0.13} y={fy-4} width={fw*0.26} height={6} fill="none" stroke="white" strokeWidth="1.5"/>
+      {/* Punto penal arriba */}
+      <circle cx={cx} cy={fy+fh*0.1} r={2.5} fill="white"/>
+
+      {/* Arco abajo (GK defiende) */}
+      <path d={`M ${cx-arcR} ${fy+fh} A ${arcR} ${arcR} 0 0 0 ${cx+arcR} ${fy+fh}`}
+        fill="none" stroke="white" strokeWidth="1.5" clipPath="url(#botClip)"/>
+      <path d={`M ${cx-arcR2} ${fy+fh} A ${arcR2} ${arcR2} 0 0 0 ${cx+arcR2} ${fy+fh}`}
+        fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4" clipPath="url(#botClip)"/>
+      <clipPath id="botClip"><rect x={fx} y={fy+fh*0.6} width={fw} height={fh*0.4}/></clipPath>
+
+      {/* Portería abajo */}
+      <rect x={cx-fw*0.13} y={fy+fh-2} width={fw*0.26} height={6} fill="none" stroke="white" strokeWidth="1.5"/>
+      {/* Punto penal abajo */}
+      <circle cx={cx} cy={fy+fh*0.9} r={2.5} fill="white"/>
+
+      {/* Corners */}
+      {[[fx,fy,1],[fx+fw,fy,-1],[fx,fy+fh,1],[fx+fw,fy+fh,-1]].map(([bx,by,dir],i)=>(
+        <path key={i} d={`M ${bx+dir*8} ${by} Q ${bx} ${by} ${bx} ${by+(i<2?8:-8)}`} fill="none" stroke="white" strokeWidth="1.2"/>
       ))}
-
-      {/* Arco izquierdo — semicírculo sólido */}
-      <path d={`M ${arcLx} ${arcCy-arcR} A ${arcR} ${arcR} 0 0 1 ${arcLx} ${arcCy+arcR}`}
-        fill="none" stroke="white" strokeWidth="1.5"/>
-      {/* Arco izquierdo — semicírculo punteado exterior */}
-      <path d={`M ${arcLx} ${arcCy-arcR*1.55} A ${arcR*1.55} ${arcR*1.55} 0 0 1 ${arcLx} ${arcCy+arcR*1.55}`}
-        fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4"/>
-
-      {/* Arco derecho — semicírculo sólido */}
-      <path d={`M ${arcRx} ${arcCy-arcR} A ${arcR} ${arcR} 0 0 0 ${arcRx} ${arcCy+arcR}`}
-        fill="none" stroke="white" strokeWidth="1.5"/>
-      {/* Arco derecho — semicírculo punteado exterior */}
-      <path d={`M ${arcRx} ${arcCy-arcR*1.55} A ${arcR*1.55} ${arcR*1.55} 0 0 0 ${arcRx} ${arcCy+arcR*1.55}`}
-        fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4"/>
-
-      {/* Punto penal izquierdo */}
-      <circle cx={fx+fw*0.075} cy={arcCy} r={2.5} fill="white"/>
-      {/* Punto penal derecho */}
-      <circle cx={fx+fw*0.925} cy={arcCy} r={2.5} fill="white"/>
-
-      {/* Arco del arco (portería) izquierdo */}
-      <rect x={fx-4} y={arcCy-fh*0.1} width={4} height={fh*0.2} fill="none" stroke="white" strokeWidth="1.5"/>
-      {/* Arco del arco (portería) derecho */}
-      <rect x={fx+fw} y={arcCy-fh*0.1} width={4} height={fh*0.2} fill="none" stroke="white" strokeWidth="1.5"/>
-
-      {/* Corners — pequeños arcos */}
-      {[[fx,fy,0,0],[fx+fw,fy,1,0],[fx,fy+fh,0,1],[fx+fw,fy+fh,1,1]].map(([cx,cy,rx,ry],i)=>{
-        const r=8;
-        const sx=rx?cx-r:cx; const sy=ry?cy-r:cy;
-        const ex=rx?cx:cx+r; const ey=ry?cy:cy+r;
-        return<path key={i} d={`M ${sx} ${cy} A ${r} ${r} 0 0 ${rx?0:1} ${cx} ${sy}`} fill="none" stroke="white" strokeWidth="1.2"/>;
-      })}
 
       {/* Jugadoras */}
       {posiciones.map((pos,i)=>{
@@ -1392,13 +1374,15 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
         const esPend=jugPendiente&&!tieneJug;
         const mins=acum&&tieneJug?Math.floor((acum[pos.nombre]||0)/60):0;
         return(
-          <g key={i} style={{cursor:"pointer"}} onClick={()=>tieneJug&&onClickJug?onClickJug(pos.nombre):onClickSlot&&onClickSlot(i)}>
-            <circle cx={px} cy={py} r={17} fill={esSel?"#1565C0":tieneJug?"rgba(0,0,0,0.6)":esPend?"rgba(100,181,246,0.25)":"rgba(255,255,255,0.08)"} stroke={esSel?"#64B5F6":tieneJug?"white":esPend?"#64B5F6":"rgba(255,255,255,0.35)"} strokeWidth={esSel?2.5:1.5} strokeDasharray={tieneJug?"":"3 2"}/>
+          <g key={i} style={{cursor:"pointer"}} onClick={()=>tieneJug&&onClickJug?onClickJug(pos.nombre):!tieneJug&&onClickSlot&&onClickSlot(i)}>
+            <circle cx={px} cy={py} r={19}
+              fill={esSel?"#0D47A1":tieneJug?"rgba(0,0,0,0.55)":esPend?"rgba(100,181,246,0.2)":"rgba(255,255,255,0.08)"}
+              stroke={esSel?"#64B5F6":tieneJug?"white":esPend?"#64B5F6":"rgba(255,255,255,0.35)"}
+              strokeWidth={esSel?2.5:1.5} strokeDasharray={tieneJug?"":"3 2"}/>
             {tieneJug?(
               <>
-                <text x={px} y={py-(modoSetup?2:4)} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="7.5" fontWeight="700" fontFamily="system-ui">{pos.nombre.split(" ")[0].slice(0,7)}</text>
-                {!modoSetup&&<text x={px} y={py+6} textAnchor="middle" dominantBaseline="middle" fill={corriendo?"#81C784":"#FFB74D"} fontSize="7" fontFamily="system-ui">{mins}'</text>}
-                {modoSetup&&<text x={px} y={py+6} textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.55)" fontSize="6.5" fontFamily="system-ui">{pos.rol}</text>}
+                <text x={px} y={py-3} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="7.5" fontWeight="700" fontFamily="system-ui">{pos.nombre.split(" ")[0].slice(0,7)}</text>
+                <text x={px} y={py+6} textAnchor="middle" dominantBaseline="middle" fill={modoSetup?"rgba(255,255,255,0.6)":corriendo?"#81C784":"#FFB74D"} fontSize="7" fontFamily="system-ui">{modoSetup?pos.rol:`${mins}'`}</text>
               </>
             ):(
               <text x={px} y={py} textAnchor="middle" dominantBaseline="middle" fill={esPend?"#64B5F6":"rgba(255,255,255,0.35)"} fontSize="7.5" fontFamily="system-ui">{pos.rol}</text>
