@@ -2233,27 +2233,24 @@ function StaffWellness(){
     );
   };
 
-  const WellnessCard=({r})=>(
-    <div style={{borderBottom:`1px solid ${T.border}`,padding:"8px 0"}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:6}}>
-        <span style={{fontSize:12,fontWeight:600,color:T.text}}>{r.Jugadora}</span>
-        {r["Zonas Dolor"]&&r["Zonas Dolor"]!=="—"&&<span style={{fontSize:10,color:T.muted}}>{r["Zonas Dolor"]}</span>}
-      </div>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-        {[
-          ["Sueño",r["Calidad Sueño"]],
-          ["Hs",r["Horas Sueño"],T.muted],
-          ["Fatiga",r.Fatiga],
-          ["Dolor",r["Dolor Muscular"]],
-          ["Estrés",r["Estrés"]],
-          ["Ánimo",r["Ánimo"]],
-        ].map(([l,v,forceColor])=>(
-          <div key={l} style={{textAlign:"center",minWidth:38}}>
-            <div style={{fontSize:9,color:T.muted,marginBottom:1}}>{l}</div>
-            <div style={{fontSize:13,fontWeight:600,color:forceColor||wColor(v)}}>{v||"—"}</div>
-          </div>
-        ))}
-      </div>
+  const WellnessCard=({r})=>null;// unused
+  const WellnessTable=({recs})=>(
+    <div style={{overflowX:"auto"}}>
+      <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,minWidth:480}}>
+        <TH cols={["Jugadora","Sueño","Horas","Fatiga","Dolor","Zona","Estrés","Ánimo"]}/>
+        <tbody>{recs.map((r,i)=>(
+          <tr key={i}>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{r.Jugadora}</td>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Calidad Sueño"]),fontWeight:600,textAlign:"center"}}>{r["Calidad Sueño"]}</td>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{r["Horas Sueño"]}</td>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r.Fatiga),fontWeight:600,textAlign:"center"}}>{r.Fatiga}</td>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Dolor Muscular"]),fontWeight:600,textAlign:"center"}}>{r["Dolor Muscular"]}</td>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,fontSize:11,whiteSpace:"nowrap"}}>{r["Zonas Dolor"]||"—"}</td>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Estrés"]),fontWeight:600,textAlign:"center"}}>{r["Estrés"]}</td>
+            <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:wColor(r["Ánimo"]),fontWeight:600,textAlign:"center"}}>{r["Ánimo"]}</td>
+          </tr>
+        ))}</tbody>
+      </table>
     </div>
   );
 
@@ -2272,7 +2269,7 @@ function StaffWellness(){
         <CT text={loading?"Cargando...":"REGISTROS HOY — "+hoy}/>
         {loading&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Cargando...</div>}
         {!loading&&todayRows.length===0&&<div style={{color:T.muted,fontSize:12,textAlign:"center",padding:10}}>Sin registros hoy</div>}
-        {!loading&&todayRows.length>0&&todayRows.map((r,i)=><WellnessCard key={i} r={r}/>)}
+        {!loading&&todayRows.length>0&&<WellnessTable recs={todayRows}/>}
       </Card>
 
       {/* FECHAS ANTERIORES — acordeón */}
@@ -2297,7 +2294,7 @@ function StaffWellness(){
                       {allByDate[fecha].map((r,i)=><AlertRow key={i} r={r}/>)}
                     </div>
                   )}
-                  {allByDate[fecha].map((r,i)=><WellnessCard key={i} r={r}/>)}
+                  <WellnessTable recs={allByDate[fecha]}/>
                 </div>
               )}
             </div>
