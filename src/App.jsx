@@ -1311,8 +1311,8 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
   // Portería y área: en el fondo (abajo)
   const y25rival=fy+fh*0.28;
   const y25propia=fy+fh*0.62;
-  const arcR=fw*0.44;
-  const arcR2=fw*0.58;
+  const arcR=fw*0.30;
+  const arcR2=fw*0.44;
 
   return(
     <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:340,display:"block",margin:"0 auto",borderRadius:8}}
@@ -1341,11 +1341,11 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
       <line x1={fx-3} y1={y25propia} x2={fx+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
       <line x1={fx+fw-3} y1={y25propia} x2={fx+fw+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
 
-      {/* Área propia — semicírculo sólido */}
-      <path d={`M ${fx} ${fy+fh*0.72} A ${arcR} ${arcR} 0 0 0 ${fx+fw} ${fy+fh*0.72}`}
+      {/* Área propia — semicírculo sólido centrado */}
+      <path d={`M ${cx-arcR} ${fy+fh} A ${arcR} ${arcR} 0 0 0 ${cx+arcR} ${fy+fh}`}
         fill="none" stroke="white" strokeWidth="1.5" clipPath="url(#fieldClip)"/>
-      {/* Área punteada exterior */}
-      <path d={`M ${Math.max(fx,cx-arcR2)} ${fy+fh} A ${arcR2} ${arcR2} 0 0 0 ${Math.min(fx+fw,cx+arcR2)} ${fy+fh}`}
+      {/* Área punteada exterior — semicírculo más grande centrado */}
+      <path d={`M ${cx-arcR2} ${fy+fh} A ${arcR2} ${arcR2} 0 0 0 ${cx+arcR2} ${fy+fh}`}
         fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4" clipPath="url(#fieldClip)"/>
       {/* Punto penal */}
       <circle cx={cx} cy={fy+fh*0.88} r={2.5} fill="white"/>
