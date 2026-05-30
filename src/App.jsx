@@ -1561,10 +1561,39 @@ function StaffMinutos(){
   const [rival,setRival]=useState("");
   const [sistema,setSistema]=useState("4-4-2");
   const [seleccion,setSeleccion]=useState([]);
-  // posiciones en cancha: array de 11 slots con {nombre,x,y,rol} — inicialmente vacíos
   const [posiciones,setPosiciones]=useState([]);
   const [enTracker,setEnTracker]=useState(false);
-  const [jugPendiente,setJugPendiente]=useState(null);// jugadora del banco esperando slot
+  const [jugPendiente,setJugPendiente]=useState(null);
+  // Hooks del reporte — siempre al inicio
+  const [driveData,setDriveData]=useState(null);
+  const [loadingDrive,setLoadingDrive]=useState(true);
+
+  React.useEffect(()=>{
+    if(vista!=="reporte")return;
+    setLoadingDrive(true);
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Minutos App"]||[];
+        if(sheet.length<2){setDriveData({partidos:[],jugMap:{}});return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
+        const partidos=[],partSet=new Set();
+        const jugMap={};
+        sheet.slice(1).forEach(r=>{
+          const rival=String(r[iR]||"").trim();
+          const jug=String(r[iJ]||"").trim();
+          const tot=Number(r[iT])||0;
+          if(!rival||!jug||!tot)return;
+          if(!partSet.has(rival)){partSet.add(rival);partidos.push(rival);}
+          if(!jugMap[jug])jugMap[jug]={};
+          jugMap[jug][rival]=(jugMap[jug][rival]||0)+tot;
+        });
+        setDriveData({partidos,jugMap});
+      })
+      .catch(()=>setDriveData({partidos:[],jugMap:{}}))
+      .finally(()=>setLoadingDrive(false));
+  },[vista]);
 
   const toggleJugadora=j=>{
     setSeleccion(prev=>prev.includes(j)?prev.filter(x=>x!==j):[...prev,j]);
@@ -1697,37 +1726,6 @@ function StaffMinutos(){
     );
   }
 
-  // Vista reporte — en vivo desde Drive
-  const [driveData,setDriveData]=useState(null);
-  const [loadingDrive,setLoadingDrive]=useState(true);
-
-  React.useEffect(()=>{
-    if(vista!=="reporte")return;
-    setLoadingDrive(true);
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
-      .then(r=>r.json())
-      .then(d=>{
-        const sheet=d["Minutos App"]||[];
-        if(sheet.length<2){setDriveData({partidos:[],jugadoras:{}});return;}
-        const headers=sheet[0].map(h=>String(h).trim());
-        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
-        // Recolectar partidos únicos (en orden de aparición)
-        const partidos=[],partSet=new Set();
-        const jugMap={};// {jugadora:{rival:total}}
-        sheet.slice(1).forEach(r=>{
-          const rival=String(r[iR]||"").trim();
-          const jug=String(r[iJ]||"").trim();
-          const tot=Number(r[iT])||0;
-          if(!rival||!jug||!tot)return;
-          if(!partSet.has(rival)){partSet.add(rival);partidos.push(rival);}
-          if(!jugMap[jug])jugMap[jug]={};
-          jugMap[jug][rival]=(jugMap[jug][rival]||0)+tot;
-        });
-        setDriveData({partidos,jugMap});
-      })
-      .catch(()=>setDriveData({partidos:[],jugMap:{}}))
-      .finally(()=>setLoadingDrive(false));
-  },[vista]);
 
   const partidos=driveData?.partidos||[];
   const jugMap=driveData?.jugMap||{};
