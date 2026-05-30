@@ -1530,7 +1530,7 @@ function StaffTomarAsistencia({onVolver, fechasRegistradas}){
           <div>
             <div style={{fontSize:10,color:T.muted,marginBottom:3}}>Fecha</div>
             <input type="date" value={fecha} onChange={e=>{setFecha(e.target.value);setSaved(false);setPres({});}}
-              style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,color:T.text,padding:"6px 10px",fontSize:13,fontFamily:"inherit"}}/>
+              style={{background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"6px 10px",fontSize:13,fontFamily:"inherit",colorScheme:"dark"}}/>
           </div>
           {!yaRegistrada&&<>
             <button onClick={()=>marcarTodas(1)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #3ecf7a",background:"#0f2d1f",color:"#3ecf7a",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✓ Todas P</button>
@@ -2449,14 +2449,27 @@ function LoginScreen({onLogin}){
   const [showPass,setShowPass]=useState(false);
   const [player,setPlayer]=useState("");
   const [error,setError]=useState("");
+  const [recordar,setRecordar]=useState(false);
+
+  // Auto-login si hay sesión guardada
+  React.useEffect(()=>{
+    try{
+      const saved=localStorage.getItem("oldgabs_session");
+      if(saved){const s=JSON.parse(saved);if(s.tipo&&(s.tipo==="staff"||(s.tipo==="jugadora"&&s.player)))onLogin(s.tipo,s.player||null);}
+    }catch(e){}
+  },[]);
+
   const handleLogin=()=>{
     if(tipo==="staff"){
-      if(pass==="Staffoldgabs"){onLogin("staff",null)}
-      else{setError("Contraseña incorrecta");setPass("");}
+      if(pass==="Staffoldgabs"){
+        if(recordar)localStorage.setItem("oldgabs_session",JSON.stringify({tipo:"staff"}));
+        onLogin("staff",null);
+      }else{setError("Contraseña incorrecta");setPass("");}
     }else{
       if(pass==="1eraoldgabs"){
         if(!player){setError("Seleccioná tu nombre");return;}
-        onLogin("jugadora",player)
+        if(recordar)localStorage.setItem("oldgabs_session",JSON.stringify({tipo:"jugadora",player}));
+        onLogin("jugadora",player);
       }else{setError("Contraseña incorrecta");setPass("");}
     }
   };
@@ -2497,12 +2510,16 @@ function LoginScreen({onLogin}){
             <div style={{marginBottom:16}}>
               <div style={{fontSize:11,color:T.muted,marginBottom:6}}>Contraseña</div>
               <div style={{position:"relative"}}>
-                <input {...{type:showPass?"text":"password"}} value={pass} onChange={e=>{setPass(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••••" style={{width:"100%",background:"#0d1020",border:`1px solid ${error?T.red:T.border2}`,borderRadius:8,boxSizing:"border-box",paddingRight:38,color:T.text,fontSize:14,padding:"10px 12px",outline:"none",boxSizing:"border-box",fontFamily:"inherit"}}/>
+                <input {...{type:showPass?"text":"password"}} value={pass} onChange={e=>{setPass(e.target.value);setError("");}} onKeyDown={e=>e.key==="Enter"&&handleLogin()} placeholder="••••••••" style={{width:"100%",background:"#0d1020",border:`1px solid ${error?T.red:T.border2}`,borderRadius:8,boxSizing:"border-box",paddingRight:38,color:T.text,fontSize:14,padding:"10px 12px",outline:"none",fontFamily:"inherit"}}/>
                 <button onClick={()=>setShowPass(v=>!v)} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:T.muted,fontSize:16,padding:0,lineHeight:1}}>
                   {showPass?"👁":"👁‍🗨"}
                 </button>
               </div>
               {error&&<div style={{fontSize:11,color:T.red,marginTop:6}}>{error}</div>}
+            </div>
+            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16,cursor:"pointer"}} onClick={()=>setRecordar(v=>!v)}>
+              <div style={{width:18,height:18,borderRadius:4,border:`1px solid ${T.border2}`,background:recordar?T.blue:"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"#fff",flexShrink:0}}>{recordar?"✓":""}</div>
+              <span style={{fontSize:12,color:T.muted}}>Recordar sesión en este dispositivo</span>
             </div>
             <button onClick={handleLogin} style={{width:"100%",padding:12,background:tipo==="staff"?T.blue:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Ingresar</button>
           </div>
@@ -2536,7 +2553,7 @@ export default function App(){
   const [tab,setTab]=useState(0);
   const [player,setPlayer]=useState(allNames()[0]);
   const handleLogin=(tipo,playerName)=>{setSession({tipo,player:playerName});setTab(0);if(playerName)setPlayer(playerName);};
-  const handleLogout=()=>{setSession(null);setTab(0);};
+  const handleLogout=()=>{localStorage.removeItem("oldgabs_session");setSession(null);setTab(0);};
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
   const mode=session.tipo==="staff"?"staff":"player";
   const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Yo-Yo","Minutos","Asistencia","RPE","Wellness"];
