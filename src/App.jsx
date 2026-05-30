@@ -2579,62 +2579,88 @@ function PlayerYoyo({player}){
 }
 
 function PlayerMinutos({player}){
-  const m=MINUTOS.find(x=>x.n===player);
-  if(!m)return(
-    <div style={{color:T.muted,padding:20,textAlign:"center",fontSize:12}}>
-      Sin datos de minutos para {player}
-    </div>
-  );
-  const partidos=[
-    {l:"COGS",   v:m.cogs, c:T.blue},
-    {l:"PWCC",   v:m.pwcc, c:T.green},
-    {l:"MANQ",   v:m.manq, c:T.amber},
-    {l:"CAT B",  v:m.catb, c:T.red},
-    {l:"OLD REDS",v:m.reds,c:T.purple},
-  ];
-  const jugados=partidos.filter(p=>p.v);
+  const [loading,setLoading]=useState(true);
+  const [jugMap,setJugMap]=useState(null);// {rival: total}
+  const [partidos,setPartidos]=useState([]);
+  const [ranking,setRanking]=useState([]);// [{n, tot}]
+
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Minutos App"]||[];
+        if(sheet.length<2){setJugMap({});setPartidos([]);setRanking([]);return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
+        const partSet=new Set(), parts=[];
+        const allMap={};// {jugadora:{rival:tot}}
+        sheet.slice(1).forEach(r=>{
+          const rival=String(r[iR]||"").trim();
+          const jug=String(r[iJ]||"").trim();
+          const tot=Number(r[iT])||0;
+          if(!rival||!jug||!tot)return;
+          if(!partSet.has(rival)){partSet.add(rival);parts.push(rival);}
+          if(!allMap[jug])allMap[jug]={};
+          allMap[jug][rival]=(allMap[jug][rival]||0)+tot;
+        });
+        setPartidos(parts);
+        setJugMap(allMap[player]||{});
+        // Ranking
+        const rank=Object.entries(allMap).map(([n,m])=>({n,tot:Object.values(m).reduce((s,v)=>s+v,0)}))
+          .filter(r=>r.tot>0).sort((a,b)=>b.tot-a.tot);
+        setRanking(rank);
+      })
+      .catch(()=>{setJugMap({});setRanking([]);})
+      .finally(()=>setLoading(false));
+  },[player]);
+
+  if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Cargando minutos...</div></Card>;
+
+  const tot=Object.values(jugMap||{}).reduce((s,v)=>s+v,0);
+  const jugados=partidos.filter(p=>jugMap[p]);
+  const prom=jugados.length?Math.round(tot/jugados.length*10)/10:0;
+  const colors=[T.blue,T.green,T.amber,T.red,T.purple,T.cyan,"#e879f9","#fb923c"];
+  const mx=ranking[0]?.tot||1;
+
   return(
     <>
       <MR>
-        <MetCard label="Total minutos" value={`${m.tot} min`} sc={T.blue}/>
-        <MetCard label="Prom. x partido" value={`${m.prom} min`}/>
+        <MetCard label="Total minutos" value={`${tot} min`} sc={T.blue}/>
+        <MetCard label="Prom. x partido" value={`${prom} min`}/>
         <MetCard label="Partidos jugados" value={jugados.length}/>
       </MR>
       <Card>
         <CT text="Mis minutos por partido"/>
-        {jugados.map(p=>(
-          <div key={p.l} style={{marginBottom:12}}>
-            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-              <span style={{fontSize:12,color:T.text,fontWeight:500}}>{p.l}</span>
-              <span style={{fontSize:12,color:p.c,fontWeight:600}}>{p.v} min</span>
+        {jugados.length===0?<div style={{color:T.muted,textAlign:"center",padding:12}}>Sin minutos registrados</div>:
+        jugados.map((p,i)=>{
+          const v=jugMap[p];
+          const c=colors[i%colors.length];
+          return(
+            <div key={p} style={{marginBottom:12}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+                <span style={{fontSize:12,color:T.text,fontWeight:500}}>{p}</span>
+                <span style={{fontSize:12,color:c,fontWeight:600}}>{v} min</span>
+              </div>
+              <div style={{background:"#1a1e2a",borderRadius:4,height:10}}>
+                <div style={{width:`${Math.min((v/70)*100,100)}%`,height:10,borderRadius:4,background:c}}/>
+              </div>
             </div>
-            <div style={{background:"#1a1e2a",borderRadius:4,height:10}}>
-              <div style={{width:`${Math.min((p.v/70)*100,100)}%`,height:10,borderRadius:4,background:p.c}}/>
+          );
+        })}
+      </Card>
+      {ranking.length>0&&<Card>
+        <CT text="Ranking minutos — equipo"/>
+        {ranking.map((r,i)=>(
+          <div key={r.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
+            <span style={{fontSize:10,color:T.muted,width:16,textAlign:"right"}}>{i+1}</span>
+            <span style={{fontSize:11,color:r.n===player?T.blue:T.text,fontWeight:r.n===player?700:400,width:130}}>{r.n.split(" ")[0]}</span>
+            <div style={{flex:1,height:8,borderRadius:3,background:"#1e2535"}}>
+              <div style={{width:`${(r.tot/mx)*100}%`,height:"100%",borderRadius:3,background:r.n===player?T.blue:T.muted2}}/>
             </div>
+            <span style={{fontSize:10,color:r.n===player?T.blue:T.muted,width:32,textAlign:"right"}}>{r.tot}'</span>
           </div>
         ))}
-        {jugados.length===0&&<div style={{color:T.muted,textAlign:"center",padding:12}}>Sin minutos registrados</div>}
-      </Card>
-      <Card>
-        <CT text="RANKING MINUTOS — EQUIPO"/>
-        {(()=>{
-          const tots=MINUTOS.map(r=>({
-            n:r.n,
-            tot:(r.cogs||0)+(r.pwcc||0)+(r.manq||0)+(r.catb||0)+(r.reds||0)
-          })).filter(r=>r.tot>0).sort((a,b)=>b.tot-a.tot);
-          const mx=tots[0]?.tot||1;
-          return tots.map((r,i)=>(
-            <div key={r.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6}}>
-              <span style={{fontSize:10,color:T.muted,width:16,textAlign:"right"}}>{i+1}</span>
-              <span style={{fontSize:11,color:r.n===player?T.blue:T.text,fontWeight:r.n===player?700:400,width:130}}>{r.n.split(" ")[0]}</span>
-              <div style={{flex:1,height:8,borderRadius:3,background:"#1e2535"}}>
-                <div style={{width:`${(r.tot/mx)*100}%`,height:"100%",borderRadius:3,background:r.n===player?T.blue:T.muted2}}/>
-              </div>
-              <span style={{fontSize:10,color:r.n===player?T.blue:T.muted,width:32,textAlign:"right"}}>{r.tot}'</span>
-            </div>
-          ));
-        })()}
-      </Card>
+      </Card>}
     </>
   );
 }
