@@ -1311,8 +1311,8 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
   // Portería y área: en el fondo (abajo)
   const y25rival=fy+fh*0.28;
   const y25propia=fy+fh*0.62;
-  const arcR=fw*0.30;
-  const arcR2=fw*0.44;
+  const arcR=fw*0.28;  // semicírculo área sólida
+  const arcR2=fw*0.42; // semicírculo punteado exterior
 
   return(
     <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:340,display:"block",margin:"0 auto",borderRadius:8}}
@@ -1321,8 +1321,8 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
         <clipPath id="fieldClip"><rect x={fx} y={fy} width={fw} height={fh}/></clipPath>
       </defs>
       {/* Fondo verde */}
-      <rect width={W} height={H} fill="#2E7D32" rx="6"/>
-      <rect x={fx} y={fy} width={fw} height={fh} fill="#388E3C"/>
+      <rect width={W} height={H} fill="#1a3a6e" rx="6"/>
+      <rect x={fx} y={fy} width={fw} height={fh} fill="#1565C0"/>
       {/* Borde campo */}
       <rect x={fx} y={fy} width={fw} height={fh} fill="none" stroke="white" strokeWidth="1.8"/>
 
@@ -1341,14 +1341,14 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
       <line x1={fx-3} y1={y25propia} x2={fx+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
       <line x1={fx+fw-3} y1={y25propia} x2={fx+fw+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
 
-      {/* Área propia — semicírculo sólido centrado */}
+      {/* Área propia — semicírculo sólido centrado hacia arriba */}
       <path d={`M ${cx-arcR} ${fy+fh} A ${arcR} ${arcR} 0 0 0 ${cx+arcR} ${fy+fh}`}
-        fill="none" stroke="white" strokeWidth="1.5" clipPath="url(#fieldClip)"/>
-      {/* Área punteada exterior — semicírculo más grande centrado */}
+        fill="none" stroke="white" strokeWidth="1.8" clipPath="url(#fieldClip)"/>
+      {/* Área punteada exterior */}
       <path d={`M ${cx-arcR2} ${fy+fh} A ${arcR2} ${arcR2} 0 0 0 ${cx+arcR2} ${fy+fh}`}
         fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4" clipPath="url(#fieldClip)"/>
       {/* Punto penal */}
-      <circle cx={cx} cy={fy+fh*0.88} r={2.5} fill="white"/>
+      <circle cx={cx} cy={fy+fh-arcR*0.6} r={2.5} fill="white"/>
 
       {/* Portería propia */}
       <rect x={cx-fw*0.14} y={fy+fh-1} width={fw*0.28} height={7} fill="none" stroke="white" strokeWidth="2"/>
