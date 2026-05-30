@@ -1540,14 +1540,14 @@ function StaffTomarAsistencia({onVolver}){
             <input type="date" value={fecha} onChange={e=>{setFecha(e.target.value);setSaved(false);setPres({});}}
               style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:6,color:T.text,padding:"6px 10px",fontSize:13,fontFamily:"inherit"}}/>
           </div>
-          {!yaRegistrada&&<>
+          {!checkando&&!yaRegistrada&&<>
             <button onClick={()=>marcarTodas(1)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #3ecf7a",background:"#0f2d1f",color:"#3ecf7a",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✓ Todas P</button>
             <button onClick={()=>marcarTodas(0)} style={{padding:"6px 10px",borderRadius:6,border:"1px solid #e05555",background:"#2d0f0f",color:"#e05555",fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>✗ Todas A</button>
             <button onClick={()=>setPres({})} style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Reset</button>
           </>}
         </div>
         {checkando?(
-          <div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Verificando...</div>
+          <div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Verificando fecha...</div>
         ):yaRegistrada?(
           <div style={{background:"#0f2d1f",border:"1px solid #1a4a2a",borderRadius:8,padding:"16px 20px",textAlign:"center"}}>
             <div style={{fontSize:20,marginBottom:6}}>✓</div>
@@ -1555,6 +1555,7 @@ function StaffTomarAsistencia({onVolver}){
             <div style={{color:T.muted,fontSize:12,marginTop:4}}>La asistencia del {fecha} ya fue cargada en Drive.</div>
           </div>
         ):(
+          <>
           <table style={{width:"100%",borderCollapse:"collapse"}}>
             <tbody>{JUGADORAS.map((j,i)=>(
               <tr key={i} onClick={()=>toggle(j)} style={{cursor:"pointer",background:pres[j]===1?"#0f2d1f33":pres[j]===0?"#2d0f0f33":"transparent"}}>
@@ -1565,6 +1566,7 @@ function StaffTomarAsistencia({onVolver}){
               </tr>
             ))}</tbody>
           </table>
+          </>
         )}
       </Card>
       {!checkando&&!yaRegistrada&&(
