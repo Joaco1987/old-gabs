@@ -770,7 +770,10 @@ function StaffGPS(){
   const [sesion,setSesion]=useState(null);
   const [jugSel,setJugSel]=useState(null);
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess;
-  const sess=sesion?pool.find(s=>s.id===sesion):null;
+  const sess=sesion?pool.find(s=>s.id===sesion)||null:null;
+
+  // Reset sesión si no existe en el nuevo pool
+  React.useEffect(()=>{if(sesion&&!pool.find(s=>s.id===sesion)){setSesion(null);setJugSel(null);}},[tipo]);
 
   return(
     <>
