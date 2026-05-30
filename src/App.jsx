@@ -1298,7 +1298,7 @@ function TiempoDisplay({seg}){
 }
 
 // SVG Cancha Hockey — 3/4 del campo: portería propia abajo, mitad arriba
-function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modoSetup,jugPendiente,onClickSlot}){
+function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modoSetup,jugPendiente,onClickSlot,tarjetas={}}){
   const W=300,H=460;
   const pad=12;
   const fw=W-pad*2, fh=H-pad*2;
@@ -1375,6 +1375,12 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
                 <text x={px} y={py+6} textAnchor="middle" dominantBaseline="middle"
                   fill={modoSetup?"rgba(255,255,255,0.6)":corriendo?"#81C784":"#FFB74D"}
                   fontSize="7" fontFamily="system-ui">{modoSetup?pos.rol:`${mins}'`}</text>
+                {/* Indicador tarjeta */}
+                {!modoSetup&&tarjetas[pos.nombre]?.length>0&&(()=>{
+                  const last=tarjetas[pos.nombre][tarjetas[pos.nombre].length-1];
+                  return<rect x={px+10} y={py-24} width={9} height={12} rx={1.5}
+                    fill={last.tipo==="amarilla"?"#eab308":"#22c55e"} stroke="white" strokeWidth="0.5"/>;
+                })()}
               </>
             ):(
               <text x={px} y={py} textAnchor="middle" dominantBaseline="middle"
@@ -1433,7 +1439,21 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
     setSelCancha(null);
   };
 
-  const confirmarFin=async()=>{
+  const [menuJug,setMenuJug]=useState(null);// nombre jugadora con menú abierto
+  const [tarjetas,setTarjetas]=useState({});// {nombre: [{tipo:"amarilla"|"verde", min, penalizacion}]}
+
+  const aplicarTarjeta=(j,tipo)=>{
+    const pen=tipo==="amarilla"?5:2;
+    setAcum(prev=>({...prev,[j]:Math.max(0,(prev[j]||0)-pen*60)}));
+    setTarjetas(prev=>({...prev,[j]:[...(prev[j]||[]),{tipo,min:Math.floor(segCuarto/60),pen}]}));
+    setHistorial(prev=>[...prev,{cuarto,min:Math.floor(segCuarto/60),tarjeta:tipo,jugadora:j}]);
+    setMenuJug(null);setSelCancha(null);
+  };
+
+  const clickEnCancha=(j)=>{
+    if(menuJug===j){setMenuJug(null);setSelCancha(null);}
+    else{setMenuJug(j);setSelCancha(j);}
+  };
     setSaving(true);
     const reporte={};
     ALL_JUGADORAS.forEach(j=>{
@@ -1476,7 +1496,11 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
         {historial.length>0&&<Card style={{marginBottom:8}}>
           <CT text="Cambios"/>
           {historial.map((h,i)=><div key={i} style={{fontSize:11,color:T.text,padding:"3px 0",borderBottom:"1px solid #141824"}}>
-            <span style={{color:T.muted}}>C{h.cuarto} {h.min}'</span> — <span style={{color:T.red}}>↓{h.sale.split(" ")[0]}</span> / <span style={{color:T.green}}>↑{h.entra.split(" ")[0]}</span>
+            <span style={{color:T.muted}}>C{h.cuarto} {h.min}'</span>
+            {h.tarjeta
+              ? <> — <span style={{color:h.tarjeta==="amarilla"?"#eab308":"#22c55e"}}>{h.tarjeta==="amarilla"?"🟡":"🟢"} {h.jugadora?.split(" ")[0]} (-{h.tarjeta==="amarilla"?5:2} min)</span></>
+              : <> — <span style={{color:T.red}}>↓{h.sale?.split(" ")[0]}</span> / <span style={{color:T.green}}>↑{h.entra?.split(" ")[0]}</span></>
+            }
           </div>)}
         </Card>}
         <button onClick={onVolver} style={{width:"100%",padding:12,background:T.blue,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>← Volver a Minutos</button>
@@ -1523,14 +1547,21 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
         </div>
       </Card>
 
-      {selCancha&&<div style={{background:"#1a3a5f",border:`1px solid ${T.blue}`,borderRadius:8,padding:"7px 12px",marginBottom:8,fontSize:12,color:T.blue,textAlign:"center"}}>
-        <strong>{selCancha.split(" ")[0]}</strong> seleccionada — tocá una del banco para hacer el cambio
-      </div>}
+      {/* Menu tarjeta/cambio */}
+      {menuJug&&!selDragging&&(
+        <div style={{background:"#1a1f2e",border:`1px solid ${T.border2}`,borderRadius:10,padding:12,marginBottom:8,display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+          <span style={{fontSize:12,color:T.text,fontWeight:600,flex:1}}>{menuJug.split(" ")[0]}</span>
+          <button onClick={()=>{setSelCancha(menuJug);setMenuJug(null);}} style={{padding:"6px 12px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1a3a5f",color:T.blue,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>🔄 Cambio</button>
+          <button onClick={()=>aplicarTarjeta(menuJug,"verde")} style={{padding:"6px 12px",borderRadius:6,border:"1px solid #22c55e",background:"#0f2d1f",color:"#22c55e",fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>🟢 -2 min</button>
+          <button onClick={()=>aplicarTarjeta(menuJug,"amarilla")} style={{padding:"6px 12px",borderRadius:6,border:"1px solid #eab308",background:"#2d2a0f",color:"#eab308",fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>🟡 -5 min</button>
+          <button onClick={()=>{setMenuJug(null);setSelCancha(null);}} style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>✕</button>
+        </div>
+      )}
 
       {/* Cancha */}
       <div style={{marginBottom:8}}>
         <CanchaHockeySVG posiciones={posiciones} acum={acum} corriendo={corriendo}
-          seleccionada={selCancha} onClickJug={j=>setSelCancha(selCancha===j?null:j)}/>
+          seleccionada={selCancha} onClickJug={clickEnCancha} tarjetas={tarjetas}/>
       </div>
 
       {/* Banco */}
