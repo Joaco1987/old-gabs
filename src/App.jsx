@@ -1544,80 +1544,19 @@ function StaffMinutosTracker({onVolver,rival,sistema,seleccion,onGuardar}){
 }
 
 function StaffMinutos(){
-  const [vista,setVista]=useState("reporte");// reporte | setup | tracker
-  const [rival,setRival]=useState("");
-  const [sistema,setSistema]=useState("4-3-3");
-  const [seleccion,setSeleccion]=useState([]);
-  const [reporteGuardado,setReporteGuardado]=useState(null);
-  const partidos=["COGS","PWCC","MANQ A","UC B","OLD REDS"];
-  const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
+  const [vista,setVista]=useState("reporte");
 
-  const toggleJugadora=j=>{
-    setSeleccion(prev=>prev.includes(j)?prev.filter(x=>x!==j):[...prev,j]);
-  };
-
-  if(vista==="tracker"){
-    return<StaffMinutosTracker
-      onVolver={()=>setVista("reporte")}
-      rival={rival} sistema={sistema} seleccion={seleccion}
-      onGuardar={(rep,rv)=>{setReporteGuardado({rep,rv});setVista("reporte");}}
-    />;
-  }
-
-  if(vista==="setup"){
-    const enCancha=seleccion.slice(0,11);
-    const enBanco=seleccion.slice(11);
-    return(
-      <>
-        <button onClick={()=>setVista("reporte")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit",marginBottom:10}}>← Volver</button>
-        <Card style={{marginBottom:10}}>
-          <CT text="Configurar partido"/>
-          <div style={{marginBottom:12}}>
-            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Rival</div>
-            <input value={rival} onChange={e=>setRival(e.target.value)} placeholder="ej: COGS, PWCC..." style={{background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"8px 12px",fontSize:13,width:"100%",boxSizing:"border-box",fontFamily:"inherit"}}/>
-          </div>
-          <div style={{marginBottom:12}}>
-            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Sistema de juego</div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-              {Object.keys(SISTEMAS).map(s=>(
-                <button key={s} onClick={()=>setSistema(s)} style={{padding:"6px 12px",borderRadius:6,border:`1px solid ${sistema===s?T.blue:T.border}`,background:sistema===s?"#1a3a5f":"transparent",color:sistema===s?T.blue:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>{s}</button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Elegí las jugadoras <span style={{color:enCancha.length===11?T.green:T.amber}}>({seleccion.length} sel. — {enCancha.length}/11 en cancha)</span></div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
-              {ALL_JUGADORAS.map(j=>{
-                const idx=seleccion.indexOf(j);
-                const esCancha=idx>=0&&idx<11;
-                const esBanco=idx>=11;
-                return(
-                  <button key={j} onClick={()=>toggleJugadora(j)}
-                    style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${esCancha?T.green:esBanco?T.amber:T.border}`,background:esCancha?"#0f2d1f":esBanco?"#2d1f0f":"transparent",color:esCancha?T.green:esBanco?T.amber:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>
-                    {j.split(" ")[0]}{esCancha?` (${idx+1})`:""}
-                  </button>
-                );
-              })}
-            </div>
-            <div style={{fontSize:10,color:T.muted,marginTop:8}}>Verde = en cancha (primeras 11) · Naranja = banco · Las primeras 11 seleccionadas van a cancha</div>
-          </div>
-        </Card>
-        <button onClick={()=>{if(!rival.trim()){alert("Ingresá el rival");return;}if(seleccion.length<11){alert("Seleccioná al menos 11 jugadoras");return;}setVista("tracker");}}
-          style={{width:"100%",padding:13,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-          ▶ Iniciar partido
-        </button>
-      </>
-    );
+  if(vista==="setup"||vista==="tracker"){
+    return<StaffMinutosSetup vistaInicial={vista} onVolver={()=>setVista("reporte")}/>;
   }
 
   // Vista reporte
+  const maxTot=Math.max(...MINUTOS.map(m=>m.tot),1);
   return(
     <>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}}>
-        <div style={{fontSize:13,color:T.text,fontWeight:600}}>Minutos de juego</div>
-        <button onClick={()=>{setSeleccion([]);setRival("");setVista("setup");}} style={{padding:"8px 16px",borderRadius:8,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-          ⏱ Nuevo partido
-        </button>
+      <div style={{display:"flex",gap:8,marginBottom:10}}>
+        <button onClick={()=>setVista("reporte")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
+        <button onClick={()=>setVista("setup")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>⏱ Tomar Minutos</button>
       </div>
       <MR>
         <MetCard label="Jugadoras" value={MINUTOS.length}/>
@@ -1659,6 +1598,76 @@ function StaffMinutos(){
           })}
         </div>
       </Card>
+    </>
+  );
+}
+
+function StaffMinutosSetup({onVolver}){
+  const [rival,setRival]=useState("");
+  const [sistema,setSistema]=useState("4-3-3");
+  const [seleccion,setSeleccion]=useState([]);
+  const [enTracker,setEnTracker]=useState(false);
+
+  const toggleJugadora=j=>{
+    setSeleccion(prev=>prev.includes(j)?prev.filter(x=>x!==j):[...prev,j]);
+  };
+
+  if(enTracker){
+    return<StaffMinutosTracker
+      onVolver={onVolver}
+      rival={rival} sistema={sistema} seleccion={seleccion}
+      onGuardar={onVolver}
+    />;
+  }
+
+  const enCancha=seleccion.slice(0,11);
+  return(
+    <>
+      <div style={{display:"flex",gap:8,marginBottom:10}}>
+        <button onClick={onVolver} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"transparent",color:T.muted,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
+        <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>⏱ Tomar Minutos</button>
+      </div>
+      <Card style={{marginBottom:10}}>
+        <CT text="Configurar partido"/>
+        <div style={{marginBottom:12}}>
+          <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Rival</div>
+          <input value={rival} onChange={e=>setRival(e.target.value)} placeholder="ej: COGS, PWCC..." style={{background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"8px 12px",fontSize:13,width:"100%",boxSizing:"border-box",fontFamily:"inherit"}}/>
+        </div>
+        <div style={{marginBottom:12}}>
+          <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Sistema de juego</div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+            {Object.keys(SISTEMAS).map(s=>(
+              <button key={s} onClick={()=>setSistema(s)} style={{padding:"6px 12px",borderRadius:6,border:`1px solid ${sistema===s?T.blue:T.border}`,background:sistema===s?"#1a3a5f":"transparent",color:sistema===s?T.blue:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>{s}</button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div style={{fontSize:11,color:T.muted,marginBottom:4}}>
+            Jugadoras <span style={{color:enCancha.length===11?T.green:T.amber}}>({seleccion.length} sel. — {enCancha.length}/11 en cancha)</span>
+          </div>
+          <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+            {ALL_JUGADORAS.map(j=>{
+              const idx=seleccion.indexOf(j);
+              const esCancha=idx>=0&&idx<11;
+              const esBanco=idx>=11;
+              return(
+                <button key={j} onClick={()=>toggleJugadora(j)}
+                  style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${esCancha?T.green:esBanco?T.amber:T.border}`,background:esCancha?"#0f2d1f":esBanco?"#2d1f0f":"transparent",color:esCancha?T.green:esBanco?T.amber:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>
+                  {j.split(" ")[0]}{esCancha?` (${idx+1})`:""}
+                </button>
+              );
+            })}
+          </div>
+          <div style={{fontSize:10,color:T.muted,marginTop:8}}>Verde = en cancha (primeras 11) · Naranja = banco</div>
+        </div>
+      </Card>
+      <button onClick={()=>{
+        if(!rival.trim()){alert("Ingresá el rival");return;}
+        if(seleccion.length<11){alert("Seleccioná al menos 11 jugadoras");return;}
+        setEnTracker(true);
+      }} style={{width:"100%",padding:13,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+        ▶ Iniciar partido
+      </button>
     </>
   );
 }
