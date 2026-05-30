@@ -1512,7 +1512,7 @@ function StaffTomarAsistencia({onVolver}){
         const fechaIdx=headers.indexOf("Fecha");
         const fechas=new Set();
         sheet.slice(1).forEach(r=>{
-          const f=String(r[fechaIdx]||"").trim();
+          const f=String(r[fechaIdx]||"").trim().slice(0,10);
           if(f)fechas.add(f);
         });
         setFechasCargadas(fechas);
