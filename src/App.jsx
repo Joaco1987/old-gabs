@@ -1279,13 +1279,15 @@ function StaffYoyo(){
 
 // ─── STAFF MINUTOS ────────────────────────────────────────────────────────────
 const SISTEMAS={
-  "4-3-3":  [{rol:"GK",x:50,y:88},{rol:"LD",x:15,y:72},{rol:"DC",x:37,y:72},{rol:"DC",x:63,y:72},{rol:"LI",x:85,y:72},{rol:"MC",x:25,y:52},{rol:"MC",x:50,y:52},{rol:"MC",x:75,y:52},{rol:"EX",x:18,y:28},{rol:"DC",x:50,y:22},{rol:"EX",x:82,y:28}],
-  "4-4-2":  [{rol:"GK",x:50,y:88},{rol:"LD",x:15,y:72},{rol:"DC",x:37,y:72},{rol:"DC",x:63,y:72},{rol:"LI",x:85,y:72},{rol:"MC",x:20,y:52},{rol:"MC",x:40,y:52},{rol:"MC",x:60,y:52},{rol:"MC",x:80,y:52},{rol:"DC",x:35,y:22},{rol:"DC",x:65,y:22}],
-  "4-2-3-1":[{rol:"GK",x:50,y:88},{rol:"LD",x:15,y:72},{rol:"DC",x:37,y:72},{rol:"DC",x:63,y:72},{rol:"LI",x:85,y:72},{rol:"MC",x:35,y:60},{rol:"MC",x:65,y:60},{rol:"EX",x:15,y:38},{rol:"MC",x:50,y:35},{rol:"EX",x:85,y:38},{rol:"DC",x:50,y:18}],
-  "3-5-2":  [{rol:"GK",x:50,y:88},{rol:"DC",x:25,y:72},{rol:"DC",x:50,y:72},{rol:"DC",x:75,y:72},{rol:"MO",x:12,y:50},{rol:"MC",x:30,y:52},{rol:"MC",x:50,y:52},{rol:"MC",x:70,y:52},{rol:"MO",x:88,y:50},{rol:"DC",x:35,y:22},{rol:"DC",x:65,y:22}],
-  "3-4-3":  [{rol:"GK",x:50,y:88},{rol:"DC",x:25,y:72},{rol:"DC",x:50,y:72},{rol:"DC",x:75,y:72},{rol:"MC",x:20,y:52},{rol:"MC",x:40,y:52},{rol:"MC",x:60,y:52},{rol:"MC",x:80,y:52},{rol:"EX",x:18,y:25},{rol:"DC",x:50,y:18},{rol:"EX",x:82,y:25}],
-  "5-3-2":  [{rol:"GK",x:50,y:88},{rol:"MO",x:8,y:68},{rol:"DC",x:25,y:74},{rol:"DC",x:50,y:74},{rol:"DC",x:75,y:74},{rol:"MO",x:92,y:68},{rol:"MC",x:25,y:50},{rol:"MC",x:50,y:50},{rol:"MC",x:75,y:50},{rol:"DC",x:35,y:22},{rol:"DC",x:65,y:22}],
-  "4-5-1":  [{rol:"GK",x:50,y:88},{rol:"LD",x:15,y:72},{rol:"DC",x:37,y:72},{rol:"DC",x:63,y:72},{rol:"LI",x:85,y:72},{rol:"EX",x:12,y:50},{rol:"MC",x:30,y:52},{rol:"MC",x:50,y:52},{rol:"MC",x:70,y:52},{rol:"EX",x:88,y:50},{rol:"DC",x:50,y:18}],
+  // x = posición izq-der (0-100), y = posición arriba-abajo en el campo (0-100)
+  // GK cerca del arco izquierdo, atacantes cerca del arco derecho
+  "4-3-3":  [{rol:"GK",x:6,y:50},{rol:"LD",x:25,y:18},{rol:"DC",x:25,y:38},{rol:"DC",x:25,y:62},{rol:"LI",x:25,y:82},{rol:"MC",x:50,y:25},{rol:"MC",x:50,y:50},{rol:"MC",x:50,y:75},{rol:"EX",x:76,y:18},{rol:"DC",x:80,y:50},{rol:"EX",x:76,y:82}],
+  "4-4-2":  [{rol:"GK",x:6,y:50},{rol:"LD",x:25,y:18},{rol:"DC",x:25,y:38},{rol:"DC",x:25,y:62},{rol:"LI",x:25,y:82},{rol:"MC",x:50,y:20},{rol:"MC",x:50,y:40},{rol:"MC",x:50,y:60},{rol:"MC",x:50,y:80},{rol:"DC",x:78,y:35},{rol:"DC",x:78,y:65}],
+  "4-2-3-1":[{rol:"GK",x:6,y:50},{rol:"LD",x:24,y:18},{rol:"DC",x:24,y:38},{rol:"DC",x:24,y:62},{rol:"LI",x:24,y:82},{rol:"MC",x:44,y:38},{rol:"MC",x:44,y:62},{rol:"EX",x:62,y:18},{rol:"MC",x:62,y:50},{rol:"EX",x:62,y:82},{rol:"DC",x:82,y:50}],
+  "3-5-2":  [{rol:"GK",x:6,y:50},{rol:"DC",x:24,y:25},{rol:"DC",x:24,y:50},{rol:"DC",x:24,y:75},{rol:"MO",x:48,y:12},{rol:"MC",x:44,y:30},{rol:"MC",x:44,y:50},{rol:"MC",x:44,y:70},{rol:"MO",x:48,y:88},{rol:"DC",x:78,y:35},{rol:"DC",x:78,y:65}],
+  "3-4-3":  [{rol:"GK",x:6,y:50},{rol:"DC",x:24,y:25},{rol:"DC",x:24,y:50},{rol:"DC",x:24,y:75},{rol:"MC",x:48,y:20},{rol:"MC",x:48,y:42},{rol:"MC",x:48,y:58},{rol:"MC",x:48,y:80},{rol:"EX",x:76,y:18},{rol:"DC",x:80,y:50},{rol:"EX",x:76,y:82}],
+  "5-3-2":  [{rol:"GK",x:6,y:50},{rol:"MO",x:22,y:8},{rol:"DC",x:26,y:28},{rol:"DC",x:26,y:50},{rol:"DC",x:26,y:72},{rol:"MO",x:22,y:92},{rol:"MC",x:50,y:25},{rol:"MC",x:50,y:50},{rol:"MC",x:50,y:75},{rol:"DC",x:78,y:35},{rol:"DC",x:78,y:65}],
+  "4-5-1":  [{rol:"GK",x:6,y:50},{rol:"LD",x:24,y:18},{rol:"DC",x:24,y:38},{rol:"DC",x:24,y:62},{rol:"LI",x:24,y:82},{rol:"EX",x:50,y:12},{rol:"MC",x:50,y:30},{rol:"MC",x:50,y:50},{rol:"MC",x:50,y:70},{rol:"EX",x:50,y:88},{rol:"DC",x:80,y:50}],
 };
 
 const ALL_JUGADORAS=["Alfaro Javiera","Arau María Paz","Carrasco Sofia","Errazu Sofia","Gacitua Emilia","Gomez Camila","Gutierrez Renata","Hevia Valentina","Liu Macarena","Manriquez Fernanda","Martinez Amanda","Mateluna Florencia","Muñoz Constanza","Pareja Camila","Pollmann Marianne","Retamal Antonia","Sepulveda Eileen","Sierra Julieta","Silva Victoria"];
@@ -1296,57 +1298,110 @@ function TiempoDisplay({seg}){
   return<span>{m}:{s}</span>;
 }
 
-// SVG Cancha Hockey
-function CanchaHockey({posiciones,acum,corriendo,onClickJug,seleccionada,banco,onCambio,modoSetup,onDrop}){
-  // posiciones: [{nombre, x, y, rol}] — x,y en % del ancho/alto del SVG
-  const W=320,H=480;
+// SVG Cancha Hockey — horizontal, verde, con semicírculos de arco y líneas correctas
+function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modoSetup,jugPendiente,onClickSlot}){
+  const W=480,H=300;
+  const pad=14;
+  const fw=W-pad*2, fh=H-pad*2; // campo interior
+  const fx=pad, fy=pad;
+  // Semicírculo de arco: radio ~14% del ancho del campo
+  const arcR=fw*0.16;
+  // Línea de 25 yardas: 25% desde cada extremo
+  const y25L=fy+fh*0.25;
+  const y25R=fy+fh*0.75;
+  // Centro del arco (en los extremos del eje largo)
+  const arcLx=fx, arcRx=fx+fw;
+  const arcCy=fy+fh/2;
+
   return(
-    <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:400,display:"block",margin:"0 auto",borderRadius:8,cursor:"default"}}
+    <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:520,display:"block",margin:"0 auto",borderRadius:8}}
       xmlns="http://www.w3.org/2000/svg">
-      {/* Fondo cancha */}
-      <rect width={W} height={H} fill="#1565C0" rx="6"/>
-      {/* Líneas de la cancha */}
-      {/* Borde */}
-      <rect x={10} y={10} width={W-20} height={H-20} fill="none" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-      {/* Línea central */}
-      <line x1={10} y1={H/2} x2={W-10} y2={H/2} stroke="white" strokeWidth="1" opacity="0.8"/>
+      {/* Fondo verde */}
+      <rect width={W} height={H} fill="#2E7D32" rx="6"/>
+      {/* Fondo campo */}
+      <rect x={fx} y={fy} width={fw} height={fh} fill="#388E3C" rx="2"/>
+
+      {/* Borde campo */}
+      <rect x={fx} y={fy} width={fw} height={fh} fill="none" stroke="white" strokeWidth="1.8"/>
+
+      {/* Línea central (vertical) */}
+      <line x1={fx+fw/2} y1={fy} x2={fx+fw/2} y2={fy+fh} stroke="white" strokeWidth="1.5"/>
+
       {/* Círculo central */}
-      <circle cx={W/2} cy={H/2} r={36} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-      <circle cx={W/2} cy={H/2} r={2} fill="white" opacity="0.8"/>
-      {/* Área penal arriba */}
-      <rect x={W/2-55} y={10} width={110} height={70} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-      <rect x={W/2-28} y={10} width={56} height={28} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-      <circle cx={W/2} cy={10+52} r={18} fill="none" stroke="white" strokeWidth="1" opacity="0.8" strokeDasharray="4 3"/>
-      {/* Punto penal arriba */}
-      <circle cx={W/2} cy={10+40} r={2} fill="white" opacity="0.9"/>
-      {/* Área penal abajo */}
-      <rect x={W/2-55} y={H-80} width={110} height={70} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-      <rect x={W/2-28} y={H-38} width={56} height={28} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-      <circle cx={W/2} cy={H-62} r={18} fill="none" stroke="white" strokeWidth="1" opacity="0.8" strokeDasharray="4 3"/>
-      {/* Punto penal abajo */}
-      <circle cx={W/2} cy={H-52} r={2} fill="white" opacity="0.9"/>
-      {/* Corners */}
-      {[[10,10],[W-10,10],[10,H-10],[W-10,H-10]].map(([cx,cy],i)=>(
-        <circle key={i} cx={cx} cy={cy} r={5} fill="none" stroke="white" strokeWidth="1" opacity="0.6"/>
+      <circle cx={fx+fw/2} cy={fy+fh/2} r={fh*0.13} fill="none" stroke="white" strokeWidth="1.5"/>
+      <circle cx={fx+fw/2} cy={fy+fh/2} r={2.5} fill="white"/>
+
+      {/* Líneas de 25 yardas */}
+      <line x1={fx} y1={y25L} x2={fx+fw} y2={y25L} stroke="white" strokeWidth="1.2"/>
+      <line x1={fx} y1={y25R} x2={fx+fw} y2={y25R} stroke="white" strokeWidth="1.2"/>
+
+      {/* Marcas de 25 yardas en borde */}
+      {[y25L,y25R].map((y,i)=>(
+        <g key={i}>
+          <line x1={fx-4} y1={y} x2={fx+4} y2={y} stroke="white" strokeWidth="1.5"/>
+          <line x1={fx+fw-4} y1={y} x2={fx+fw+4} y2={y} stroke="white" strokeWidth="1.5"/>
+        </g>
       ))}
 
-      {/* Jugadoras en cancha */}
-      {posiciones.map(({nombre,x,y,rol},i)=>{
-        const px=x/100*W;
-        const py=y/100*H;
-        const sel=seleccionada===nombre;
-        const mins=acum?Math.floor((acum[nombre]||0)/60):0;
-        const sinNombre=!nombre;
+      {/* Marcas laterales en 5y desde cada extremo */}
+      {[fy+fh*0.083,fy+fh*0.917].map((y,i)=>(
+        <g key={i}>
+          <line x1={fx} y1={y} x2={fx+6} y2={y} stroke="white" strokeWidth="1"/>
+          <line x1={fx+fw-6} y1={y} x2={fx+fw} y2={y} stroke="white" strokeWidth="1"/>
+        </g>
+      ))}
+
+      {/* Arco izquierdo — semicírculo sólido */}
+      <path d={`M ${arcLx} ${arcCy-arcR} A ${arcR} ${arcR} 0 0 1 ${arcLx} ${arcCy+arcR}`}
+        fill="none" stroke="white" strokeWidth="1.5"/>
+      {/* Arco izquierdo — semicírculo punteado exterior */}
+      <path d={`M ${arcLx} ${arcCy-arcR*1.55} A ${arcR*1.55} ${arcR*1.55} 0 0 1 ${arcLx} ${arcCy+arcR*1.55}`}
+        fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4"/>
+
+      {/* Arco derecho — semicírculo sólido */}
+      <path d={`M ${arcRx} ${arcCy-arcR} A ${arcR} ${arcR} 0 0 0 ${arcRx} ${arcCy+arcR}`}
+        fill="none" stroke="white" strokeWidth="1.5"/>
+      {/* Arco derecho — semicírculo punteado exterior */}
+      <path d={`M ${arcRx} ${arcCy-arcR*1.55} A ${arcR*1.55} ${arcR*1.55} 0 0 0 ${arcRx} ${arcCy+arcR*1.55}`}
+        fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4"/>
+
+      {/* Punto penal izquierdo */}
+      <circle cx={fx+fw*0.075} cy={arcCy} r={2.5} fill="white"/>
+      {/* Punto penal derecho */}
+      <circle cx={fx+fw*0.925} cy={arcCy} r={2.5} fill="white"/>
+
+      {/* Arco del arco (portería) izquierdo */}
+      <rect x={fx-4} y={arcCy-fh*0.1} width={4} height={fh*0.2} fill="none" stroke="white" strokeWidth="1.5"/>
+      {/* Arco del arco (portería) derecho */}
+      <rect x={fx+fw} y={arcCy-fh*0.1} width={4} height={fh*0.2} fill="none" stroke="white" strokeWidth="1.5"/>
+
+      {/* Corners — pequeños arcos */}
+      {[[fx,fy,0,0],[fx+fw,fy,1,0],[fx,fy+fh,0,1],[fx+fw,fy+fh,1,1]].map(([cx,cy,rx,ry],i)=>{
+        const r=8;
+        const sx=rx?cx-r:cx; const sy=ry?cy-r:cy;
+        const ex=rx?cx:cx+r; const ey=ry?cy:cy+r;
+        return<path key={i} d={`M ${sx} ${cy} A ${r} ${r} 0 0 ${rx?0:1} ${cx} ${sy}`} fill="none" stroke="white" strokeWidth="1.2"/>;
+      })}
+
+      {/* Jugadoras */}
+      {posiciones.map((pos,i)=>{
+        const px=pos.x/100*fw+fx;
+        const py=pos.y/100*fh+fy;
+        const tieneJug=!!pos.nombre;
+        const esSel=seleccionada===pos.nombre&&tieneJug;
+        const esPend=jugPendiente&&!tieneJug;
+        const mins=acum&&tieneJug?Math.floor((acum[pos.nombre]||0)/60):0;
         return(
-          <g key={i} style={{cursor:"pointer"}} onClick={()=>nombre&&onClickJug&&onClickJug(nombre)}>
-            <circle cx={px} cy={py} r={18} fill={sel?"#1565C0":sinNombre?"rgba(255,255,255,0.15)":"rgba(0,0,0,0.5)"} stroke={sel?"#64B5F6":sinNombre?"rgba(255,255,255,0.4)":"white"} strokeWidth={sel?2.5:1.5}/>
-            {nombre?(
+          <g key={i} style={{cursor:"pointer"}} onClick={()=>tieneJug&&onClickJug?onClickJug(pos.nombre):onClickSlot&&onClickSlot(i)}>
+            <circle cx={px} cy={py} r={17} fill={esSel?"#1565C0":tieneJug?"rgba(0,0,0,0.6)":esPend?"rgba(100,181,246,0.25)":"rgba(255,255,255,0.08)"} stroke={esSel?"#64B5F6":tieneJug?"white":esPend?"#64B5F6":"rgba(255,255,255,0.35)"} strokeWidth={esSel?2.5:1.5} strokeDasharray={tieneJug?"":"3 2"}/>
+            {tieneJug?(
               <>
-                <text x={px} y={py-2} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="8" fontWeight="600" fontFamily="system-ui">{nombre.split(" ")[0].slice(0,8)}</text>
-                {!modoSetup&&<text x={px} y={py+8} textAnchor="middle" dominantBaseline="middle" fill={corriendo?"#81C784":"#FFB74D"} fontSize="7" fontFamily="system-ui">{mins}'</text>}
+                <text x={px} y={py-(modoSetup?2:4)} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="7.5" fontWeight="700" fontFamily="system-ui">{pos.nombre.split(" ")[0].slice(0,7)}</text>
+                {!modoSetup&&<text x={px} y={py+6} textAnchor="middle" dominantBaseline="middle" fill={corriendo?"#81C784":"#FFB74D"} fontSize="7" fontFamily="system-ui">{mins}'</text>}
+                {modoSetup&&<text x={px} y={py+6} textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.55)" fontSize="6.5" fontFamily="system-ui">{pos.rol}</text>}
               </>
             ):(
-              <text x={px} y={py} textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.5)" fontSize="8" fontFamily="system-ui">{rol}</text>
+              <text x={px} y={py} textAnchor="middle" dominantBaseline="middle" fill={esPend?"#64B5F6":"rgba(255,255,255,0.35)"} fontSize="7.5" fontFamily="system-ui">{pos.rol}</text>
             )}
           </g>
         );
@@ -1496,7 +1551,8 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
 
       {/* Cancha */}
       <div style={{marginBottom:8}}>
-        <CanchaHockey posiciones={posiciones} acum={acum} corriendo={corriendo} seleccionada={selCancha} onClickJug={j=>setSelCancha(selCancha===j?null:j)} banco={banco}/>
+        <CanchaHockeySVG posiciones={posiciones} acum={acum} corriendo={corriendo}
+          seleccionada={selCancha} onClickJug={j=>setSelCancha(selCancha===j?null:j)}/>
       </div>
 
       {/* Banco */}
@@ -1619,43 +1675,8 @@ function StaffMinutos(){
             {jugPendiente?<span style={{color:T.blue}}>Tocá un slot en la cancha para ubicar a <strong>{jugPendiente.split(" ")[0]}</strong></span>
             :`Cancha — ${enCanchaCount}/11 ubicadas · Tocá una jugadora del plantel para colocarla`}
           </div>
-          <svg viewBox="0 0 320 480" style={{width:"100%",maxWidth:400,display:"block",margin:"0 auto",borderRadius:8}} xmlns="http://www.w3.org/2000/svg">
-            <rect width={320} height={480} fill="#1565C0" rx="6"/>
-            <rect x={10} y={10} width={300} height={460} fill="none" stroke="white" strokeWidth="1.5" opacity="0.8"/>
-            <line x1={10} y1={240} x2={310} y2={240} stroke="white" strokeWidth="1" opacity="0.8"/>
-            <circle cx={160} cy={240} r={36} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-            <circle cx={160} cy={240} r={2} fill="white" opacity="0.8"/>
-            <rect x={105} y={10} width={110} height={70} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-            <rect x={132} y={10} width={56} height={28} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-            <circle cx={160} cy={62} r={18} fill="none" stroke="white" strokeWidth="1" opacity="0.8" strokeDasharray="4 3"/>
-            <circle cx={160} cy={50} r={2} fill="white" opacity="0.9"/>
-            <rect x={105} y={400} width={110} height={70} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-            <rect x={132} y={442} width={56} height={28} fill="none" stroke="white" strokeWidth="1" opacity="0.8"/>
-            <circle cx={160} cy={418} r={18} fill="none" stroke="white" strokeWidth="1" opacity="0.8" strokeDasharray="4 3"/>
-            <circle cx={160} cy={430} r={2} fill="white" opacity="0.9"/>
-            {[[10,10],[310,10],[10,470],[310,470]].map(([cx,cy],i)=>(
-              <circle key={i} cx={cx} cy={cy} r={5} fill="none" stroke="white" strokeWidth="1" opacity="0.6"/>
-            ))}
-            {posiciones.map((pos,i)=>{
-              const px=pos.x/100*320;
-              const py=pos.y/100*480;
-              const tieneJug=!!pos.nombre;
-              const esPendiente=jugPendiente&&!tieneJug;
-              return(
-                <g key={i} style={{cursor:"pointer"}} onClick={()=>clickSlot(i)}>
-                  <circle cx={px} cy={py} r={20} fill={tieneJug?"rgba(0,0,0,0.55)":esPendiente?"rgba(100,181,246,0.3)":"rgba(255,255,255,0.1)"} stroke={tieneJug?"white":esPendiente?"#64B5F6":"rgba(255,255,255,0.4)"} strokeWidth={tieneJug?1.5:esPendiente?2:1} strokeDasharray={tieneJug?"":"3 2"}/>
-                  {tieneJug?(
-                    <>
-                      <text x={px} y={py-3} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="8" fontWeight="600" fontFamily="system-ui">{pos.nombre.split(" ")[0].slice(0,8)}</text>
-                      <text x={px} y={py+7} textAnchor="middle" dominantBaseline="middle" fill="rgba(255,255,255,0.6)" fontSize="7" fontFamily="system-ui">{pos.rol}</text>
-                    </>
-                  ):(
-                    <text x={px} y={py} textAnchor="middle" dominantBaseline="middle" fill={esPendiente?"#64B5F6":"rgba(255,255,255,0.4)"} fontSize="8" fontFamily="system-ui">{pos.rol}</text>
-                  )}
-                </g>
-              );
-            })}
-          </svg>
+          <CanchaHockeySVG posiciones={posiciones} modoSetup={true} jugPendiente={jugPendiente}
+            onClickSlot={clickSlot} onClickJug={clickJugadora}/>
         </Card>
 
         {/* Plantel */}
