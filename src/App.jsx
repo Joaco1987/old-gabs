@@ -1330,9 +1330,8 @@ function StaffMinutos(){
 // ─── STAFF ASISTENCIA ──────────────────────────────────────────────────────────
 function StaffAsistencia(){
   const [vista,setVista]=useState("reporte");
-  const [fechasRegistradas,setFechasRegistradas]=useState(null);// Set de fechas ya cargadas
-  if(vista==="tomar")return <StaffTomarAsistencia onVolver={()=>setVista("reporte")} fechasRegistradas={fechasRegistradas}/>;
-  return <StaffAsistenciaReporte onTomar={()=>setVista("tomar")} onFechas={setFechasRegistradas}/>;
+  if(vista==="tomar")return <StaffTomarAsistencia onVolver={()=>setVista("reporte")}/>;
+  return <StaffAsistenciaReporte onTomar={()=>setVista("tomar")} onFechas={()=>{}}/>;
 }
 function StaffAsistenciaReporte({onTomar,onFechas}){
   const [rows,setRows]=useState(null);
@@ -1496,16 +1495,33 @@ function StaffAsistenciaReporte({onTomar,onFechas}){
 }
 
 
-function StaffTomarAsistencia({onVolver, fechasRegistradas}){
+function StaffTomarAsistencia({onVolver}){
   const JUGADORAS=["Alfaro Javiera","Arau María Paz","Carrasco Sofia","Errazu Sofia","Gacitua Emilia","Gomez Camila","Gutierrez Renata","Hevia Valentina","Liu Macarena","Manriquez Fernanda","Martinez Amanda","Mateluna Florencia","Muñoz Constanza","Pareja Camila","Pollmann Marianne","Retamal Antonia","Sepulveda Eileen","Sierra Julieta","Silva Victoria"];
   const [fecha,setFecha]=useState("");
   const [pres,setPres]=useState({});
   const [saving,setSaving]=useState(false);
-  const [extraFechas,setExtraFechas]=useState(new Set());
+  const [fechasCargadas,setFechasCargadas]=useState(null);// null=cargando, Set=listo
 
-  const todasFechas=new Set([...(fechasRegistradas||[]),...extraFechas]);
-  const cargando=fechasRegistradas===null;
-  const yaRegistrada=fecha&&todasFechas.has(fecha);
+  // Cargar fechas registradas al montar
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Asistencias App"]||[];
+        const headers=(sheet[0]||[]).map(h=>String(h));
+        const fechaIdx=headers.indexOf("Fecha");
+        const fechas=new Set();
+        sheet.slice(1).forEach(r=>{
+          const f=String(r[fechaIdx]||"").trim();
+          if(f)fechas.add(f);
+        });
+        setFechasCargadas(fechas);
+      })
+      .catch(()=>setFechasCargadas(new Set()));
+  },[]);
+
+  const cargando=fechasCargadas===null;
+  const yaRegistrada=fecha&&fechasCargadas&&fechasCargadas.has(fecha);
   const listaVisible=!cargando&&fecha&&!yaRegistrada;
 
   const toggle=j=>setPres(p=>{const n={...p};n[j]=n[j]===1?0:n[j]===0?null:1;return n;});
@@ -1518,7 +1534,7 @@ function StaffTomarAsistencia({onVolver, fechasRegistradas}){
     const params=new URLSearchParams({accion:"asistencia",fecha,datos});
     await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
     setSaving(false);
-    setExtraFechas(prev=>new Set([...prev,fecha]));
+    setFechasCargadas(prev=>new Set([...(prev||[]),fecha]));
   };
 
   return(
