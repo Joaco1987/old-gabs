@@ -1504,8 +1504,9 @@ function StaffTomarAsistencia({onVolver, fechasRegistradas}){
   const [extraFechas,setExtraFechas]=useState(new Set());
 
   const todasFechas=new Set([...(fechasRegistradas||[]),...extraFechas]);
+  const cargando=fechasRegistradas===null;
   const yaRegistrada=fecha&&todasFechas.has(fecha);
-  const listaVisible=fecha&&!yaRegistrada;
+  const listaVisible=!cargando&&fecha&&!yaRegistrada;
 
   const toggle=j=>setPres(p=>{const n={...p};n[j]=n[j]===1?0:n[j]===0?null:1;return n;});
   const marcarTodas=v=>{const n={};JUGADORAS.forEach(j=>n[j]=v);setPres(n);};
@@ -1537,7 +1538,9 @@ function StaffTomarAsistencia({onVolver, fechasRegistradas}){
             <button onClick={()=>setPres({})} style={{padding:"6px 10px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>Reset</button>
           </>}
         </div>
-        {!fecha?(
+        {cargando?(
+          <div style={{color:T.muted,textAlign:"center",padding:24,fontSize:13}}>Cargando...</div>
+        ):!fecha?(
           <div style={{color:T.muted,textAlign:"center",padding:24,fontSize:13}}>Seleccioná una fecha para continuar</div>
         ):yaRegistrada?(
           <div style={{background:"#0f2d1f",border:"1px solid #1a4a2a",borderRadius:8,padding:"16px 20px",textAlign:"center"}}>
