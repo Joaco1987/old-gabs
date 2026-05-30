@@ -1442,6 +1442,11 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
     document.addEventListener("visibilitychange",handleVisibility);
     return()=>document.removeEventListener("visibilitychange",handleVisibility);
   },[corriendo,enCanchaNames.join(",")]);
+
+  React.useEffect(()=>{
+    if(!corriendo||finalizado)return;
+    const t=setInterval(()=>{
+      setSegCuarto(s=>s+1);
       setAcum(prev=>{const n={...prev};enCanchaNames.forEach(j=>{n[j]=(n[j]||0)+1;});return n;});
     },1000);
     return()=>clearInterval(t);
