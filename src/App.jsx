@@ -1341,11 +1341,11 @@ function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modo
       <line x1={fx-3} y1={y25propia} x2={fx+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
       <line x1={fx+fw-3} y1={y25propia} x2={fx+fw+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
 
-      {/* Área propia — semicírculo sólido (cortado al borde inferior) */}
-      <path d={`M ${cx-arcR} ${fy+fh} A ${arcR} ${arcR} 0 0 0 ${cx+arcR} ${fy+fh}`}
+      {/* Área propia — semicírculo sólido */}
+      <path d={`M ${fx} ${fy+fh*0.72} A ${arcR} ${arcR} 0 0 0 ${fx+fw} ${fy+fh*0.72}`}
         fill="none" stroke="white" strokeWidth="1.5" clipPath="url(#fieldClip)"/>
       {/* Área punteada exterior */}
-      <path d={`M ${cx-arcR2} ${fy+fh} A ${arcR2} ${arcR2} 0 0 0 ${cx+arcR2} ${fy+fh}`}
+      <path d={`M ${Math.max(fx,cx-arcR2)} ${fy+fh} A ${arcR2} ${arcR2} 0 0 0 ${Math.min(fx+fw,cx+arcR2)} ${fy+fh}`}
         fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4" clipPath="url(#fieldClip)"/>
       {/* Punto penal */}
       <circle cx={cx} cy={fy+fh*0.88} r={2.5} fill="white"/>
