@@ -752,14 +752,12 @@ function calcZonas(j, sess){
   }
   const h18=j.ai18||0;
   const sp=j.spr||0;
-  if(sess.tipo==="entreno"){
-    // entrenos: hsr ya ES la zona 15-18
-    return {h15:j.hsr||0, h18, sp};
+  if(sess.tipo==="amistoso"){
+    // amistosos: ai15 = total >15 → h15 = ai15 - ai18 - spr
+    return {h15:Math.max(0,(j.ai15||0)-h18-sp), h18, sp};
   }
-  // partidos: hsr = total >15 → h15 = hsr - ai18 - spr
-  // amistosos: ai15 = total >15 → h15 = ai15 - ai18 - spr
-  const total=j.hsr||j.ai15||0;
-  return {h15:Math.max(0,total-h18-sp), h18, sp};
+  // partidos y entrenos: hsr YA ES la zona 15-18
+  return {h15:j.hsr||0, h18, sp};
 }
 
 // ─── STAFF GPS ────────────────────────────────────────────────────────────────
