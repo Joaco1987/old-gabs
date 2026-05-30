@@ -1297,15 +1297,97 @@ function TiempoDisplay({seg}){
   return<span>{m}:{s}</span>;
 }
 
-// SVG Cancha Hockey — vertical (portrait), líneas horizontales, GK abajo, del arriba
+// SVG Cancha Hockey — 3/4 del campo: portería propia abajo, mitad arriba
 function CanchaHockeySVG({posiciones,acum,corriendo,onClickJug,seleccionada,modoSetup,jugPendiente,onClickSlot}){
-  const W=300,H=480;
+  const W=300,H=460;
   const pad=12;
   const fw=W-pad*2, fh=H-pad*2;
   const fx=pad, fy=pad;
-  const cx=fx+fw/2, cy=fy+fh/2;
-  const arcR=fw*0.42; // semicírculo arco
-  const arcR2=fw*0.55; // semicírculo punteado
+  const cx=fx+fw/2;
+  // En 3/4 cancha: abajo=portería propia, arriba=mitad de cancha
+  // Línea de mitad: top del SVG (y=fy)
+  // Línea 25y rival: 33% desde arriba
+  // Línea 25y propia: 66% desde arriba
+  // Portería y área: en el fondo (abajo)
+  const y25rival=fy+fh*0.28;
+  const y25propia=fy+fh*0.62;
+  const arcR=fw*0.44;
+  const arcR2=fw*0.58;
+
+  return(
+    <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:340,display:"block",margin:"0 auto",borderRadius:8}}
+      xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="fieldClip"><rect x={fx} y={fy} width={fw} height={fh}/></clipPath>
+      </defs>
+      {/* Fondo verde */}
+      <rect width={W} height={H} fill="#2E7D32" rx="6"/>
+      <rect x={fx} y={fy} width={fw} height={fh} fill="#388E3C"/>
+      {/* Borde campo */}
+      <rect x={fx} y={fy} width={fw} height={fh} fill="none" stroke="white" strokeWidth="1.8"/>
+
+      {/* Línea de mitad (arriba del SVG) — solo la línea horizontal */}
+      <line x1={fx} y1={fy} x2={fx+fw} y2={fy} stroke="white" strokeWidth="1.8"/>
+
+      {/* Línea 25y rival */}
+      <line x1={fx} y1={y25rival} x2={fx+fw} y2={y25rival} stroke="white" strokeWidth="1.2"/>
+      {/* Marcas laterales 25y rival */}
+      <line x1={fx-3} y1={y25rival} x2={fx+3} y2={y25rival} stroke="white" strokeWidth="1.5"/>
+      <line x1={fx+fw-3} y1={y25rival} x2={fx+fw+3} y2={y25rival} stroke="white" strokeWidth="1.5"/>
+
+      {/* Línea 25y propia */}
+      <line x1={fx} y1={y25propia} x2={fx+fw} y2={y25propia} stroke="white" strokeWidth="1.2"/>
+      {/* Marcas laterales 25y propia */}
+      <line x1={fx-3} y1={y25propia} x2={fx+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
+      <line x1={fx+fw-3} y1={y25propia} x2={fx+fw+3} y2={y25propia} stroke="white" strokeWidth="1.5"/>
+
+      {/* Área propia — semicírculo sólido (cortado al borde inferior) */}
+      <path d={`M ${cx-arcR} ${fy+fh} A ${arcR} ${arcR} 0 0 0 ${cx+arcR} ${fy+fh}`}
+        fill="none" stroke="white" strokeWidth="1.5" clipPath="url(#fieldClip)"/>
+      {/* Área punteada exterior */}
+      <path d={`M ${cx-arcR2} ${fy+fh} A ${arcR2} ${arcR2} 0 0 0 ${cx+arcR2} ${fy+fh}`}
+        fill="none" stroke="white" strokeWidth="1.5" strokeDasharray="6 4" clipPath="url(#fieldClip)"/>
+      {/* Punto penal */}
+      <circle cx={cx} cy={fy+fh*0.88} r={2.5} fill="white"/>
+
+      {/* Portería propia */}
+      <rect x={cx-fw*0.14} y={fy+fh-1} width={fw*0.28} height={7} fill="none" stroke="white" strokeWidth="2"/>
+
+      {/* Corners inferiores */}
+      <path d={`M ${fx+10} ${fy+fh} Q ${fx} ${fy+fh} ${fx} ${fy+fh-10}`} fill="none" stroke="white" strokeWidth="1.2"/>
+      <path d={`M ${fx+fw-10} ${fy+fh} Q ${fx+fw} ${fy+fh} ${fx+fw} ${fy+fh-10}`} fill="none" stroke="white" strokeWidth="1.2"/>
+
+      {/* Jugadoras */}
+      {posiciones.map((pos,i)=>{
+        const px=pos.x/100*fw+fx;
+        const py=pos.y/100*fh+fy;
+        const tieneJug=!!pos.nombre;
+        const esSel=seleccionada===pos.nombre&&tieneJug;
+        const esPend=jugPendiente&&!tieneJug;
+        const mins=acum&&tieneJug?Math.floor((acum[pos.nombre]||0)/60):0;
+        return(
+          <g key={i} style={{cursor:"pointer"}} onClick={()=>tieneJug&&onClickJug?onClickJug(pos.nombre):!tieneJug&&onClickSlot&&onClickSlot(i)}>
+            <circle cx={px} cy={py} r={19}
+              fill={esSel?"#0D47A1":tieneJug?"rgba(0,0,0,0.55)":esPend?"rgba(100,181,246,0.2)":"rgba(255,255,255,0.08)"}
+              stroke={esSel?"#64B5F6":tieneJug?"white":esPend?"#64B5F6":"rgba(255,255,255,0.35)"}
+              strokeWidth={esSel?2.5:1.5} strokeDasharray={tieneJug?"":"3 2"}/>
+            {tieneJug?(
+              <>
+                <text x={px} y={py-3} textAnchor="middle" dominantBaseline="middle" fill="white" fontSize="7.5" fontWeight="700" fontFamily="system-ui">{pos.nombre.split(" ")[0].slice(0,7)}</text>
+                <text x={px} y={py+6} textAnchor="middle" dominantBaseline="middle"
+                  fill={modoSetup?"rgba(255,255,255,0.6)":corriendo?"#81C784":"#FFB74D"}
+                  fontSize="7" fontFamily="system-ui">{modoSetup?pos.rol:`${mins}'`}</text>
+              </>
+            ):(
+              <text x={px} y={py} textAnchor="middle" dominantBaseline="middle"
+                fill={esPend?"#64B5F6":"rgba(255,255,255,0.35)"} fontSize="7.5" fontFamily="system-ui">{pos.rol}</text>
+            )}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
 
   return(
     <svg viewBox={`0 0 ${W} ${H}`} style={{width:"100%",maxWidth:360,display:"block",margin:"0 auto",borderRadius:8}}
