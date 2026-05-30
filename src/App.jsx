@@ -1516,6 +1516,8 @@ function StaffTomarAsistencia({onVolver}){
           if(f)fechas.add(f);
         });
         setFechasCargadas(fechas);
+        console.log("Fechas en Drive:", [...fechas].slice(0,5));
+        console.log("Total fechas:", fechas.size);
       })
       .catch(()=>setFechasCargadas(new Set()));
   },[]);
