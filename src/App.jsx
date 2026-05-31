@@ -1505,21 +1505,40 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
     setSelCancha(selCancha===j?null:j);
   };
 
+  // Reporte editable
+  const [reporteEdit,setReporteEdit]=useState(null);// se inicializa al entrar a confirmFin
+
+  // Cuando se activa confirmFin, inicializar reporteEdit con los datos actuales
+  React.useEffect(()=>{
+    if(confirmFin){
+      const r={};
+      ALL_JUGADORAS.forEach(j=>{
+        const d={c1:cuartosData[1]?.[j]||0,c2:cuartosData[2]?.[j]||0,c3:cuartosData[3]?.[j]||0,c4:cuartosData[4]?.[j]||0};
+        d.tot=d.c1+d.c2+d.c3+d.c4;
+        r[j]=d;
+      });
+      setReporteEdit(r);
+    }
+  },[confirmFin]);
+
+  const updateCell=(j,campo,val)=>{
+    setReporteEdit(prev=>{
+      const n={...prev,[j]:{...prev[j],[campo]:Number(val)||0}};
+      n[j].tot=n[j].c1+n[j].c2+n[j].c3+n[j].c4;
+      return n;
+    });
+  };
+
   const confirmarFin=async()=>{
     setSaving(true);
-    const reporte={};
-    ALL_JUGADORAS.forEach(j=>{
-      const d={c1:cuartosData[1]?.[j]||0,c2:cuartosData[2]?.[j]||0,c3:cuartosData[3]?.[j]||0,c4:cuartosData[4]?.[j]||0};
-      d.tot=d.c1+d.c2+d.c3+d.c4;
-      reporte[j]=d;
-    });
+    const reporte=reporteEdit||{};
     const params=new URLSearchParams({accion:"minutos",rival,datos:JSON.stringify(reporte)});
     await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
     setSaving(false);setFinalizado(true);setConfirmFin(false);
     onGuardar(reporte,rival);
   };
 
-  // Reporte preview — construir datos
+  // Reporte preview para pantalla final
   const reportePreview=React.useMemo(()=>{
     const r={};
     ALL_JUGADORAS.forEach(j=>{
@@ -1532,35 +1551,41 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
 
   const pct=Math.min(100,Math.round(segCuarto/DURACION*100));
 
-  // Vista: revisión antes de guardar
-  if(confirmFin){
+  if(confirmFin&&reporteEdit){
+    const jugConMin=ALL_JUGADORAS.filter(j=>reporteEdit[j]?.tot>0);
+    const inputStyle={width:32,background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:4,color:T.text,fontSize:12,textAlign:"center",padding:"2px 0",fontFamily:"inherit"};
     return(
       <>
-        <div style={{textAlign:"center",padding:"16px 0 10px"}}>
-          <div style={{fontSize:24,marginBottom:6}}>🏁</div>
-          <div style={{color:T.text,fontWeight:700,fontSize:16,marginBottom:4}}>Revisá el reporte antes de guardar</div>
-          <div style={{color:T.muted,fontSize:12}}>vs {rival}</div>
+        <div style={{textAlign:"center",padding:"12px 0 8px"}}>
+          <div style={{fontSize:22,marginBottom:4}}>🏁</div>
+          <div style={{color:T.text,fontWeight:700,fontSize:15}}>Revisá y editá antes de guardar</div>
+          <div style={{color:T.muted,fontSize:11,marginTop:2}}>vs {rival} · Tocá un valor para editarlo</div>
         </div>
-        <Card style={{marginBottom:8}}>
-          <CT text="Minutos por cuarto — revisión"/>
+        <Card style={{marginBottom:10}}>
+          <CT text="Minutos por cuarto"/>
           <div style={{overflowX:"auto"}}>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,minWidth:300}}>
               <TH cols={["Jugadora","C1","C2","C3","C4","Total"]}/>
-              <tbody>{ALL_JUGADORAS.map(j=>{
-                const d=reportePreview[j];
-                if(!d||!d.tot)return null;
+              <tbody>{jugConMin.map(j=>{
+                const d=reporteEdit[j];
                 return(<tr key={j}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{j}</td>
-                  {[d.c1,d.c2,d.c3,d.c4].map((v,i)=><td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.blue:T.muted,textAlign:"center",fontWeight:v?500:400}}>{v?`${v}'`:"—"}</td>)}
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.green,fontWeight:700,textAlign:"center"}}>{d.tot}'</td>
+                  <td style={{padding:"5px 4px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{j.split(" ")[0]}</td>
+                  {["c1","c2","c3","c4"].map(k=>(
+                    <td key={k} style={{padding:"3px 2px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                      <input type="number" value={d[k]} min={0} max={20}
+                        onChange={e=>updateCell(j,k,e.target.value)}
+                        style={inputStyle}/>
+                    </td>
+                  ))}
+                  <td style={{padding:"5px 4px",borderBottom:"1px solid #141824",color:T.green,fontWeight:700,textAlign:"center"}}>{d.tot}'</td>
                 </tr>);
               })}</tbody>
             </table>
           </div>
         </Card>
         <div style={{display:"flex",gap:8}}>
-          <button onClick={()=>setConfirmFin(false)} style={{flex:1,padding:12,background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>← Volver al partido</button>
-          <button onClick={confirmarFin} disabled={saving} style={{flex:1,padding:12,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"✓ Guardar en Drive"}</button>
+          <button onClick={()=>setConfirmFin(false)} style={{flex:1,padding:12,background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>← Volver</button>
+          <button onClick={confirmarFin} disabled={saving} style={{flex:2,padding:12,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"✓ Guardar en Drive"}</button>
         </div>
       </>
     );
