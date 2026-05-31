@@ -1519,7 +1519,52 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
     onGuardar(reporte,rival);
   };
 
+  // Reporte preview — construir datos
+  const reportePreview=React.useMemo(()=>{
+    const r={};
+    ALL_JUGADORAS.forEach(j=>{
+      const d={c1:cuartosData[1]?.[j]||0,c2:cuartosData[2]?.[j]||0,c3:cuartosData[3]?.[j]||0,c4:cuartosData[4]?.[j]||0};
+      d.tot=d.c1+d.c2+d.c3+d.c4;
+      r[j]=d;
+    });
+    return r;
+  },[cuartosData]);
+
   const pct=Math.min(100,Math.round(segCuarto/DURACION*100));
+
+  // Vista: revisión antes de guardar
+  if(confirmFin){
+    return(
+      <>
+        <div style={{textAlign:"center",padding:"16px 0 10px"}}>
+          <div style={{fontSize:24,marginBottom:6}}>🏁</div>
+          <div style={{color:T.text,fontWeight:700,fontSize:16,marginBottom:4}}>Revisá el reporte antes de guardar</div>
+          <div style={{color:T.muted,fontSize:12}}>vs {rival}</div>
+        </div>
+        <Card style={{marginBottom:8}}>
+          <CT text="Minutos por cuarto — revisión"/>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,minWidth:300}}>
+              <TH cols={["Jugadora","C1","C2","C3","C4","Total"]}/>
+              <tbody>{ALL_JUGADORAS.map(j=>{
+                const d=reportePreview[j];
+                if(!d||!d.tot)return null;
+                return(<tr key={j}>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{j}</td>
+                  {[d.c1,d.c2,d.c3,d.c4].map((v,i)=><td key={i} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.blue:T.muted,textAlign:"center",fontWeight:v?500:400}}>{v?`${v}'`:"—"}</td>)}
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.green,fontWeight:700,textAlign:"center"}}>{d.tot}'</td>
+                </tr>);
+              })}</tbody>
+            </table>
+          </div>
+        </Card>
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={()=>setConfirmFin(false)} style={{flex:1,padding:12,background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>← Volver al partido</button>
+          <button onClick={confirmarFin} disabled={saving} style={{flex:1,padding:12,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"✓ Guardar en Drive"}</button>
+        </div>
+      </>
+    );
+  }
 
   if(finalizado){
     return(
@@ -1527,26 +1572,27 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
         <div style={{textAlign:"center",padding:"20px 0 10px"}}>
           <div style={{fontSize:28,marginBottom:6}}>🏆</div>
           <div style={{color:T.green,fontWeight:700,fontSize:16}}>Partido finalizado</div>
-          <div style={{color:T.muted,fontSize:12,marginTop:4}}>vs {rival} — datos guardados</div>
+          <div style={{color:T.muted,fontSize:12,marginTop:4}}>vs {rival} — datos guardados en Drive</div>
         </div>
         <Card style={{marginBottom:8}}>
           <CT text="Reporte final — minutos por jugadora"/>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Jugadora","C1","C2","C3","C4","Total"]}/>
-            <tbody>{ALL_JUGADORAS.map(j=>{
-              const d={c1:cuartosData[1]?.[j]||0,c2:cuartosData[2]?.[j]||0,c3:cuartosData[3]?.[j]||0,c4:cuartosData[4]?.[j]||0};
-              const tot=d.c1+d.c2+d.c3+d.c4;
-              if(!tot)return null;
-              return(<tr key={j}>
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{j}</td>
-                {[d.c1,d.c2,d.c3,d.c4].map((v,i)=><td key={i} style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v?`${v}'`:"—"}</td>)}
-                <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,fontWeight:700,textAlign:"center"}}>{tot}'</td>
-              </tr>);
-            })}</tbody>
-          </table>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,minWidth:300}}>
+              <TH cols={["Jugadora","C1","C2","C3","C4","Total"]}/>
+              <tbody>{ALL_JUGADORAS.map(j=>{
+                const d=reportePreview[j];
+                if(!d||!d.tot)return null;
+                return(<tr key={j}>
+                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{j}</td>
+                  {[d.c1,d.c2,d.c3,d.c4].map((v,i)=><td key={i} style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v?`${v}'`:"—"}</td>)}
+                  <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,fontWeight:700,textAlign:"center"}}>{d.tot}'</td>
+                </tr>);
+              })}</tbody>
+            </table>
+          </div>
         </Card>
         {historial.length>0&&<Card style={{marginBottom:8}}>
-          <CT text="Cambios"/>
+          <CT text="Cambios y tarjetas"/>
           {historial.map((h,i)=><div key={i} style={{fontSize:11,color:T.text,padding:"3px 0",borderBottom:"1px solid #141824"}}>
             <span style={{color:T.muted}}>C{h.cuarto} {h.min}'</span>
             {h.tarjeta
@@ -1562,20 +1608,6 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
 
   return(
     <>
-      {confirmFin&&(
-        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.8)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center"}} onClick={()=>setConfirmFin(false)}>
-          <div style={{background:"#1a1f2e",border:`1px solid ${T.border2}`,borderRadius:12,padding:24,maxWidth:300,width:"90%",textAlign:"center"}} onClick={e=>e.stopPropagation()}>
-            <div style={{fontSize:24,marginBottom:12}}>🏁</div>
-            <div style={{color:T.text,fontWeight:700,fontSize:16,marginBottom:8}}>¿Terminar partido?</div>
-            <div style={{color:T.muted,fontSize:12,marginBottom:20}}>Se guardará el reporte en Drive.</div>
-            <div style={{display:"flex",gap:10}}>
-              <button onClick={()=>setConfirmFin(false)} style={{flex:1,padding:10,background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>Cancelar</button>
-              <button onClick={confirmarFin} disabled={saving} style={{flex:1,padding:10,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"Sí, terminar"}</button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Cronómetro */}
       <Card style={{marginBottom:8}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
