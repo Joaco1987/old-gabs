@@ -1454,8 +1454,18 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
 
   const finCuarto=()=>{
     setCorriendo(false);
+    // Guardar solo los minutos de ESTE cuarto (diferencia respecto al cuarto anterior)
+    const acumAnterior=Object.values(cuartosData).reduce((total,qData)=>{
+      const merged={...total};
+      Object.entries(qData).forEach(([j,v])=>{merged[j]=(merged[j]||0)+v;});
+      return merged;
+    },{});
     const mins={};
-    enCanchaNames.forEach(j=>{mins[j]=Math.round((acum[j]||0)/60);});
+    posiciones.map(p=>p.nombre).filter(Boolean).forEach(j=>{
+      const totalAcum=Math.round((acum[j]||0)/60);
+      const anteriorMin=acumAnterior[j]||0;
+      mins[j]=Math.max(0,totalAcum-anteriorMin);
+    });
     setCuartosData(prev=>({...prev,[cuarto]:mins}));
     if(cuarto<CUARTOS){setCuarto(c=>c+1);setSegCuarto(0);}
     else setConfirmFin(true);
