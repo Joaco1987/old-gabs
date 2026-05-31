@@ -1583,10 +1583,7 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
             </table>
           </div>
         </Card>
-        <div style={{display:"flex",gap:8}}>
-          <button onClick={()=>setConfirmFin(false)} style={{flex:1,padding:12,background:"transparent",border:`1px solid ${T.border}`,borderRadius:8,color:T.muted,fontSize:13,cursor:"pointer",fontFamily:"inherit"}}>← Volver</button>
-          <button onClick={confirmarFin} disabled={saving} style={{flex:2,padding:12,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"✓ Guardar en Drive"}</button>
-        </div>
+        <button onClick={confirmarFin} disabled={saving} style={{width:"100%",padding:12,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"✓ Guardar en Drive"}</button>
       </>
     );
   }
