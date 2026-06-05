@@ -272,6 +272,15 @@ const ENTRENOS=[
     {n:"Mateluna Florencia",min:50,dist:4634.0,mxm:92.0,hsr:766.0,ai18:396.0,spr:37.0,acc:30.0,dsc:36.0,ns:2.0,vmax:25.9},
     {n:"Carrasco Sofia",min:52,dist:4696.0,mxm:91.0,hsr:858.0,ai18:388.0,spr:85.0,acc:45.0,dsc:59.0,ns:5.0,vmax:26.1}
   ]},
+  {id:"e3jun",label:"3-jun",fecha:"3-jun",tipo:"entreno",jugadoras:[
+    {n:"Pareja Camila",min:1,dist:77.0,mxm:61.0,hsr:19.0,ai18:10.0,spr:0.0,acc:0.0,dsc:0.0,ns:0.0,vmax:19.0},
+    {n:"Hevia Valentina",min:7,dist:536.0,mxm:81.0,hsr:255.0,ai18:210.0,spr:0.0,acc:6.0,dsc:0.0,ns:0.0,vmax:24.0},
+    {n:"Arau Maria",min:11,dist:546.0,mxm:50.0,hsr:20.0,ai18:0.0,spr:0.0,acc:14.0,dsc:0.0,ns:0.0,vmax:17.0},
+    {n:"Gomez Camila",min:7,dist:680.0,mxm:92.0,hsr:410.0,ai18:330.0,spr:0.0,acc:11.0,dsc:1.0,ns:0.0,vmax:23.0},
+    {n:"Alfaro Javiera",min:7,dist:715.0,mxm:96.0,hsr:442.0,ai18:317.0,spr:66.0,acc:12.0,dsc:1.0,ns:6.0,vmax:26.0},
+    {n:"Gutierrez Renata",min:7,dist:738.0,mxm:100.0,hsr:465.0,ai18:377.0,spr:31.0,acc:10.0,dsc:4.0,ns:2.0,vmax:25.0},
+    {n:"Mateluna Florencia",min:7,dist:758.0,mxm:102.0,hsr:472.0,ai18:284.0,spr:136.0,acc:11.0,dsc:3.0,ns:10.0,vmax:26.0}
+  ]},
 ];
 
 // ─── MINUTOS DE JUEGO — hoja Minutos Juego del Drive ───────────────────────
