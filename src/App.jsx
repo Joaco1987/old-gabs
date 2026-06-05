@@ -1014,56 +1014,92 @@ const yoyoColor=nivel=>nivel>=16.5?"#3ecf7a":nivel>=14.6?"#e09020":"#e05555";
 const yoyoLabel=nivel=>nivel>=16.5?"Grupo 1":nivel>=14.6?"Grupo 2":"Grupo 3";
 const yoyoGrupo=vam=>vam>=3.8?1:vam>=3.6?2:3;
 
+// ─── EVALUACIONES HELPERS ────────────────────────────────────────────────────
+const EJERCICIOS=["Sentadilla","Peso Muerto","Press Plano","Dominadas","Cargada","2do Tiempo"];
+
+// Yo-Yo: nivel → distancia y VAM
+function calcYoyo(nivel){
+  // IRT1 tabla aproximada: dist = nivel * 40 (simplificado), VAM basado en nivel
+  const nivelMap={
+    "12.0":{dist:280,vam:3.0},"12.1":{dist:320,vam:3.0},"12.2":{dist:360,vam:3.1},
+    "12.3":{dist:400,vam:3.1},"12.4":{dist:440,vam:3.2},"12.5":{dist:480,vam:3.2},
+    "13.0":{dist:560,vam:3.3},"13.1":{dist:640,vam:3.3},"13.2":{dist:720,vam:3.4},
+    "13.3":{dist:800,vam:3.4},"13.4":{dist:880,vam:3.5},"13.5":{dist:960,vam:3.5},
+    "14.0":{dist:1080,vam:3.6},"14.1":{dist:1200,vam:3.6},"14.2":{dist:1320,vam:3.7},
+    "14.3":{dist:1440,vam:3.7},"14.4":{dist:1560,vam:3.8},"14.5":{dist:1680,vam:3.8},
+    "15.0":{dist:1840,vam:3.9},"15.1":{dist:2000,vam:3.9},"15.2":{dist:2160,vam:4.0},
+    "15.3":{dist:2320,vam:4.0},"15.4":{dist:2480,vam:4.1},"15.5":{dist:2640,vam:4.1},
+    "16.0":{dist:2800,vam:4.2},"16.1":{dist:2960,vam:4.2},"16.2":{dist:3120,vam:4.3},
+    "16.3":{dist:3280,vam:4.3},"16.4":{dist:3440,vam:4.4},"16.5":{dist:3600,vam:4.4},
+    "17.0":{dist:3760,vam:4.5},"17.1":{dist:3920,vam:4.5},"17.2":{dist:4080,vam:4.6},
+    "17.3":{dist:4240,vam:4.6},"17.4":{dist:4400,vam:4.7},"17.5":{dist:4560,vam:4.7},
+    "18.0":{dist:4720,vam:4.8},"18.1":{dist:4880,vam:4.8},"18.2":{dist:5040,vam:4.9},
+    "18.3":{dist:5200,vam:4.9},"18.4":{dist:5360,vam:5.0},"18.5":{dist:5520,vam:5.0},
+  };
+  const key=String(parseFloat(nivel).toFixed(1));
+  if(nivelMap[key])return nivelMap[key];
+  // Interpolación simple
+  const n=parseFloat(nivel);
+  const dist=Math.round((n-12)*320+280);
+  const vam=Math.round((3.0+(n-12)*0.08)*10)/10;
+  return{dist,vam};
+}
+
+function StaffEvaluaciones(){
+  const [subTab,setSubTab]=useState("yoyo");// yoyo | cargas
+  return(
+    <>
+      <div style={{display:"flex",gap:8,marginBottom:12}}>
+        <button onClick={()=>setSubTab("yoyo")} style={{padding:"7px 16px",borderRadius:6,border:`1px solid ${subTab==="yoyo"?T.blue:T.border}`,background:subTab==="yoyo"?"#1e3a5f":"transparent",color:subTab==="yoyo"?T.blue:T.muted,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🏃 Yo-Yo</button>
+        <button onClick={()=>setSubTab("cargas")} style={{padding:"7px 16px",borderRadius:6,border:`1px solid ${subTab==="cargas"?T.amber:T.border}`,background:subTab==="cargas"?"#2d2a0f":"transparent",color:subTab==="cargas"?T.amber:T.muted,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🏋️ Cargas</button>
+      </div>
+      {subTab==="yoyo"?<StaffYoyo/>:<StaffCargas/>}
+    </>
+  );
+}
+
 function StaffYoyo(){
+  const [vista,setVista]=useState("reporte");
+  if(vista==="tomar")return<StaffTomarYoyo onVolver={()=>setVista("reporte")}/>;
+
   const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
   const medals=["🥇","🥈","🥉"];
   return(
     <>
+      <div style={{display:"flex",gap:8,marginBottom:10}}>
+        <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>📊 Reporte</button>
+        <button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📝 Tomar Test</button>
+      </div>
       <MR>
-        <MetCard label="Nivel prom." value={avg(YOYO.map(p=>p.nivel)).toFixed(1)} sub="Yo-Yo IRT1 — 15/4/26"/>
-        <MetCard label="Nivel más alto" value={sorted[0].nivel} sub={sorted[0].n.split(" ")[0]} sc={T.amber}/>
+        <MetCard label="Nivel prom." value={avg(YOYO.map(p=>p.nivel)).toFixed(1)} sub="Yo-Yo IRT1"/>
+        <MetCard label="Nivel más alto" value={sorted[0]?.nivel||"—"} sub={sorted[0]?.n.split(" ")[0]} sc={T.amber}/>
         <MetCard label="VAM prom." value={`${avg(YOYO.map(p=>p.vam)).toFixed(1)} m/s`}/>
         <MetCard label="Evaluadas" value={YOYO.length}/>
       </MR>
       <Card style={{marginBottom:10}}>
-        <CT text="Clasificación por Nivel"/>
-        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#f5c518"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
+        <CT text="Grupos por VAM"/>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+          {[{label:"Grupo A — VAM >4.3",c:T.green},{label:"Grupo B — VAM 4.0–4.3",c:T.amber},{label:"Grupo C — VAM <4.0",c:T.red}].map((r,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
-              <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
+              <div style={{width:10,height:10,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
             </div>
           ))}
         </div>
       </Card>
-      <div style={{marginBottom:6,fontSize:10,color:T.muted,textTransform:"uppercase",letterSpacing:".5px"}}>Podio — Nivel Alcanzado</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:14}}>
-        {sorted.slice(0,3).map((p,i)=>{
-          const col=yoyoGrupoColor(yoyoGrupo(p.vam));
-          return(
-            <div key={p.n} style={{background:T.surf,border:`1px solid ${col}`,borderRadius:8,padding:12,textAlign:"center"}}>
-              <div style={{fontSize:22,marginBottom:4}}>{medals[i]}</div>
-              <div style={{fontSize:12,fontWeight:500,color:T.text}}>{p.n.split(" ")[0]}</div>
-              <div style={{fontSize:20,fontWeight:700,color:col,margin:"4px 0"}}>Niv. {p.nivel}</div>
-              <div style={{marginTop:6,background:col+"22",borderRadius:6,padding:"3px 0",color:col,fontSize:10,fontWeight:500}}>{yoyoGrupoLabel(yoyoGrupo(p.vam))}</div>
-            </div>
-          );
-        })}
-      </div>
       <Card>
-        <CT text="Yo-Yo IRT1 — 15/4/26 (ordenado por Nivel)"/>
+        <CT text="Ranking Yo-Yo IRT1"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["#","Jugadora","Nivel","Distancia","VAM (m/s)","Clasificación"]}/>
+            <TH cols={["#","Jugadora","Nivel","Distancia","VAM","Grupo"]}/>
             <tbody>{sorted.map((p,i)=>{
               const col=yoyoGrupoColor(yoyoGrupo(p.vam));
-              const nivelCol=yoyoNivelColor(p.nivel);
               return(
                 <tr key={p.n}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i+1}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:yoyoNivelColor(p.nivel),fontWeight:700,fontSize:14}}>{p.nivel}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist}m</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:600}}>{p.vam}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
                     <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoGrupoLabel(yoyoGrupo(p.vam))}</span>
                   </td>
@@ -1073,6 +1109,223 @@ function StaffYoyo(){
           </table>
         </div>
       </Card>
+    </>
+  );
+}
+
+function StaffTomarYoyo({onVolver}){
+  const hoy=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
+  const [fecha,setFecha]=useState(hoy);
+  const [niveles,setNiveles]=useState({});
+  const [saving,setSaving]=useState(false);
+  const [saved,setSaved]=useState(false);
+
+  const setNivel=(j,v)=>setNiveles(prev=>({...prev,[j]:v}));
+
+  const guardar=async()=>{
+    setSaving(true);
+    const datos=ALL_JUGADORAS.filter(j=>niveles[j]).map(j=>{
+      const n=parseFloat(niveles[j]);
+      const{dist,vam}=calcYoyo(n);
+      return{jugadora:j,nivel:n,dist,vam};
+    });
+    const params=new URLSearchParams({accion:"yoyo",fecha,datos:JSON.stringify(datos)});
+    await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
+    setSaving(false);setSaved(true);
+  };
+
+  // Preview de resultados
+  const preview=ALL_JUGADORAS.filter(j=>niveles[j]&&parseFloat(niveles[j])>0).map(j=>{
+    const n=parseFloat(niveles[j]);
+    const{dist,vam}=calcYoyo(n);
+    return{j,n,dist,vam};
+  }).sort((a,b)=>b.vam-a.vam);
+
+  return(
+    <>
+      <div style={{display:"flex",gap:8,marginBottom:10}}>
+        <button onClick={onVolver} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
+        <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>📝 Tomar Test</button>
+      </div>
+      <Card style={{marginBottom:8}}>
+        <CT text="Yo-Yo IRT1 — Ingresá nivel por jugadora"/>
+        <div style={{marginBottom:12}}>
+          <div style={{fontSize:10,color:T.muted,marginBottom:3}}>Fecha del test</div>
+          <input type="date" value={fecha} onChange={e=>setFecha(e.target.value)}
+            style={{background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"6px 10px",fontSize:13,fontFamily:"inherit",colorScheme:"dark"}}/>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:6}}>
+          {ALL_JUGADORAS.map(j=>{
+            const n=niveles[j]||"";
+            const preview_=n&&parseFloat(n)>0?calcYoyo(parseFloat(n)):null;
+            const col=preview_?yoyoGrupoColor(yoyoGrupo(preview_.vam)):T.muted;
+            return(
+              <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:`1px solid ${T.border}`}}>
+                <span style={{fontSize:12,color:T.text,flex:1,minWidth:120}}>{j}</span>
+                <input type="number" value={n} onChange={e=>setNivel(j,e.target.value)}
+                  placeholder="ej: 15.1" step="0.1" min="10" max="20"
+                  style={{width:70,background:"#1a2035",border:`1px solid ${n?T.blue:T.border2}`,borderRadius:6,color:T.text,padding:"5px 8px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+                {preview_&&(
+                  <span style={{fontSize:11,color:col,minWidth:90,textAlign:"right"}}>{preview_.dist}m · {preview_.vam} m/s</span>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+      {preview.length>0&&(
+        <Card style={{marginBottom:8}}>
+          <CT text="Vista previa — grupos por VAM"/>
+          {[{label:"Grupo A",min:4.3,c:T.green},{label:"Grupo B",min:4.0,c:T.amber},{label:"Grupo C",min:0,c:T.red}].map(g=>{
+            const jugs=preview.filter(p=>p.vam>(g.min===4.0?4.0:g.min===4.3?4.3:0)&&(g.min===4.3||p.vam<=g.min+99));
+            const filtradas=g.label==="Grupo A"?preview.filter(p=>p.vam>4.3):g.label==="Grupo B"?preview.filter(p=>p.vam>=4.0&&p.vam<=4.3):preview.filter(p=>p.vam<4.0);
+            if(!filtradas.length)return null;
+            return(
+              <div key={g.label} style={{marginBottom:10}}>
+                <div style={{fontSize:11,color:g.c,fontWeight:600,marginBottom:5}}>{g.label} — VAM {g.label==="Grupo A"?">4.3":g.label==="Grupo B"?"4.0–4.3":"<4.0"}</div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                  {filtradas.map(p=>(
+                    <div key={p.j} style={{background:g.c+"15",border:`1px solid ${g.c}44`,borderRadius:6,padding:"4px 10px",fontSize:11}}>
+                      <span style={{color:T.text}}>{p.j.split(" ")[0]}</span>
+                      <span style={{color:g.c,marginLeft:6,fontWeight:600}}>Niv.{p.n}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </Card>
+      )}
+      <button onClick={guardar} disabled={saving||preview.length===0}
+        style={{width:"100%",padding:13,background:saved?T.green:T.blue,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+        {saving?"Guardando...":saved?"✓ Guardado en Drive":"Guardar Test en Drive"}
+      </button>
+    </>
+  );
+}
+
+function StaffCargas(){
+  const [vista,setVista]=useState("reporte");
+  if(vista==="cargar")return<StaffCargarPesos onVolver={()=>setVista("reporte")}/>;
+
+  const [loading,setLoading]=useState(true);
+  const [data,setData]=useState(null);
+
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Cargas App"]||[];
+        if(sheet.length<2){setData({});return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iF=headers.indexOf("Fecha"),iE=headers.indexOf("Ejercicio"),iJ=headers.indexOf("Jugadora"),iP=headers.indexOf("Peso");
+        const acc={};// {ejercicio:{jugadora:[{fecha,peso}]}}
+        sheet.slice(1).forEach(r=>{
+          const fecha=String(r[iF]||"").slice(0,10);
+          const ej=String(r[iE]||"").trim();
+          const jug=String(r[iJ]||"").trim();
+          const peso=Number(r[iP])||0;
+          if(!ej||!jug||!peso)return;
+          if(!acc[ej])acc[ej]={};
+          if(!acc[ej][jug])acc[ej][jug]=[];
+          acc[ej][jug].push({fecha,peso});
+        });
+        setData(acc);
+      })
+      .catch(()=>setData({}))
+      .finally(()=>setLoading(false));
+  },[]);
+
+  return(
+    <>
+      <div style={{display:"flex",gap:8,marginBottom:10}}>
+        <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.amber}`,background:"#2d2a0f",color:T.amber,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>📊 Reporte</button>
+        <button onClick={()=>setVista("cargar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>➕ Cargar Pesos</button>
+      </div>
+      {loading?<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Cargando desde Drive...</div></Card>:
+      !data||!Object.keys(data).length?<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Sin datos de cargas todavía</div></Card>:
+      EJERCICIOS.filter(ej=>data[ej]).map(ej=>(
+        <Card key={ej} style={{marginBottom:10}}>
+          <CT text={ej}/>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <TH cols={["Jugadora","Último peso","Fecha"]}/>
+            <tbody>{Object.entries(data[ej]||{}).sort((a,b)=>{
+              const pa=Math.max(...a[1].map(x=>x.peso));
+              const pb=Math.max(...b[1].map(x=>x.peso));
+              return pb-pa;
+            }).map(([jug,registros])=>{
+              const last=registros[registros.length-1];
+              const max=Math.max(...registros.map(x=>x.peso));
+              return(
+                <tr key={jug}>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{jug}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:600}}>{last.peso} kg {last.peso===max&&<span style={{color:T.green,fontSize:10}}>↑ MÁX</span>}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{last.fecha}</td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
+        </Card>
+      ))}
+    </>
+  );
+}
+
+function StaffCargarPesos({onVolver}){
+  const hoy=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
+  const [fecha,setFecha]=useState(hoy);
+  const [ejercicio,setEjercicio]=useState(EJERCICIOS[0]);
+  const [pesos,setPesos]=useState({});
+  const [saving,setSaving]=useState(false);
+  const [saved,setSaved]=useState(false);
+
+  const guardar=async()=>{
+    setSaving(true);
+    const datos=ALL_JUGADORAS.filter(j=>pesos[j]&&parseFloat(pesos[j])>0).map(j=>({jugadora:j,peso:parseFloat(pesos[j])}));
+    const params=new URLSearchParams({accion:"cargas",fecha,ejercicio,datos:JSON.stringify(datos)});
+    await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
+    setSaving(false);setSaved(true);setPesos({});
+  };
+
+  return(
+    <>
+      <div style={{display:"flex",gap:8,marginBottom:10}}>
+        <button onClick={onVolver} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.border}`,background:"transparent",color:T.muted,fontSize:12,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
+        <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>➕ Cargar Pesos</button>
+      </div>
+      <Card style={{marginBottom:8}}>
+        <CT text="Cargar pesos"/>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:12}}>
+          <div>
+            <div style={{fontSize:10,color:T.muted,marginBottom:3}}>Fecha</div>
+            <input type="date" value={fecha} onChange={e=>setFecha(e.target.value)}
+              style={{background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"6px 10px",fontSize:13,fontFamily:"inherit",colorScheme:"dark"}}/>
+          </div>
+          <div>
+            <div style={{fontSize:10,color:T.muted,marginBottom:3}}>Ejercicio</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+              {EJERCICIOS.map(ej=>(
+                <button key={ej} onClick={()=>{setEjercicio(ej);setPesos({});setSaved(false);}}
+                  style={{padding:"5px 10px",borderRadius:5,border:`1px solid ${ejercicio===ej?T.amber:T.border}`,background:ejercicio===ej?"#2d2a0f":"transparent",color:ejercicio===ej?T.amber:T.muted,fontSize:11,cursor:"pointer",fontFamily:"inherit"}}>{ej}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:5}}>
+          {ALL_JUGADORAS.map(j=>(
+            <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"5px 0",borderBottom:`1px solid ${T.border}`}}>
+              <span style={{fontSize:12,color:T.text,flex:1}}>{j}</span>
+              <input type="number" value={pesos[j]||""} onChange={e=>setPesos(prev=>({...prev,[j]:e.target.value}))}
+                placeholder="kg" step="0.5" min="0"
+                style={{width:65,background:"#1a2035",border:`1px solid ${pesos[j]?T.amber:T.border2}`,borderRadius:6,color:T.text,padding:"5px 8px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+            </div>
+          ))}
+        </div>
+      </Card>
+      <button onClick={guardar} disabled={saving||Object.keys(pesos).filter(j=>pesos[j]>0).length===0}
+        style={{width:"100%",padding:13,background:saved?T.green:T.amber,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+        {saving?"Guardando...":saved?"✓ Guardado en Drive":"Guardar Cargas en Drive"}
+      </button>
     </>
   );
 }
@@ -3012,7 +3265,7 @@ export default function App(){
   const handleLogout=()=>{localStorage.removeItem("oldgabs_session");setSession(null);setTab(0);};
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
   const mode=session.tipo==="staff"?"staff":"player";
-  const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Yo-Yo","Minutos","Asistencia","RPE","Wellness"];
+  const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
   const PLAYER_TABS=["Mi GPS","Evolución GPS","Yo-Yo","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
@@ -3045,7 +3298,7 @@ export default function App(){
           </div>
         )}
         {mode==="staff"?(
-          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffPuestos/>}{tab===3&&<StaffYoyo/>}{tab===4&&<StaffMinutos/>}{tab===5&&<StaffAsistencia/>}{tab===6&&<StaffRPE/>}{tab===7&&<StaffWellness/>}</></ErrorBoundary>
+          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffPuestos/>}{tab===3&&<StaffEvaluaciones/>}{tab===4&&<StaffMinutos/>}{tab===5&&<StaffAsistencia/>}{tab===6&&<StaffRPE/>}{tab===7&&<StaffWellness/>}</></ErrorBoundary>
         ):(
           <ErrorBoundary><>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerYoyo player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</></ErrorBoundary>
         )}
