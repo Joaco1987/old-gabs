@@ -1487,6 +1487,11 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
               enCanchaNames.forEach(j=>{n[j]=(n[j]||0)+elapsed;});
               return n;
             });
+            setAcumCuarto(prev=>{
+              const n={...prev};
+              enCanchaNames.forEach(j=>{n[j]=(n[j]||0)+elapsed;});
+              return n;
+            });
           }
           lastVisibleRef.current=null;
         }
@@ -1496,40 +1501,45 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
     return()=>document.removeEventListener("visibilitychange",handleVisibility);
   },[corriendo,enCanchaNames.join(",")]);
 
+  const [acumCuarto,setAcumCuarto]=useState(()=>{const a={};[...posicionesIniciales.map(p=>p.nombre),...bancoInicial].forEach(j=>j&&(a[j]=0));return a;});
+
   React.useEffect(()=>{
     if(!corriendo||finalizado)return;
     const t=setInterval(()=>{
       setSegCuarto(s=>s+1);
       setAcum(prev=>{const n={...prev};enCanchaNames.forEach(j=>{n[j]=(n[j]||0)+1;});return n;});
+      setAcumCuarto(prev=>{const n={...prev};enCanchaNames.forEach(j=>{n[j]=(n[j]||0)+1;});return n;});
     },1000);
     return()=>clearInterval(t);
   },[corriendo,enCanchaNames.join(","),finalizado]);
 
   const finCuarto=()=>{
     setCorriendo(false);
-    // Guardar solo los minutos de ESTE cuarto (diferencia respecto al cuarto anterior)
-    const acumAnterior=Object.values(cuartosData).reduce((total,qData)=>{
-      const merged={...total};
-      Object.entries(qData).forEach(([j,v])=>{merged[j]=(merged[j]||0)+v;});
-      return merged;
-    },{});
+    // Guardar minutos de ESTE cuarto desde acumulador del cuarto
     const mins={};
     posiciones.map(p=>p.nombre).filter(Boolean).forEach(j=>{
-      const totalAcum=Math.round((acum[j]||0)/60);
-      const anteriorMin=acumAnterior[j]||0;
-      mins[j]=Math.max(0,totalAcum-anteriorMin);
+      mins[j]=Math.round((acumCuarto[j]||0)/60);
+    });
+    // También incluir jugadoras del banco que jugaron este cuarto
+    banco.forEach(j=>{
+      if(acumCuarto[j]>0) mins[j]=Math.round((acumCuarto[j]||0)/60);
     });
     setCuartosData(prev=>({...prev,[cuarto]:mins}));
-    if(cuarto<CUARTOS){setCuarto(c=>c+1);setSegCuarto(0);}
-    else setConfirmFin(true);
+    if(cuarto<CUARTOS){
+      setCuarto(c=>c+1);
+      setSegCuarto(0);
+      // Resetear acumulador del cuarto
+      setAcumCuarto(()=>{const a={};[...posiciones.map(p=>p.nombre),...banco].forEach(j=>j&&(a[j]=0));return a;});
+    } else setConfirmFin(true);
   };
 
   const clickBanco=(jugBanco)=>{
     if(!selCancha)return;
-    // Swap: jugadora del banco entra, selCancha sale
     setPosiciones(prev=>prev.map(p=>p.nombre===selCancha?{...p,nombre:jugBanco}:p));
     setBanco(prev=>prev.map(j=>j===jugBanco?selCancha:j));
     setHistorial(prev=>[...prev,{cuarto,min:Math.floor(segCuarto/60),sale:selCancha,entra:jugBanco}]);
+    // La jugadora que entra empieza a acumular desde donde está el cuarto
+    setAcumCuarto(prev=>({...prev,[jugBanco]:prev[jugBanco]||0}));
     setSelCancha(null);
   };
 
