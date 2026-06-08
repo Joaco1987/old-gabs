@@ -89,6 +89,19 @@ const PARTIDOS=[
     {n:"Silva Victoria",min:60,dist:7275.0,mxm:122.0,hsr:1563.0,ai18:716.0,spr:0.0,acc:39.0,dsc:58.0,ns:0.0,vmax:24.0},
     {n:"Mateluna Florencia",min:65,dist:7441.0,mxm:115.0,hsr:1080.0,ai18:454.0,spr:0.0,acc:24.0,dsc:31.0,ns:0.0,vmax:23.3},
     {n:"Sierra Julieta",min:63,dist:7505.0,mxm:119.0,hsr:1189.0,ai18:373.0,spr:0.0,acc:37.0,dsc:60.0,ns:0.0,vmax:23.1}
+  ]},
+  {id:"pucatolicaa",label:"vs U CATOLICA A",fecha:"U CATOLICA A",tipo:"partido",jugadoras:[
+    {n:"Gacitua Emilia",min:67,dist:6750.0,mxm:100.0,hsr:931.0,ai18:385.0,spr:0.0,acc:24.0,dsc:38.0,ns:0.0,vmax:23.6},
+    {n:"Silva Victoria",min:67,dist:6963.0,mxm:103.0,hsr:1004.0,ai18:434.0,spr:0.0,acc:30.0,dsc:52.0,ns:0.0,vmax:23.3},
+    {n:"Pollmann Marianne",min:66,dist:6766.0,mxm:102.0,hsr:488.0,ai18:125.0,spr:0.0,acc:10.0,dsc:6.0,ns:0.0,vmax:23.1},
+    {n:"Carrasco Sofia",min:24,dist:2601.0,mxm:107.0,hsr:617.0,ai18:215.0,spr:0.0,acc:15.0,dsc:31.0,ns:0.0,vmax:22.8},
+    {n:"Sierra Julieta",min:57,dist:6742.0,mxm:118.0,hsr:1024.0,ai18:221.0,spr:0.0,acc:22.0,dsc:51.0,ns:0.0,vmax:22.6},
+    {n:"Errazu Sofia",min:32,dist:3879.0,mxm:122.0,hsr:606.0,ai18:190.0,spr:0.0,acc:16.0,dsc:23.0,ns:0.0,vmax:22.6},
+    {n:"Mateluna Florencia",min:62,dist:6081.0,mxm:98.0,hsr:645.0,ai18:234.0,spr:0.0,acc:20.0,dsc:28.0,ns:0.0,vmax:22.6},
+    {n:"Liu Macarena",min:34,dist:4377.0,mxm:128.0,hsr:835.0,ai18:336.0,spr:0.0,acc:13.0,dsc:26.0,ns:0.0,vmax:22.5},
+    {n:"Alfaro Javiera",min:32,dist:3448.0,mxm:108.0,hsr:386.0,ai18:98.0,spr:0.0,acc:10.0,dsc:17.0,ns:0.0,vmax:22.4},
+    {n:"Gutierrez Renata",min:67,dist:7022.0,mxm:104.0,hsr:581.0,ai18:152.0,spr:0.0,acc:11.0,dsc:26.0,ns:0.0,vmax:22.2},
+    {n:"Pareja Camila",min:67,dist:5183.0,mxm:77.0,hsr:155.0,ai18:54.0,spr:0.0,acc:10.0,dsc:9.0,ns:0.0,vmax:21.2}
   ]}
 ];
 
