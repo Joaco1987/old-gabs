@@ -1555,6 +1555,22 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
   };
   const handleTap=(j)=>{
     if(menuJug){setMenuJug(null);return;}
+    // Si hay una seleccionada y se toca otra de cancha → intercambiar posiciones
+    if(selCancha&&selCancha!==j&&posiciones.find(p=>p.nombre===j)){
+      setPosiciones(prev=>{
+        const posA=prev.findIndex(p=>p.nombre===selCancha);
+        const posB=prev.findIndex(p=>p.nombre===j);
+        if(posA<0||posB<0)return prev;
+        const n=[...prev];
+        const tmp=n[posA].nombre;
+        n[posA]={...n[posA],nombre:n[posB].nombre};
+        n[posB]={...n[posB],nombre:tmp};
+        return n;
+      });
+      setHistorial(prev=>[...prev,{cuarto,min:Math.floor(segCuarto/60),cambioPosicion:true,jugA:selCancha,jugB:j}]);
+      setSelCancha(null);
+      return;
+    }
     setSelCancha(selCancha===j?null:j);
   };
 
@@ -1672,7 +1688,9 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
             <span style={{color:T.muted}}>C{h.cuarto} {h.min}'</span>
             {h.tarjeta
               ? <> — <span style={{color:h.tarjeta==="amarilla"?"#eab308":"#22c55e"}}>{h.tarjeta==="amarilla"?"🟡":"🟢"} {h.jugadora?.split(" ")[0]} (-{h.tarjeta==="amarilla"?5:2} min)</span></>
-              : <> — <span style={{color:T.red}}>↓{h.sale?.split(" ")[0]}</span> / <span style={{color:T.green}}>↑{h.entra?.split(" ")[0]}</span></>
+              : h.cambioPosicion
+                ? <> — <span style={{color:T.blue}}>↔ {h.jugA?.split(" ")[0]} / {h.jugB?.split(" ")[0]}</span></>
+                : <> — <span style={{color:T.red}}>↓{h.sale?.split(" ")[0]}</span> / <span style={{color:T.green}}>↑{h.entra?.split(" ")[0]}</span></>
             }
           </div>)}
         </Card>}
@@ -1717,6 +1735,9 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
 
       {/* Cancha */}
       <div style={{marginBottom:8}}>
+        {selCancha&&!menuJug&&<div style={{background:"#1a3a5f",border:`1px solid ${T.blue}`,borderRadius:8,padding:"7px 12px",marginBottom:6,fontSize:12,color:T.blue,textAlign:"center"}}>
+          <strong>{selCancha.split(" ")[0]}</strong> — tocá otra de <strong>cancha</strong> para cambiar posición, o una del <strong>banco</strong> para sustituir
+        </div>}
         <CanchaHockeySVG posiciones={posiciones} acum={acum} corriendo={corriendo}
           seleccionada={selCancha} onClickJug={handleTap}
           onPressStart={handlePressStart} onPressEnd={handlePressEnd}
