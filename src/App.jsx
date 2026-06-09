@@ -1022,15 +1022,18 @@ function PlayerEvoGPS({player}){
 }
 
 // ─── YOYO HELPERS ─────────────────────────────────────────────────────────────
-// Grupos YOYO por VAM: Grupo 1=3.8 | Grupo 2=3.6 | Grupo 3=3.4
-const yoyoColor=nivel=>nivel>=16.5?"#3ecf7a":nivel>=14.6?"#e09020":"#e05555";
-const yoyoLabel=nivel=>nivel>=16.5?"Grupo 1":nivel>=14.6?"Grupo 2":"Grupo 3";
-const yoyoGrupo=vam=>vam>=3.8?1:vam>=3.6?2:3;
+// Grupos YOYO por NIVEL (referencia femenina): Grupo 1=>16.5, Grupo 2=14.6-16.4, Grupo 3=<14.6
+const yoyoColor=nivel=>nivel>16.5?"#3ecf7a":nivel>=14.6?"#e09020":"#e05555";
+const yoyoLabel=nivel=>nivel>16.5?"Grupo 1":nivel>=14.6?"Grupo 2":"Grupo 3";
+const yoyoGrupo=nivel=>{const n=parseFloat(nivel)||0;return n>16.5?1:n>=14.6?2:3;};
+
+// Niveles válidos IRT1
+const NIVELES_VALIDOS=["5.1","8.1","11.1","11.2","12.1","12.2","12.3","13.1","13.2","13.3","13.4","14.1","14.2","14.3","14.4","14.5","14.6","14.7","14.8","15.1","15.2","15.3","15.4","15.5","15.6","15.7","15.8","16.1","16.2","16.3","16.4","16.5","16.6","16.7","16.8","17.1","17.2","17.3","17.4","17.5","17.6","17.7","17.8","18.1","18.2","18.3","18.4","18.5","18.6","18.7","18.8","19.1","19.2","19.3","19.4","19.5","19.6","19.7","19.8","20.1","20.2","20.3","20.4","20.5","20.6","20.7","20.8","21.1","21.2","21.3","21.4","21.5","21.6","21.7","21.8","22.1","22.2","22.3","22.4","22.5","22.6","22.7","22.8","23.1","23.2","23.3","23.4","23.5","23.6","23.7","23.8"];
 
 // ─── EVALUACIONES HELPERS ────────────────────────────────────────────────────
 const EJERCICIOS=["Sentadilla","Peso Muerto","Press Plano","Dominadas","Cargada","2do Tiempo"];
 
-// Yo-Yo IRT1: nivel.subnivel → distancia y VAM (tabla oficial)
+// Yo-Yo IRT1: nivel.subnivel → distancia y VAM (fórmula Bangsbo 2008)
 function calcYoyo(nivelStr){
   const tabla={
     "5.1":40,"8.1":80,
@@ -1048,13 +1051,10 @@ function calcYoyo(nivelStr){
     "22.1":3040,"22.2":3080,"22.3":3120,"22.4":3160,"22.5":3200,"22.6":3240,"22.7":3280,"22.8":3320,
     "23.1":3360,"23.2":3400,"23.3":3440,"23.4":3480,"23.5":3520,"23.6":3560,"23.7":3600,"23.8":3640,
   };
-  // VAM por nivel (km/h → m/s)
-  const velMap={5:12,8:13,11:13.5,12:14,13:14,14:14.5,15:15,16:15.5,17:16,18:16.5,19:17,20:17.5,21:18,22:18.5,23:19};
   const key=String(parseFloat(nivelStr).toFixed(1));
   const dist=tabla[key]||0;
-  const nivel=parseInt(nivelStr);
-  const kmh=velMap[nivel]||15;
-  const vam=Math.round(kmh/3.6*10)/10;
+  // VAM fórmula Bangsbo 2008: ((metros × 0.0024) + 10.4) / 3.6
+  const vam=dist>0?Math.round(((dist*0.0024)+10.4)/3.6*100)/100:0;
   return{dist,vam};
 }
 
@@ -1090,9 +1090,9 @@ function StaffYoyo(){
         <MetCard label="Evaluadas" value={YOYO.length}/>
       </MR>
       <Card style={{marginBottom:10}}>
-        <CT text="Grupos por VAM"/>
+        <CT text="Grupos por Nivel"/>
         <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-          {[{label:"Grupo A — VAM >4.3",c:T.green},{label:"Grupo B — VAM 4.0–4.3",c:T.amber},{label:"Grupo C — VAM <4.0",c:T.red}].map((r,i)=>(
+          {[{label:"Grupo 1 — >16.5",c:T.green},{label:"Grupo 2 — 14.6 a 16.4",c:T.amber},{label:"Grupo 3 — <14.6",c:T.red}].map((r,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
               <div style={{width:10,height:10,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
             </div>
@@ -1105,7 +1105,8 @@ function StaffYoyo(){
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
             <TH cols={["#","Jugadora","Nivel","Distancia","VAM","Grupo"]}/>
             <tbody>{sorted.map((p,i)=>{
-              const col=yoyoGrupoColor(yoyoGrupo(p.vam));
+              const g=yoyoGrupo(p.nivel);
+              const col=yoyoGrupoColor(g);
               return(
                 <tr key={p.n}>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
@@ -1114,7 +1115,7 @@ function StaffYoyo(){
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist}m</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
-                    <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoGrupoLabel(yoyoGrupo(p.vam))}</span>
+                    <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoGrupoLabel(g)}</span>
                   </td>
                 </tr>
               );
@@ -1171,15 +1172,17 @@ function StaffTomarYoyo({onVolver}){
           {ALL_JUGADORAS.map(j=>{
             const n=niveles[j]||"";
             const preview_=n&&parseFloat(n)>0?calcYoyo(parseFloat(n)):null;
-            const col=preview_?yoyoGrupoColor(yoyoGrupo(preview_.vam)):T.muted;
+            const col=preview_?yoyoGrupoColor(yoyoGrupo(parseFloat(n)||0)):T.muted;
             return(
               <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:`1px solid ${T.border}`}}>
                 <span style={{fontSize:12,color:T.text,flex:1,minWidth:120}}>{j}</span>
-                <input type="number" value={n} onChange={e=>setNivel(j,e.target.value)}
-                  placeholder="ej: 15.1" step="0.1" min="10" max="20"
-                  style={{width:70,background:"#1a2035",border:`1px solid ${n?T.blue:T.border2}`,borderRadius:6,color:T.text,padding:"5px 8px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+                <select value={n} onChange={e=>setNivel(j,e.target.value)}
+                  style={{width:80,background:"#1a2035",border:`1px solid ${n?T.blue:T.border2}`,borderRadius:6,color:n?T.text:T.muted,padding:"5px 6px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}>
+                  <option value="">—</option>
+                  {NIVELES_VALIDOS.map(nv=><option key={nv} value={nv}>{nv}</option>)}
+                </select>
                 {preview_&&(
-                  <span style={{fontSize:11,color:col,minWidth:90,textAlign:"right"}}>{preview_.dist}m · {preview_.vam} m/s</span>
+                  <span style={{fontSize:11,color:col,minWidth:100,textAlign:"right"}}>{preview_.dist}m · {preview_.vam} m/s</span>
                 )}
               </div>
             );
@@ -1188,14 +1191,13 @@ function StaffTomarYoyo({onVolver}){
       </Card>
       {preview.length>0&&(
         <Card style={{marginBottom:8}}>
-          <CT text="Vista previa — grupos por VAM"/>
-          {[{label:"Grupo A",min:4.3,c:T.green},{label:"Grupo B",min:4.0,c:T.amber},{label:"Grupo C",min:0,c:T.red}].map(g=>{
-            const jugs=preview.filter(p=>p.vam>(g.min===4.0?4.0:g.min===4.3?4.3:0)&&(g.min===4.3||p.vam<=g.min+99));
-            const filtradas=g.label==="Grupo A"?preview.filter(p=>p.vam>4.3):g.label==="Grupo B"?preview.filter(p=>p.vam>=4.0&&p.vam<=4.3):preview.filter(p=>p.vam<4.0);
+          <CT text="Vista previa — grupos por Nivel"/>
+          {[{label:"Grupo 1",c:T.green,filter:p=>parseFloat(p.nivel)>16.5},{label:"Grupo 2",c:T.amber,filter:p=>parseFloat(p.nivel)>=14.6&&parseFloat(p.nivel)<=16.5},{label:"Grupo 3",c:T.red,filter:p=>parseFloat(p.nivel)<14.6}].map(g=>{
+            const filtradas=preview.filter(g.filter);
             if(!filtradas.length)return null;
             return(
               <div key={g.label} style={{marginBottom:10}}>
-                <div style={{fontSize:11,color:g.c,fontWeight:600,marginBottom:5}}>{g.label} — VAM {g.label==="Grupo A"?">4.3":g.label==="Grupo B"?"4.0–4.3":"<4.0"}</div>
+                <div style={{fontSize:11,color:g.c,fontWeight:600,marginBottom:5}}>{g.label}</div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
                   {filtradas.map(p=>(
                     <div key={p.j} style={{background:g.c+"15",border:`1px solid ${g.c}44`,borderRadius:6,padding:"4px 10px",fontSize:11}}>
