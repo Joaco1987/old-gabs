@@ -1107,9 +1107,9 @@ function StaffYoyo(){
             <TH cols={["#","Jugadora","Nivel","Distancia","VAM","Grupo"]}/>
             <tbody>{(()=>{
               // Agrupar por VAM — cada VAM distinta es un grupo con su color
-              const PALETTE=["#3ecf7a","#64B5F6","#e09020","#e879f9","#06b6d4","#e05555","#a78bfa","#fb923c","#34d399"];
+              const PALETTE=["#64B5F6","#a78bfa","#06b6d4","#fb923c","#34d399","#f472b6","#facc15","#94a3b8"];
               const vams=[...new Set(sorted.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
-              const vamGrupo={};// vam → {num, color}
+              const vamGrupo={};
               vams.forEach((v,i)=>{vamGrupo[v]={num:i+1,color:PALETTE[i%PALETTE.length]};});
               return sorted.map((p,i)=>{
                 const nivelCol=yoyoColor(p.nivel);
@@ -1122,8 +1122,8 @@ function StaffYoyo(){
                     <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
                     <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist?`${p.dist}m`:"—"}</td>
                     <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam||"—"}</td>
-                    <td style={{padding:"5px 4px",borderBottom:"1px solid #141824",textAlign:"center"}}>
-                      {gInfo&&<span style={{background:col,color:"#fff",padding:"2px 8px",borderRadius:10,fontSize:11,fontWeight:700}}>G{gInfo.num}</span>}
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                      {gInfo&&<span style={{background:col,color:"#111",padding:"2px 8px",borderRadius:10,fontSize:11,fontWeight:700,display:"inline-block"}}>G{gInfo.num}</span>}
                     </td>
                   </tr>
                 );
