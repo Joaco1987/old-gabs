@@ -2787,44 +2787,66 @@ function PlayerGPS({player}){
 }
 
 // ─── PLAYER YO-YO ─────────────────────────────────────────────────────────────
+function PlayerEvaluaciones({player}){
+  const [subTab,setSubTab]=useState("yoyo");
+  return(
+    <>
+      <div style={{display:"flex",gap:8,marginBottom:12}}>
+        <button onClick={()=>setSubTab("yoyo")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${subTab==="yoyo"?T.blue:T.border}`,background:subTab==="yoyo"?"#1a3a5f":"transparent",color:subTab==="yoyo"?T.blue:T.muted,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🏃 Yo-Yo</button>
+        <button onClick={()=>setSubTab("cargas")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${subTab==="cargas"?T.amber:T.border}`,background:subTab==="cargas"?"#2d2a0f":"transparent",color:subTab==="cargas"?T.amber:T.muted,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>🏋️ Cargas</button>
+      </div>
+      {subTab==="yoyo"?<PlayerYoyo player={player}/>:<PlayerCargas player={player}/>}
+    </>
+  );
+}
+
 function PlayerYoyo({player}){
   const d=YOYO.find(p=>p.n===player);
   const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
   const myRank=d?sorted.findIndex(p=>p.n===player)+1:null;
-  if(!d)return(
-    <div style={{color:T.muted,padding:20,textAlign:"center",fontSize:12}}>
-      Sin datos Yo-Yo para {player}
-    </div>
-  );
-  const col=yoyoColor(d.nivel);
-  const nivelColD=yoyoNivelColor(d.nivel);
+
+  // Grupos dinámicos por VAM (igual que Staff)
+  const PALETTE=["#64B5F6","#f472b6","#a78bfa","#06b6d4","#e879f9","#38bdf8","#818cf8","#c084fc"];
+  const vams=[...new Set(sorted.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
+  const vamGrupo={};
+  vams.forEach((v,i)=>{vamGrupo[v]={num:i+1,color:PALETTE[i%PALETTE.length]};});
+
+  if(!d)return<div style={{color:T.muted,padding:20,textAlign:"center",fontSize:12}}>Sin datos Yo-Yo para {player}</div>;
+
+  const nivelCol=yoyoColor(d.nivel);
+  const gInfo=d.vam?vamGrupo[d.vam]:null;
+  const gCol=gInfo?gInfo.color:T.muted;
+
   return(
     <>
       <MR>
-        <MetCard label="Nivel alcanzado" value={d.nivel} sc={col}/>
+        <MetCard label="Nivel alcanzado" value={d.nivel} sc={nivelCol}/>
         <MetCard label="Distancia" value={`${d.dist}m`}/>
-        <MetCard label="VAM" value={`${d.vam} m/s`} sc={T.cyan}/>
+        <MetCard label="VAM" value={`${d.vam} m/s`} sc={gCol}/>
         <MetCard label="Ranking" value={`${myRank}° / ${YOYO.length}`}/>
       </MR>
       <Card style={{marginBottom:10}}>
-        <CT text="Mi resultado Yo-Yo IRT1 — 15/4/26"/>
+        <CT text="Mi resultado Yo-Yo IRT1"/>
         <div style={{textAlign:"center",padding:"20px 0"}}>
-          <div style={{fontSize:48,fontWeight:700,color:nivelColD,marginBottom:8}}>{d.nivel}</div>
-          <div style={{fontSize:14,color:T.muted2,marginBottom:4}}>Nivel alcanzado</div>
-          <span style={{background:col+"22",color:col,padding:"4px 16px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(d.nivel)}</span>
+          <div style={{fontSize:48,fontWeight:700,color:nivelCol,marginBottom:8}}>{d.nivel}</div>
+          <div style={{fontSize:14,color:T.muted2,marginBottom:8}}>Nivel alcanzado</div>
+          <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
+            <span style={{background:nivelCol+"22",color:nivelCol,padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(d.nivel)}</span>
+            {gInfo&&<span style={{background:gCol,color:"#111",padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:700}}>G{gInfo.num} VAM</span>}
+          </div>
         </div>
         <div style={{display:"flex",justifyContent:"space-around",marginTop:16}}>
           <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.blue}}>{d.dist}m</div><div style={{fontSize:11,color:T.muted}}>Distancia</div></div>
-          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.cyan}}>{d.vam} m/s</div><div style={{fontSize:11,color:T.muted}}>VAM</div></div>
+          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:gCol}}>{d.vam} m/s</div><div style={{fontSize:11,color:T.muted}}>VAM</div></div>
           <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.amber}}>{myRank}°</div><div style={{fontSize:11,color:T.muted}}>Ranking</div></div>
         </div>
       </Card>
       <Card style={{marginBottom:10}}>
-        <CT text="Clasificación por Nivel"/>
-        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-          {[{label:">16.5 — Verde",c:"#3ecf7a"},{label:"14.6–16.4 — Amarillo",c:"#f5c518"},{label:"<14.6 — Rojo",c:"#e05555"}].map((r,i)=>(
+        <CT text="Referencias por Nivel"/>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+          {[{label:"Grupo 1 — >16.5",c:T.green},{label:"Grupo 2 — 14.6 a 16.4",c:T.amber},{label:"Grupo 3 — <14.6",c:T.red}].map((r,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
-              <div style={{width:12,height:12,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
+              <div style={{width:10,height:10,borderRadius:"50%",background:r.c}}/><span style={{fontSize:11,color:r.c,fontWeight:500}}>{r.label}</span>
             </div>
           ))}
         </div>
@@ -2832,19 +2854,75 @@ function PlayerYoyo({player}){
       <Card>
         <CT text="Comparación con el equipo"/>
         {sorted.map((p,i)=>{
-          const isMe=p.n===player;const gc=yoyoGrupoColor(yoyoGrupo(p.vam));
-              const nivelColP=yoyoNivelColor(p.nivel);
+          const isMe=p.n===player;
+          const nCol=yoyoColor(p.nivel);
+          const pg=p.vam?vamGrupo[p.vam]:null;
+          const pgCol=pg?pg.color:T.muted;
           return(
             <div key={p.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:isMe?"#1e3a5f":"transparent",borderRadius:6,padding:"4px 8px"}}>
               <span style={{fontSize:11,color:T.muted,width:20}}>{i+1}</span>
               <span style={{fontSize:12,color:isMe?T.blue:T.text,fontWeight:isMe?700:400,flex:1}}>{p.n.split(" ")[0]}</span>
-              <span style={{fontSize:12,color:nivelColP,fontWeight:600}}>{p.nivel}</span>
+              <span style={{fontSize:12,color:nCol,fontWeight:600}}>{p.nivel}</span>
               <span style={{fontSize:11,color:T.muted}}>{p.dist}m</span>
-              <span style={{fontSize:11,color:T.cyan}}>{p.vam}m/s</span>
+              {pg&&<span style={{background:pgCol,color:"#111",padding:"1px 7px",borderRadius:8,fontSize:10,fontWeight:700}}>G{pg.num}</span>}
             </div>
           );
         })}
       </Card>
+    </>
+  );
+}
+
+function PlayerCargas({player}){
+  const [loading,setLoading]=useState(true);
+  const [data,setData]=useState(null);
+
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Cargas App"]||[];
+        if(sheet.length<2){setData({});return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iF=headers.indexOf("Fecha"),iE=headers.indexOf("Ejercicio"),iJ=headers.indexOf("Jugadora"),iP=headers.indexOf("Peso"),iV=headers.indexOf("Vel (m/s)");
+        const acc={};
+        sheet.slice(1).forEach(r=>{
+          const jug=String(r[iJ]||"").trim();
+          if(jug!==player)return;
+          const fecha=String(r[iF]||"").slice(0,10);
+          const ej=String(r[iE]||"").trim();
+          const peso=Number(r[iP])||0;
+          const vel=iV>=0?Number(r[iV])||null:null;
+          if(!ej||!peso)return;
+          if(!acc[ej])acc[ej]=[];
+          acc[ej].push({fecha,peso,vel});
+        });
+        setData(acc);
+      })
+      .catch(()=>setData({}))
+      .finally(()=>setLoading(false));
+  },[player]);
+
+  if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Cargando cargas...</div></Card>;
+  if(!data||!Object.keys(data).length)return<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Sin datos de cargas todavía</div></Card>;
+
+  return(
+    <>
+      {EJERCICIOS.filter(ej=>data[ej]).map(ej=>(
+        <Card key={ej} style={{marginBottom:10}}>
+          <CT text={ej}/>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <TH cols={ej==="Dominadas"?["Fecha","Reps"]:["Fecha","Peso","Vel"]}/>
+            <tbody>{[...data[ej]].reverse().map((r,i)=>(
+              <tr key={i}>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r.fecha}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:600}}>{ej==="Dominadas"?`${r.peso} reps`:`${r.peso} kg`}</td>
+                {ej!=="Dominadas"&&<td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:r.vel?T.blue:T.muted}}>{r.vel?`${r.vel} m/s`:"—"}</td>}
+              </tr>
+            ))}</tbody>
+          </table>
+        </Card>
+      ))}
     </>
   );
 }
@@ -3342,7 +3420,7 @@ export default function App(){
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
   const mode=session.tipo==="staff"?"staff":"player";
   const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
-  const PLAYER_TABS=["Mi GPS","Evolución GPS","Yo-Yo","Minutos","Asistencia","Mi RPE","Mi Wellness"];
+  const PLAYER_TABS=["Mi GPS","Evolución GPS","Evaluaciones","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
     <PuestosProvider>
@@ -3376,7 +3454,7 @@ export default function App(){
         {mode==="staff"?(
           <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffPuestos/>}{tab===3&&<StaffEvaluaciones/>}{tab===4&&<StaffMinutos/>}{tab===5&&<StaffAsistencia/>}{tab===6&&<StaffRPE/>}{tab===7&&<StaffWellness/>}</></ErrorBoundary>
         ):(
-          <ErrorBoundary><>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerYoyo player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</></ErrorBoundary>
+          <ErrorBoundary><>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerEvaluaciones player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</></ErrorBoundary>
         )}
       </div>
     </div>
