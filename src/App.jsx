@@ -1101,27 +1101,34 @@ function StaffYoyo(){
         </div>
       </Card>
       <Card>
-        <CT text="Ranking Yo-Yo IRT1"/>
+        <CT text="Ranking Yo-Yo IRT1 — grupos por VAM"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
             <TH cols={["#","Jugadora","Nivel","Distancia","VAM","Grupo"]}/>
-            <tbody>{sorted.map((p,i)=>{
-              const g=yoyoGrupo(p.vam);
-              const col=yoyoGrupoColor(g);
-              const nivelCol=yoyoColor(p.nivel);
-              return(
-                <tr key={p.n}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist}m</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
-                    <span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>{yoyoGrupoLabel(g)}</span>
-                  </td>
-                </tr>
-              );
-            })}</tbody>
+            <tbody>{(()=>{
+              // Agrupar por VAM — cada VAM distinta es un grupo con su color
+              const PALETTE=["#3ecf7a","#64B5F6","#e09020","#e879f9","#06b6d4","#e05555","#a78bfa","#fb923c","#34d399"];
+              const vams=[...new Set(sorted.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
+              const vamGrupo={};// vam → {num, color}
+              vams.forEach((v,i)=>{vamGrupo[v]={num:i+1,color:PALETTE[i%PALETTE.length]};});
+              return sorted.map((p,i)=>{
+                const nivelCol=yoyoColor(p.nivel);
+                const gInfo=p.vam?vamGrupo[p.vam]:null;
+                const col=gInfo?gInfo.color:T.muted;
+                return(
+                  <tr key={p.n}>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist?`${p.dist}m`:"—"}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam||"—"}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
+                      {gInfo&&<span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>Grupo {gInfo.num}</span>}
+                    </td>
+                  </tr>
+                );
+              });
+            })()}</tbody>
           </table>
         </div>
       </Card>
