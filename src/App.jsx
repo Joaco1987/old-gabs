@@ -1022,10 +1022,11 @@ function PlayerEvoGPS({player}){
 }
 
 // ─── YOYO HELPERS ─────────────────────────────────────────────────────────────
-// Grupos YOYO por NIVEL (referencia femenina): Grupo 1=>16.5, Grupo 2=14.6-16.4, Grupo 3=<14.6
+// Color y label del NIVEL según referencias por nivel
 const yoyoColor=nivel=>nivel>16.5?"#3ecf7a":nivel>=14.6?"#e09020":"#e05555";
 const yoyoLabel=nivel=>nivel>16.5?"Grupo 1":nivel>=14.6?"Grupo 2":"Grupo 3";
-const yoyoGrupo=nivel=>{const n=parseFloat(nivel)||0;return n>16.5?1:n>=14.6?2:3;};
+// Grupos en tabla por VAM
+const yoyoGrupo=vam=>vam>=4.3?1:vam>=4.0?2:3;
 
 // Niveles válidos IRT1
 const NIVELES_VALIDOS=["5.1","8.1","11.1","11.2","12.1","12.2","12.3","13.1","13.2","13.3","13.4","14.1","14.2","14.3","14.4","14.5","14.6","14.7","14.8","15.1","15.2","15.3","15.4","15.5","15.6","15.7","15.8","16.1","16.2","16.3","16.4","16.5","16.6","16.7","16.8","17.1","17.2","17.3","17.4","17.5","17.6","17.7","17.8","18.1","18.2","18.3","18.4","18.5","18.6","18.7","18.8","19.1","19.2","19.3","19.4","19.5","19.6","19.7","19.8","20.1","20.2","20.3","20.4","20.5","20.6","20.7","20.8","21.1","21.2","21.3","21.4","21.5","21.6","21.7","21.8","22.1","22.2","22.3","22.4","22.5","22.6","22.7","22.8","23.1","23.2","23.3","23.4","23.5","23.6","23.7","23.8"];
@@ -1053,8 +1054,8 @@ function calcYoyo(nivelStr){
   };
   const key=String(parseFloat(nivelStr).toFixed(1));
   const dist=tabla[key]||0;
-  // VAM fórmula Bangsbo 2008: ((metros × 0.0024) + 10.4) / 3.6
-  const vam=dist>0?Math.round(((dist*0.0024)+10.4)/3.6*100)/100:0;
+  // VAM fórmula Bangsbo 2008, 1 decimal
+  const vam=dist>0?Math.round(((dist*0.0024)+10.4)/3.6*10)/10:0;
   return{dist,vam};
 }
 
@@ -1090,7 +1091,7 @@ function StaffYoyo(){
         <MetCard label="Evaluadas" value={YOYO.length}/>
       </MR>
       <Card style={{marginBottom:10}}>
-        <CT text="Grupos por Nivel"/>
+        <CT text="Referencias por Nivel"/>
         <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
           {[{label:"Grupo 1 — >16.5",c:T.green},{label:"Grupo 2 — 14.6 a 16.4",c:T.amber},{label:"Grupo 3 — <14.6",c:T.red}].map((r,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:7,background:"#0d1020",padding:"7px 12px",borderRadius:8,border:`1px solid ${r.c}44`}}>
@@ -1105,13 +1106,14 @@ function StaffYoyo(){
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
             <TH cols={["#","Jugadora","Nivel","Distancia","VAM","Grupo"]}/>
             <tbody>{sorted.map((p,i)=>{
-              const g=yoyoGrupo(p.nivel);
+              const g=yoyoGrupo(p.vam);
               const col=yoyoGrupoColor(g);
+              const nivelCol=yoyoColor(p.nivel);
               return(
                 <tr key={p.n}>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:yoyoNivelColor(p.nivel),fontWeight:700,fontSize:14}}>{p.nivel}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist}m</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
