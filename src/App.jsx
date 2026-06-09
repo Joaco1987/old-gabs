@@ -1311,7 +1311,11 @@ function StaffCargarPesos({onVolver}){
 
   const guardar=async()=>{
     setSaving(true);
-    const datos=ALL_JUGADORAS.filter(j=>pesos[j]&&parseFloat(pesos[j])>0).map(j=>({jugadora:j,peso:parseFloat(pesos[j])}));
+    const datos=ALL_JUGADORAS.filter(j=>pesos[j]?.kg&&parseFloat(pesos[j].kg)>0).map(j=>({
+      jugadora:j,
+      peso:parseFloat(pesos[j].kg),
+      vel:pesos[j]?.vel?parseFloat(pesos[j].vel):null
+    }));
     const params=new URLSearchParams({accion:"cargas",fecha,ejercicio,datos:JSON.stringify(datos)});
     await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
     setSaving(false);setSaved(true);setPesos({});
@@ -1345,14 +1349,25 @@ function StaffCargarPesos({onVolver}){
           {ALL_JUGADORAS.map(j=>(
             <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"5px 0",borderBottom:`1px solid ${T.border}`}}>
               <span style={{fontSize:12,color:T.text,flex:1}}>{j}</span>
-              <input type="number" value={pesos[j]||""} onChange={e=>setPesos(prev=>({...prev,[j]:e.target.value}))}
-                placeholder="kg" step="0.5" min="0"
-                style={{width:65,background:"#1a2035",border:`1px solid ${pesos[j]?T.amber:T.border2}`,borderRadius:6,color:T.text,padding:"5px 8px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+              {ejercicio==="Dominadas"?(
+                <input type="number" value={pesos[j]?.kg||""} onChange={e=>setPesos(prev=>({...prev,[j]:{...prev[j],kg:e.target.value}}))}
+                  placeholder="reps" step="1" min="0"
+                  style={{width:65,background:"#1a2035",border:`1px solid ${pesos[j]?.kg?T.amber:T.border2}`,borderRadius:6,color:T.text,padding:"5px 8px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+              ):(
+                <>
+                  <input type="number" value={pesos[j]?.kg||""} onChange={e=>setPesos(prev=>({...prev,[j]:{...prev[j],kg:e.target.value}}))}
+                    placeholder="kg" step="0.5" min="0"
+                    style={{width:60,background:"#1a2035",border:`1px solid ${pesos[j]?.kg?T.amber:T.border2}`,borderRadius:6,color:T.text,padding:"5px 6px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+                  <input type="number" value={pesos[j]?.vel||""} onChange={e=>setPesos(prev=>({...prev,[j]:{...prev[j],vel:e.target.value}}))}
+                    placeholder="m/s" step="0.01" min="0"
+                    style={{width:60,background:"#1a2035",border:`1px solid ${pesos[j]?.vel?T.blue:T.border2}`,borderRadius:6,color:T.text,padding:"5px 6px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+                </>
+              )}
             </div>
           ))}
         </div>
       </Card>
-      <button onClick={guardar} disabled={saving||Object.keys(pesos).filter(j=>pesos[j]>0).length===0}
+      <button onClick={guardar} disabled={saving||Object.keys(pesos).filter(j=>pesos[j]?.kg>0).length===0}
         style={{width:"100%",padding:13,background:saved?T.green:T.amber,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
         {saving?"Guardando...":saved?"✓ Guardado en Drive":"Guardar Cargas en Drive"}
       </button>
