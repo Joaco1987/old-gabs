@@ -1234,12 +1234,12 @@ function StaffTomarYoyo({onVolver}){
 
 function StaffCargas(){
   const [vista,setVista]=useState("reporte");
-  if(vista==="cargar")return<StaffCargarPesos onVolver={()=>setVista("reporte")}/>;
-
   const [loading,setLoading]=useState(true);
   const [data,setData]=useState(null);
 
   React.useEffect(()=>{
+    if(vista!=="reporte")return;
+    setLoading(true);
     fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
       .then(r=>r.json())
       .then(d=>{
@@ -1247,7 +1247,7 @@ function StaffCargas(){
         if(sheet.length<2){setData({});return;}
         const headers=sheet[0].map(h=>String(h).trim());
         const iF=headers.indexOf("Fecha"),iE=headers.indexOf("Ejercicio"),iJ=headers.indexOf("Jugadora"),iP=headers.indexOf("Peso");
-        const acc={};// {ejercicio:{jugadora:[{fecha,peso}]}}
+        const acc={};
         sheet.slice(1).forEach(r=>{
           const fecha=String(r[iF]||"").slice(0,10);
           const ej=String(r[iE]||"").trim();
@@ -1262,7 +1262,9 @@ function StaffCargas(){
       })
       .catch(()=>setData({}))
       .finally(()=>setLoading(false));
-  },[]);
+  },[vista]);
+
+  if(vista==="cargar")return<StaffCargarPesos onVolver={()=>setVista("reporte")}/>;
 
   return(
     <>
