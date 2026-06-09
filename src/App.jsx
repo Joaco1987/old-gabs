@@ -1104,10 +1104,13 @@ function StaffYoyo(){
         <CT text="Ranking Yo-Yo IRT1 — grupos por VAM"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["#","Jugadora","Nivel","Distancia","VAM","Grupo"]}/>
+            <thead><tr>
+              {["#","Jugadora","Nivel","Distancia","VAM","Grupo"].map((c,i)=>(
+                <th key={i} style={{textAlign:i===5?"center":"left",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
+              ))}
+            </tr></thead>
             <tbody>{(()=>{
-              // Agrupar por VAM — cada VAM distinta es un grupo con su color
-              const PALETTE=["#64B5F6","#a78bfa","#06b6d4","#fb923c","#34d399","#f472b6","#facc15","#94a3b8"];
+              const PALETTE=["#64B5F6","#f472b6","#fb923c","#34d399","#facc15","#c084fc","#94a3b8"];
               const vams=[...new Set(sorted.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
               const vamGrupo={};
               vams.forEach((v,i)=>{vamGrupo[v]={num:i+1,color:PALETTE[i%PALETTE.length]};});
@@ -1181,17 +1184,18 @@ function StaffTomarYoyo({onVolver}){
           {ALL_JUGADORAS.map(j=>{
             const n=niveles[j]||"";
             const preview_=n&&parseFloat(n)>0?calcYoyo(parseFloat(n)):null;
-            const col=preview_?yoyoGrupoColor(yoyoGrupo(parseFloat(n)||0)):T.muted;
+            const nivelNum=parseFloat(n)||0;
+            const nivelCol=n?yoyoColor(nivelNum):T.muted;
             return(
               <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:`1px solid ${T.border}`}}>
                 <span style={{fontSize:12,color:T.text,flex:1,minWidth:120}}>{j}</span>
                 <select value={n} onChange={e=>setNivel(j,e.target.value)}
-                  style={{width:80,background:"#1a2035",border:`1px solid ${n?T.blue:T.border2}`,borderRadius:6,color:n?T.text:T.muted,padding:"5px 6px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}>
+                  style={{width:80,background:"#1a2035",border:`1px solid ${n?nivelCol:T.border2}`,borderRadius:6,color:n?nivelCol:T.muted,padding:"5px 6px",fontSize:13,fontFamily:"inherit",textAlign:"center",fontWeight:n?"700":"400"}}>
                   <option value="">—</option>
                   {NIVELES_VALIDOS.map(nv=><option key={nv} value={nv}>{nv}</option>)}
                 </select>
                 {preview_&&(
-                  <span style={{fontSize:11,color:col,minWidth:100,textAlign:"right"}}>{preview_.dist}m · {preview_.vam} m/s</span>
+                  <span style={{fontSize:11,color:nivelCol,minWidth:100,textAlign:"right"}}>{preview_.dist}m · {preview_.vam} m/s</span>
                 )}
               </div>
             );
