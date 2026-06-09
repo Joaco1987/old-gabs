@@ -1110,7 +1110,7 @@ function StaffYoyo(){
               ))}
             </tr></thead>
             <tbody>{(()=>{
-              const PALETTE=["#64B5F6","#f472b6","#fb923c","#34d399","#facc15","#c084fc","#94a3b8"];
+              const PALETTE=["#64B5F6","#f472b6","#a78bfa","#06b6d4","#e879f9","#38bdf8","#818cf8","#c084fc"];
               const vams=[...new Set(sorted.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
               const vamGrupo={};
               vams.forEach((v,i)=>{vamGrupo[v]={num:i+1,color:PALETTE[i%PALETTE.length]};});
