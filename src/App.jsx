@@ -2832,7 +2832,7 @@ function PlayerYoyo({player}){
           <div style={{fontSize:14,color:T.muted2,marginBottom:8}}>Nivel alcanzado</div>
           <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
             <span style={{background:nivelCol+"22",color:nivelCol,padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(d.nivel)}</span>
-            {gInfo&&<span style={{background:gCol,color:"#111",padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:700}}>G{gInfo.num} VAM</span>}
+            {gInfo&&<span style={{background:gCol,color:"#111",padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:700}}>G{gInfo.num}</span>}
           </div>
         </div>
         <div style={{display:"flex",justifyContent:"space-around",marginTop:16}}>
