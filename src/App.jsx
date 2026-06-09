@@ -1122,8 +1122,8 @@ function StaffYoyo(){
                     <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
                     <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist?`${p.dist}m`:"—"}</td>
                     <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam||"—"}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
-                      {gInfo&&<span style={{background:col+"22",color:col,padding:"2px 7px",borderRadius:4,fontSize:10,fontWeight:500}}>Grupo {gInfo.num}</span>}
+                    <td style={{padding:"5px 4px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                      {gInfo&&<span style={{background:col,color:"#fff",padding:"2px 8px",borderRadius:10,fontSize:11,fontWeight:700}}>G{gInfo.num}</span>}
                     </td>
                   </tr>
                 );
