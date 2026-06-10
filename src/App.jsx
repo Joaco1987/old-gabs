@@ -2810,7 +2810,7 @@ function PlayerYoyo({player}){
     fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
       .then(r=>r.json())
       .then(d=>{
-        const sheet=d["Yoyo App"]||[];
+        const sheet=d["YOYO App"]||d["Yoyo App"]||[];
         if(sheet.length<2){setLoading(false);return;}
         const headers=sheet[0].map(h=>String(h).trim());
         const iF=headers.indexOf("Fecha"),iJ=headers.indexOf("Jugadora"),iN=headers.indexOf("Nivel"),iD=headers.indexOf("Distancia"),iV=headers.indexOf("VAM");
