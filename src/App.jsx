@@ -2952,7 +2952,7 @@ function PlayerYoyo({player}){
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
             <thead><tr>
-              {["#","Jugadora","Nivel","Dist","VAM","G"].map((c,i)=>(
+              {["#","Jugadora","Nivel","Dist","VAM","Grupo"].map((c,i)=>(
                 <th key={i} style={{textAlign:i===5?"center":"left",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
               ))}
             </tr></thead>
@@ -2961,9 +2961,10 @@ function PlayerYoyo({player}){
               const nCol=yoyoColor(p.nivel);
               const pg=p.vam?vamGrupo[p.vam]:null;
               const pgCol=pg?pg.color:T.muted;
+              const medals=["🥇","🥈","🥉"];
               return(
                 <tr key={p.n} style={{background:isMe?"#1e3a5f":"transparent"}}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i+1}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>{p.n.split(" ")[0]}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist?`${p.dist}m`:"—"}</td>
