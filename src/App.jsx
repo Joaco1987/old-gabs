@@ -1074,21 +1074,59 @@ function StaffEvaluaciones(){
 
 function StaffYoyo(){
   const [vista,setVista]=useState("reporte");
+  const [loading,setLoading]=useState(true);
+  const [driveData,setDriveData]=useState([]);
+
+  React.useEffect(()=>{
+    if(vista!=="reporte")return;
+    setLoading(true);
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Yoyo App"]||d["YOYO App"]||[];
+        if(sheet.length<2){setDriveData([]);return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iF=headers.indexOf("Fecha"),iJ=headers.indexOf("Jugadora"),iN=headers.indexOf("Nivel"),iD=headers.indexOf("Distancia"),iV=headers.indexOf("VAM");
+        const last={};
+        sheet.slice(1).forEach(r=>{
+          const fecha=String(r[iF]||"").slice(0,10);
+          const jug=String(r[iJ]||"").trim();
+          const nivel=parseFloat(r[iN])||0;
+          const dist=Number(r[iD])||0;
+          const rawVam=parseFloat(r[iV])||0;
+          if(!jug||!nivel)return;
+          // Recalcular VAM con Bangsbo para asegurar 1 decimal
+          const vam=dist>0?Math.round(((dist*0.0024)+10.4)/3.6*10)/10:Math.round(rawVam*10)/10;
+          if(!last[jug]||fecha>last[jug].fecha) last[jug]={n:jug,fecha,nivel,dist,vam};
+        });
+        setDriveData(Object.values(last).sort((a,b)=>b.nivel-a.nivel));
+      })
+      .catch(()=>setDriveData([]))
+      .finally(()=>setLoading(false));
+  },[vista]);
+
   if(vista==="tomar")return<StaffTomarYoyo onVolver={()=>setVista("reporte")}/>;
 
-  const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
+  const sorted=driveData;
   const medals=["🥇","🥈","🥉"];
+
+  const PALETTE=["#64B5F6","#f472b6","#a78bfa","#06b6d4","#e879f9","#38bdf8","#818cf8","#c084fc"];
+  const vams=[...new Set(sorted.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
+  const vamGrupo={};
+  vams.forEach((v,i)=>{vamGrupo[v]={num:i+1,color:PALETTE[i%PALETTE.length]};});
+
   return(
     <>
       <div style={{display:"flex",gap:8,marginBottom:10}}>
         <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>📊 Reporte</button>
         <button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📝 Tomar Test</button>
       </div>
+      {loading?<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Cargando desde Drive...</div></Card>:<>
       <MR>
-        <MetCard label="Nivel prom." value={avg(YOYO.map(p=>p.nivel)).toFixed(1)} sub="Yo-Yo IRT1"/>
+        <MetCard label="Nivel prom." value={sorted.length?avg(sorted.map(p=>p.nivel)).toFixed(1):"—"} sub="Yo-Yo IRT1"/>
         <MetCard label="Nivel más alto" value={sorted[0]?.nivel||"—"} sub={sorted[0]?.n.split(" ")[0]} sc={T.amber}/>
-        <MetCard label="VAM prom." value={`${avg(YOYO.map(p=>p.vam)).toFixed(1)} m/s`}/>
-        <MetCard label="Evaluadas" value={YOYO.length}/>
+        <MetCard label="VAM prom." value={sorted.length?`${avg(sorted.map(p=>p.vam)).toFixed(1)} m/s`:"—"}/>
+        <MetCard label="Evaluadas" value={sorted.length}/>
       </MR>
       <Card style={{marginBottom:10}}>
         <CT text="Referencias por Nivel"/>
@@ -1100,6 +1138,39 @@ function StaffYoyo(){
           ))}
         </div>
       </Card>
+      <Card>
+        <CT text="Ranking Yo-Yo IRT1 — grupos por VAM"/>
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <thead><tr>
+              {["#","Jugadora","Nivel","Distancia","VAM","Grupo"].map((c,i)=>(
+                <th key={i} style={{textAlign:i===5?"center":"left",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
+              ))}
+            </tr></thead>
+            <tbody>{sorted.map((p,i)=>{
+              const nivelCol=yoyoColor(p.nivel);
+              const gInfo=p.vam?vamGrupo[p.vam]:null;
+              const col=gInfo?gInfo.color:T.muted;
+              return(
+                <tr key={p.n}>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist?`${p.dist}m`:"—"}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam||"—"}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                    {gInfo&&<span style={{background:col,color:"#111",padding:"2px 8px",borderRadius:10,fontSize:11,fontWeight:700,display:"inline-block"}}>G{gInfo.num}</span>}
+                  </td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
+        </div>
+      </Card>
+      </>}
+    </>
+  );
+}
       <Card>
         <CT text="Ranking Yo-Yo IRT1 — grupos por VAM"/>
         <div style={{overflowX:"auto"}}>
@@ -2822,7 +2893,8 @@ function PlayerYoyo({player}){
           const jug=String(r[iJ]||"").trim();
           const nivel=parseFloat(r[iN])||0;
           const dist=Number(r[iD])||0;
-          const vam=parseFloat(r[iV])||0;
+          const rawVam=parseFloat(r[iV])||0;
+          const vam=dist>0?Math.round(((dist*0.0024)+10.4)/3.6*10)/10:Math.round(rawVam*10)/10;
           if(!jug||!nivel)return;
           if(!histByJug[jug])histByJug[jug]=[];
           histByJug[jug].push({fecha,nivel,dist,vam});
@@ -2870,8 +2942,7 @@ function PlayerYoyo({player}){
           <div style={{fontSize:48,fontWeight:700,color:nivelCol,marginBottom:8}}>{myData.nivel}</div>
           <div style={{fontSize:14,color:T.muted2,marginBottom:8}}>Nivel alcanzado · {myData.fecha}</div>
           <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
-            {gInfo&&<span style={{background:gCol,color:"#111",padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:700}}>G{gInfo.num}</span>}
-            <span style={{background:nivelCol+"22",color:nivelCol,padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(myData.nivel)}</span>
+            {gInfo&&<span style={{background:gCol,color:"#111",padding:"4px 14px",borderRadius:6,fontSize:13,fontWeight:700}}>G{gInfo.num}</span>}
           </div>
         </div>
         <div style={{display:"flex",justifyContent:"space-around",marginTop:16}}>
