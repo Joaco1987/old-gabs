@@ -2949,21 +2949,33 @@ function PlayerYoyo({player}){
       </Card>
       <Card>
         <CT text="Comparación con el equipo"/>
-        {allData.map((p,i)=>{
-          const isMe=p.n===player;
-          const nCol=yoyoColor(p.nivel);
-          const pg=p.vam?vamGrupo[p.vam]:null;
-          const pgCol=pg?pg.color:T.muted;
-          return(
-            <div key={p.n} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,background:isMe?"#1e3a5f":"transparent",borderRadius:6,padding:"4px 8px"}}>
-              <span style={{fontSize:11,color:T.muted,width:20}}>{i+1}</span>
-              <span style={{fontSize:12,color:isMe?T.blue:T.text,fontWeight:isMe?700:400,flex:1}}>{p.n.split(" ")[0]}</span>
-              <span style={{fontSize:12,color:nCol,fontWeight:600}}>{p.nivel}</span>
-              <span style={{fontSize:11,color:T.muted}}>{p.dist}m</span>
-              {pg&&<span style={{background:pgCol,color:"#111",padding:"1px 7px",borderRadius:8,fontSize:10,fontWeight:700}}>G{pg.num}</span>}
-            </div>
-          );
-        })}
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+            <thead><tr>
+              {["#","Jugadora","Nivel","Dist","VAM","G"].map((c,i)=>(
+                <th key={i} style={{textAlign:i===5?"center":"left",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
+              ))}
+            </tr></thead>
+            <tbody>{allData.map((p,i)=>{
+              const isMe=p.n===player;
+              const nCol=yoyoColor(p.nivel);
+              const pg=p.vam?vamGrupo[p.vam]:null;
+              const pgCol=pg?pg.color:T.muted;
+              return(
+                <tr key={p.n} style={{background:isMe?"#1e3a5f":"transparent"}}>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i+1}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>{p.n.split(" ")[0]}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist?`${p.dist}m`:"—"}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pgCol,fontWeight:600}}>{p.vam||"—"}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                    {pg&&<span style={{background:pgCol,color:"#111",padding:"2px 8px",borderRadius:10,fontSize:11,fontWeight:700,display:"inline-block"}}>G{pg.num}</span>}
+                  </td>
+                </tr>
+              );
+            })}</tbody>
+          </table>
+        </div>
       </Card>
     </>
   );
