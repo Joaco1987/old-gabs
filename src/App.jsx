@@ -2801,46 +2801,109 @@ function PlayerEvaluaciones({player}){
 }
 
 function PlayerYoyo({player}){
-  const d=YOYO.find(p=>p.n===player);
-  const sorted=[...YOYO].sort((a,b)=>b.nivel-a.nivel);
-  const myRank=d?sorted.findIndex(p=>p.n===player)+1:null;
+  const [loading,setLoading]=useState(true);
+  const [myData,setMyData]=useState(null);// último resultado
+  const [allData,setAllData]=useState([]);// todos los jugadores (último test)
+  const [historial,setHistorial]=useState([]);// historial de tests de este jugador
 
-  // Grupos dinámicos por VAM (igual que Staff)
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Yoyo App"]||[];
+        if(sheet.length<2){setLoading(false);return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iF=headers.indexOf("Fecha"),iJ=headers.indexOf("Jugadora"),iN=headers.indexOf("Nivel"),iD=headers.indexOf("Distancia"),iV=headers.indexOf("VAM");
+        // Agrupar por jugadora → último test
+        const lastByJug={};
+        const histByJug={};
+        sheet.slice(1).forEach(r=>{
+          const fecha=String(r[iF]||"").slice(0,10);
+          const jug=String(r[iJ]||"").trim();
+          const nivel=parseFloat(r[iN])||0;
+          const dist=Number(r[iD])||0;
+          const vam=parseFloat(r[iV])||0;
+          if(!jug||!nivel)return;
+          if(!histByJug[jug])histByJug[jug]=[];
+          histByJug[jug].push({fecha,nivel,dist,vam});
+          if(!lastByJug[jug]||fecha>lastByJug[jug].fecha)
+            lastByJug[jug]={fecha,nivel,dist,vam};
+        });
+        // Recalcular VAM con Bangsbo por si acaso
+        const jugadoras=Object.entries(lastByJug).map(([n,d])=>({n,...d}))
+          .sort((a,b)=>b.nivel-a.nivel);
+        setAllData(jugadoras);
+        setMyData(lastByJug[player]||null);
+        setHistorial((histByJug[player]||[]).sort((a,b)=>a.fecha.localeCompare(b.fecha)));
+      })
+      .catch(()=>{})
+      .finally(()=>setLoading(false));
+  },[player]);
+
+  if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Cargando datos Yo-Yo...</div></Card>;
+  if(!myData)return<div style={{color:T.muted,padding:20,textAlign:"center",fontSize:12}}>Sin datos Yo-Yo para {player}</div>;
+
   const PALETTE=["#64B5F6","#f472b6","#a78bfa","#06b6d4","#e879f9","#38bdf8","#818cf8","#c084fc"];
-  const vams=[...new Set(sorted.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
+  const vams=[...new Set(allData.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
   const vamGrupo={};
   vams.forEach((v,i)=>{vamGrupo[v]={num:i+1,color:PALETTE[i%PALETTE.length]};});
 
-  if(!d)return<div style={{color:T.muted,padding:20,textAlign:"center",fontSize:12}}>Sin datos Yo-Yo para {player}</div>;
-
-  const nivelCol=yoyoColor(d.nivel);
-  const gInfo=d.vam?vamGrupo[d.vam]:null;
+  const myRank=allData.findIndex(p=>p.n===player)+1;
+  const nivelCol=yoyoColor(myData.nivel);
+  const gInfo=myData.vam?vamGrupo[myData.vam]:null;
   const gCol=gInfo?gInfo.color:T.muted;
+
+  // Evolución
+  const evol=historial.length>1?(((historial[historial.length-1].nivel-historial[0].nivel)/historial[0].nivel)*100).toFixed(1):null;
 
   return(
     <>
       <MR>
-        <MetCard label="Nivel alcanzado" value={d.nivel} sc={nivelCol}/>
-        <MetCard label="Distancia" value={`${d.dist}m`}/>
-        <MetCard label="VAM" value={`${d.vam} m/s`} sc={gCol}/>
-        <MetCard label="Ranking" value={`${myRank}° / ${YOYO.length}`}/>
+        <MetCard label="Nivel alcanzado" value={myData.nivel} sc={nivelCol}/>
+        <MetCard label="Distancia" value={`${myData.dist}m`}/>
+        <MetCard label="VAM" value={`${myData.vam} m/s`} sc={gCol}/>
+        <MetCard label="Ranking" value={`${myRank}° / ${allData.length}`}/>
       </MR>
       <Card style={{marginBottom:10}}>
         <CT text="Mi resultado Yo-Yo IRT1"/>
         <div style={{textAlign:"center",padding:"20px 0"}}>
-          <div style={{fontSize:48,fontWeight:700,color:nivelCol,marginBottom:8}}>{d.nivel}</div>
-          <div style={{fontSize:14,color:T.muted2,marginBottom:8}}>Nivel alcanzado</div>
+          <div style={{fontSize:48,fontWeight:700,color:nivelCol,marginBottom:8}}>{myData.nivel}</div>
+          <div style={{fontSize:14,color:T.muted2,marginBottom:8}}>Nivel alcanzado · {myData.fecha}</div>
           <div style={{display:"flex",gap:10,justifyContent:"center",flexWrap:"wrap"}}>
-            <span style={{background:nivelCol+"22",color:nivelCol,padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(d.nivel)}</span>
             {gInfo&&<span style={{background:gCol,color:"#111",padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:700}}>G{gInfo.num}</span>}
+            <span style={{background:nivelCol+"22",color:nivelCol,padding:"4px 14px",borderRadius:6,fontSize:12,fontWeight:500}}>{yoyoLabel(myData.nivel)}</span>
           </div>
         </div>
         <div style={{display:"flex",justifyContent:"space-around",marginTop:16}}>
-          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.blue}}>{d.dist}m</div><div style={{fontSize:11,color:T.muted}}>Distancia</div></div>
-          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:gCol}}>{d.vam} m/s</div><div style={{fontSize:11,color:T.muted}}>VAM</div></div>
+          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.blue}}>{myData.dist}m</div><div style={{fontSize:11,color:T.muted}}>Distancia</div></div>
+          <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:gCol}}>{myData.vam} m/s</div><div style={{fontSize:11,color:T.muted}}>VAM</div></div>
           <div style={{textAlign:"center"}}><div style={{fontSize:22,fontWeight:700,color:T.amber}}>{myRank}°</div><div style={{fontSize:11,color:T.muted}}>Ranking</div></div>
         </div>
       </Card>
+      {historial.length>1&&(
+        <Card style={{marginBottom:10}}>
+          <CT text="Evolución Yo-Yo"/>
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:10}}>
+            <div style={{fontSize:13,color:T.muted}}>Primer test → Último test</div>
+            <div style={{fontSize:16,fontWeight:700,color:parseFloat(evol)>=0?T.green:T.red}}>
+              {parseFloat(evol)>=0?"+":""}{evol}%
+            </div>
+          </div>
+          {historial.map((h,i)=>{
+            const prev=historial[i-1];
+            const delta=prev?((h.nivel-prev.nivel)/prev.nivel*100).toFixed(1):null;
+            const nc=yoyoColor(h.nivel);
+            return(
+              <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:6,padding:"6px 8px",borderRadius:6,background:i===historial.length-1?"#1e3a5f":"transparent"}}>
+                <span style={{fontSize:11,color:T.muted,width:80}}>{h.fecha}</span>
+                <span style={{fontSize:13,fontWeight:700,color:nc}}>{h.nivel}</span>
+                <span style={{fontSize:11,color:T.muted}}>{h.dist}m · {h.vam} m/s</span>
+                {delta&&<span style={{fontSize:11,fontWeight:600,color:parseFloat(delta)>=0?T.green:T.red,marginLeft:"auto"}}>{parseFloat(delta)>=0?"+":""}{delta}%</span>}
+              </div>
+            );
+          })}
+        </Card>
+      )}
       <Card style={{marginBottom:10}}>
         <CT text="Referencias por Nivel"/>
         <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
@@ -2853,7 +2916,7 @@ function PlayerYoyo({player}){
       </Card>
       <Card>
         <CT text="Comparación con el equipo"/>
-        {sorted.map((p,i)=>{
+        {allData.map((p,i)=>{
           const isMe=p.n===player;
           const nCol=yoyoColor(p.nivel);
           const pg=p.vam?vamGrupo[p.vam]:null;
