@@ -1171,44 +1171,6 @@ function StaffYoyo(){
     </>
   );
 }
-      <Card>
-        <CT text="Ranking Yo-Yo IRT1 — grupos por VAM"/>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <thead><tr>
-              {["#","Jugadora","Nivel","Distancia","VAM","Grupo"].map((c,i)=>(
-                <th key={i} style={{textAlign:i===5?"center":"left",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
-              ))}
-            </tr></thead>
-            <tbody>{(()=>{
-              const PALETTE=["#64B5F6","#f472b6","#a78bfa","#06b6d4","#e879f9","#38bdf8","#818cf8","#c084fc"];
-              const vams=[...new Set(sorted.map(p=>p.vam).filter(Boolean))].sort((a,b)=>b-a);
-              const vamGrupo={};
-              vams.forEach((v,i)=>{vamGrupo[v]={num:i+1,color:PALETTE[i%PALETTE.length]};});
-              return sorted.map((p,i)=>{
-                const nivelCol=yoyoColor(p.nivel);
-                const gInfo=p.vam?vamGrupo[p.vam]:null;
-                const col=gInfo?gInfo.color:T.muted;
-                return(
-                  <tr key={p.n}>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist?`${p.dist}m`:"—"}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam||"—"}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
-                      {gInfo&&<span style={{background:col,color:"#111",padding:"2px 8px",borderRadius:10,fontSize:11,fontWeight:700,display:"inline-block"}}>G{gInfo.num}</span>}
-                    </td>
-                  </tr>
-                );
-              });
-            })()}</tbody>
-          </table>
-        </div>
-      </Card>
-    </>
-  );
-}
 
 function StaffTomarYoyo({onVolver}){
   const hoy=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
