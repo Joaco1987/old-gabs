@@ -1279,17 +1279,19 @@ function StaffCargas(){
         const sheet=d["Cargas App"]||[];
         if(sheet.length<2){setData({});return;}
         const headers=sheet[0].map(h=>String(h).trim());
-        const iF=headers.indexOf("Fecha"),iE=headers.indexOf("Ejercicio"),iJ=headers.indexOf("Jugadora"),iP=headers.indexOf("Peso");
+        const iF=headers.indexOf("Fecha"),iE=headers.indexOf("Ejercicio"),iJ=headers.indexOf("Jugadora"),iP=headers.indexOf("Peso"),iV=headers.indexOf("Vel (m/s)"),iR=headers.indexOf("RM");
         const acc={};
         sheet.slice(1).forEach(r=>{
           const fecha=String(r[iF]||"").slice(0,10);
           const ej=String(r[iE]||"").trim();
           const jug=String(r[iJ]||"").trim();
           const peso=Number(r[iP])||0;
+          const vel=iV>=0?Number(r[iV])||null:null;
+          const rm=iR>=0?Number(r[iR])||null:null;
           if(!ej||!jug||!peso)return;
           if(!acc[ej])acc[ej]={};
           if(!acc[ej][jug])acc[ej][jug]=[];
-          acc[ej][jug].push({fecha,peso});
+          acc[ej][jug].push({fecha,peso,vel,rm});
         });
         setData(acc);
       })
@@ -1311,7 +1313,7 @@ function StaffCargas(){
         <Card key={ej} style={{marginBottom:10}}>
           <CT text={ej}/>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Jugadora","Último peso","Fecha"]}/>
+            <TH cols={ej==="Dominadas"?["Jugadora","Reps","Fecha"]:["Jugadora","Kg","VMP","RM","Fecha"]}/>
             <tbody>{Object.entries(data[ej]||{}).sort((a,b)=>{
               const pa=Math.max(...a[1].map(x=>x.peso));
               const pb=Math.max(...b[1].map(x=>x.peso));
@@ -1321,8 +1323,10 @@ function StaffCargas(){
               const max=Math.max(...registros.map(x=>x.peso));
               return(
                 <tr key={jug}>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{jug}</td>
-                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:600}}>{last.peso} kg {last.peso===max&&<span style={{color:T.green,fontSize:10}}>↑ MÁX</span>}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{jug.split(" ")[0]}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:600}}>{ej==="Dominadas"?`${last.peso}`:`${last.peso} kg`}{last.peso===max&&<span style={{color:T.green,fontSize:10}}> ↑</span>}</td>
+                  {ej!=="Dominadas"&&<td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:last.vel?T.blue:T.muted}}>{last.vel?`${last.vel} m/s`:"—"}</td>}
+                  {ej!=="Dominadas"&&<td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:last.rm?T.green:T.muted}}>{last.rm?`${last.rm} kg`:"—"}</td>}
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{last.fecha}</td>
                 </tr>
               );
@@ -1347,7 +1351,8 @@ function StaffCargarPesos({onVolver}){
     const datos=ALL_JUGADORAS.filter(j=>pesos[j]?.kg&&parseFloat(pesos[j].kg)>0).map(j=>({
       jugadora:j,
       peso:parseFloat(pesos[j].kg),
-      vel:pesos[j]?.vel?parseFloat(pesos[j].vel):null
+      vel:pesos[j]?.vel?parseFloat(pesos[j].vel):null,
+      rm:pesos[j]?.rm?parseFloat(pesos[j].rm):null
     }));
     const params=new URLSearchParams({accion:"cargas",fecha,ejercicio,datos:JSON.stringify(datos)});
     await fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?"+params.toString(),{method:"GET",mode:"no-cors"}).catch(()=>{});
@@ -1390,10 +1395,13 @@ function StaffCargarPesos({onVolver}){
                 <>
                   <input type="number" value={pesos[j]?.kg||""} onChange={e=>setPesos(prev=>({...prev,[j]:{...prev[j],kg:e.target.value}}))}
                     placeholder="kg" step="0.5" min="0"
-                    style={{width:60,background:"#1a2035",border:`1px solid ${pesos[j]?.kg?T.amber:T.border2}`,borderRadius:6,color:T.text,padding:"5px 6px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+                    style={{width:52,background:"#1a2035",border:`1px solid ${pesos[j]?.kg?T.amber:T.border2}`,borderRadius:6,color:T.text,padding:"5px 4px",fontSize:12,fontFamily:"inherit",textAlign:"center"}}/>
                   <input type="number" value={pesos[j]?.vel||""} onChange={e=>setPesos(prev=>({...prev,[j]:{...prev[j],vel:e.target.value}}))}
                     placeholder="m/s" step="0.01" min="0"
-                    style={{width:60,background:"#1a2035",border:`1px solid ${pesos[j]?.vel?T.blue:T.border2}`,borderRadius:6,color:T.text,padding:"5px 6px",fontSize:13,fontFamily:"inherit",textAlign:"center"}}/>
+                    style={{width:52,background:"#1a2035",border:`1px solid ${pesos[j]?.vel?T.blue:T.border2}`,borderRadius:6,color:T.text,padding:"5px 4px",fontSize:12,fontFamily:"inherit",textAlign:"center"}}/>
+                  <input type="number" value={pesos[j]?.rm||""} onChange={e=>setPesos(prev=>({...prev,[j]:{...prev[j],rm:e.target.value}}))}
+                    placeholder="RM" step="0.5" min="0"
+                    style={{width:52,background:"#1a2035",border:`1px solid ${pesos[j]?.rm?T.green:T.border2}`,borderRadius:6,color:T.text,padding:"5px 4px",fontSize:12,fontFamily:"inherit",textAlign:"center"}}/>
                 </>
               )}
             </div>
@@ -2993,7 +3001,7 @@ function PlayerCargas({player}){
         const sheet=d["Cargas App"]||[];
         if(sheet.length<2){setData({});return;}
         const headers=sheet[0].map(h=>String(h).trim());
-        const iF=headers.indexOf("Fecha"),iE=headers.indexOf("Ejercicio"),iJ=headers.indexOf("Jugadora"),iP=headers.indexOf("Peso"),iV=headers.indexOf("Vel (m/s)");
+        const iF=headers.indexOf("Fecha"),iE=headers.indexOf("Ejercicio"),iJ=headers.indexOf("Jugadora"),iP=headers.indexOf("Peso"),iV=headers.indexOf("Vel (m/s)"),iR=headers.indexOf("RM");
         const acc={};
         sheet.slice(1).forEach(r=>{
           const jug=String(r[iJ]||"").trim();
@@ -3002,9 +3010,10 @@ function PlayerCargas({player}){
           const ej=String(r[iE]||"").trim();
           const peso=Number(r[iP])||0;
           const vel=iV>=0?Number(r[iV])||null:null;
+          const rm=iR>=0?Number(r[iR])||null:null;
           if(!ej||!peso)return;
           if(!acc[ej])acc[ej]=[];
-          acc[ej].push({fecha,peso,vel});
+          acc[ej].push({fecha,peso,vel,rm});
         });
         setData(acc);
       })
@@ -3021,12 +3030,13 @@ function PlayerCargas({player}){
         <Card key={ej} style={{marginBottom:10}}>
           <CT text={ej}/>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={ej==="Dominadas"?["Fecha","Reps"]:["Fecha","Peso","Vel"]}/>
+            <TH cols={ej==="Dominadas"?["Fecha","Reps"]:["Fecha","Kg","VMP","RM"]}/>
             <tbody>{[...data[ej]].reverse().map((r,i)=>(
               <tr key={i}>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{r.fecha}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:600}}>{ej==="Dominadas"?`${r.peso} reps`:`${r.peso} kg`}</td>
                 {ej!=="Dominadas"&&<td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:r.vel?T.blue:T.muted}}>{r.vel?`${r.vel} m/s`:"—"}</td>}
+                {ej!=="Dominadas"&&<td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:r.rm?T.green:T.muted}}>{r.rm?`${r.rm} kg`:"—"}</td>}
               </tr>
             ))}</tbody>
           </table>
