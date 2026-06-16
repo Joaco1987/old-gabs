@@ -3293,11 +3293,35 @@ const saveToSheet=(jugadora,tipo,datos)=>{
     .catch(()=>true);
 };
 function PlayerRPE({player}){
-  const todayKey=(p)=>{const d=new Date();return p+"_rpe_"+d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();};
-  const [yaDone,setYaDone]=useState(()=>!!localStorage.getItem(todayKey(player)));
+  const [yaDone,setYaDone]=useState(false);
+  const [checking,setChecking]=useState(true);
   const [rpe,setRpe]=useState(RPE_DATA[player]||5);
   const [saved,setSaved]=useState(false);
   const [saving,setSaving]=useState(false);
+
+  const hoyISO=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
+
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["RPE y Wellness"]||[];
+        if(sheet.length<2){setChecking(false);return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iF=headers.indexOf("Fecha"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Tipo");
+        const yaRegistro=sheet.slice(1).some(r=>{
+          const fecha=String(r[iF]||"").slice(0,10);
+          const jug=String(r[iJ]||"").trim();
+          const tipo=String(r[iT]||"").trim();
+          return jug===player&&tipo==="RPE"&&fecha===hoyISO;
+        });
+        setYaDone(yaRegistro);
+      })
+      .catch(()=>{})
+      .finally(()=>setChecking(false));
+  },[player]);
+
+  if(checking)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Verificando...</div></Card>;
   if(yaDone)return(
     <Card>
       <div style={{textAlign:"center",padding:"30px 10px"}}>
@@ -3345,11 +3369,33 @@ function PlayerRPE({player}){
 // ─── PLAYER WELLNESS ──────────────────────────────────────────────────────────
 function PlayerWellness({player}){
   const base=WELLNESS[player]||{horas:"7hs",calidad:3,fatiga:3,dolor:3,estres:3,animo:3};
-  const todayKeyW=(p)=>{const d=new Date();return p+"_well_"+d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();};
-  const [yaDone,setYaDone]=useState(()=>!!localStorage.getItem(todayKeyW(player)));
+  const [yaDone,setYaDone]=useState(false);
+  const [checking,setChecking]=useState(true);
   const [form,setForm]=useState({horas:base.horas,calidad:base.calidad,fatiga:base.fatiga,dolor:base.dolor,estres:base.estres,animo:base.animo,zonasDolor:[],otroZona:""});
   const [saved,setSaved]=useState(false);
   const [saving,setSaving]=useState(false);
+
+  const hoyISO=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
+
+  React.useEffect(()=>{
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["RPE y Wellness"]||[];
+        if(sheet.length<2){setChecking(false);return;}
+        const headers=sheet[0].map(h=>String(h).trim());
+        const iF=headers.indexOf("Fecha"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Tipo");
+        const yaRegistro=sheet.slice(1).some(r=>{
+          const fecha=String(r[iF]||"").slice(0,10);
+          const jug=String(r[iJ]||"").trim();
+          const tipo=String(r[iT]||"").trim();
+          return jug===player&&tipo==="Wellness"&&fecha===hoyISO;
+        });
+        setYaDone(yaRegistro);
+      })
+      .catch(()=>{})
+      .finally(()=>setChecking(false));
+  },[player]);
   const upd=(k,v)=>{setForm(p=>({...p,[k]:v}));setSaved(false);};
   const toggleZona=z=>{setForm(p=>({...p,zonasDolor:p.zonasDolor.includes(z)?p.zonasDolor.filter(x=>x!==z):[...p.zonasDolor,z]}));setSaved(false);};
   const WRow=({field,label})=>(
@@ -3364,6 +3410,7 @@ function PlayerWellness({player}){
       </div>
     </div>
   );
+  if(checking)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Verificando...</div></Card>;
   if(yaDone)return(
     <Card>
       <div style={{textAlign:"center",padding:"30px 10px"}}>
