@@ -2533,12 +2533,13 @@ function StaffWellness(){
   const todayRows=allByDate[hoy]||[];
   const pastDates=Object.keys(allByDate).filter(d=>d!==hoy);
 
-  const alertsHoy=todayRows.filter(r=>+r["Calidad Sueño"]<=2||+r.Fatiga<=2||+r["Estrés"]<=2||+r["Ánimo"]<=2);
+  const alertsHoy=todayRows.filter(r=>+r["Calidad Sueño"]<=2||+r.Fatiga<=2||+r["Dolor Muscular"]<=2||+r["Estrés"]<=2||+r["Ánimo"]<=2);
 
   const AlertRow=({r})=>{
     const al=[];
     if(+r["Calidad Sueño"]<=2)al.push("Sueño↓");
     if(+r.Fatiga<=2)al.push("Fatiga↓");
+    if(+r["Dolor Muscular"]<=2)al.push("Dolor↓");
     if(+r["Estrés"]<=2)al.push("Estrés↑");
     if(+r["Ánimo"]<=2)al.push("Ánimo↓");
     if(!al.length)return null;
