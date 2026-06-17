@@ -295,28 +295,28 @@ const ENTRENOS=[
     {n:"Mateluna Florencia",min:7,dist:758.0,mxm:102.0,hsr:472.0,ai18:284.0,spr:136.0,acc:11.0,dsc:3.0,ns:10.0,vmax:25.6}
   ]},
   {id:"e10jun",label:"10-jun",fecha:"10-jun",tipo:"entreno",jugadoras:[
-    {n:"Silva Victoria",min:45,dist:4434.0,mxm:99.0,hsr:474.0,ai18:593.0,spr:34.0,acc:35.0,dsc:49.0,ns:2.0,vmax:25.3},
-    {n:"Sierra Julieta",min:50,dist:4639.0,mxm:93.0,hsr:501.0,ai18:440.0,spr:42.0,acc:65.0,dsc:64.0,ns:3.0,vmax:25.3},
-    {n:"Carrasco Sofia",min:75,dist:4727.0,mxm:66.0,hsr:460.0,ai18:646.0,spr:14.0,acc:46.0,dsc:46.0,ns:1.0,vmax:25.1},
-    {n:"Retamal Antonia",min:45,dist:4227.0,mxm:95.0,hsr:530.0,ai18:476.0,spr:0.0,acc:34.0,dsc:37.0,ns:0.0,vmax:23.8},
-    {n:"Pollmann Marianne",min:80,dist:4933.0,mxm:71.0,hsr:445.0,ai18:298.0,spr:0.0,acc:32.0,dsc:19.0,ns:0.0,vmax:23.1},
-    {n:"Mateluna Florencia",min:80,dist:6007.0,mxm:78.0,hsr:656.0,ai18:624.0,spr:0.0,acc:55.0,dsc:62.0,ns:0.0,vmax:22.4},
-    {n:"Errazu Sofia",min:48,dist:3939.0,mxm:85.0,hsr:472.0,ai18:328.0,spr:0.0,acc:39.0,dsc:29.0,ns:0.0,vmax:22.3},
-    {n:"Pareja Camila",min:75,dist:4601.0,mxm:63.0,hsr:439.0,ai18:246.0,spr:0.0,acc:28.0,dsc:17.0,ns:0.0,vmax:21.5},
-    {n:"Gomez Camila",min:80,dist:4576.0,mxm:59.0,hsr:457.0,ai18:196.0,spr:0.0,acc:26.0,dsc:36.0,ns:0.0,vmax:21.0},
+    {n:"Silva Victoria",min:45,dist:4434.0,mxm:99.0,hsr:1100.0,ai18:593.0,spr:34.0,acc:35.0,dsc:49.0,ns:2.0,vmax:25.3},
+    {n:"Sierra Julieta",min:50,dist:4639.0,mxm:93.0,hsr:984.0,ai18:440.0,spr:42.0,acc:65.0,dsc:64.0,ns:3.0,vmax:25.3},
+    {n:"Carrasco Sofia",min:75,dist:4727.0,mxm:66.0,hsr:1120.0,ai18:646.0,spr:14.0,acc:46.0,dsc:46.0,ns:1.0,vmax:25.1},
+    {n:"Retamal Antonia",min:45,dist:4227.0,mxm:95.0,hsr:1006.0,ai18:476.0,spr:0.0,acc:34.0,dsc:37.0,ns:0.0,vmax:23.8},
+    {n:"Pollmann Marianne",min:80,dist:4933.0,mxm:71.0,hsr:743.0,ai18:298.0,spr:0.0,acc:32.0,dsc:19.0,ns:0.0,vmax:23.1},
+    {n:"Mateluna Florencia",min:80,dist:6007.0,mxm:78.0,hsr:1280.0,ai18:624.0,spr:0.0,acc:55.0,dsc:62.0,ns:0.0,vmax:22.4},
+    {n:"Errazu Sofia",min:48,dist:3939.0,mxm:85.0,hsr:801.0,ai18:328.0,spr:0.0,acc:39.0,dsc:29.0,ns:0.0,vmax:22.3},
+    {n:"Pareja Camila",min:75,dist:4601.0,mxm:63.0,hsr:685.0,ai18:246.0,spr:0.0,acc:28.0,dsc:17.0,ns:0.0,vmax:21.5},
+    {n:"Gomez Camila",min:80,dist:4576.0,mxm:59.0,hsr:653.0,ai18:196.0,spr:0.0,acc:26.0,dsc:36.0,ns:0.0,vmax:21.0},
     {n:"Arau Maria",min:73,dist:1715.0,mxm:24.0,hsr:11.0,ai18:0.0,spr:0.0,acc:13.0,dsc:7.0,ns:0.0,vmax:17.0}
   ]},
   {id:"e15jun",label:"15-jun",fecha:"15-jun",tipo:"entreno",jugadoras:[
-    {n:"Gacitua Emilia",min:63,dist:4268.0,mxm:68.0,hsr:244.0,ai18:533.0,spr:74.0,acc:42.0,dsc:21.0,ns:4.0,vmax:26.8},
-    {n:"Sierra Julieta",min:32,dist:2883.0,mxm:91.0,hsr:137.0,ai18:317.0,spr:35.0,acc:22.0,dsc:28.0,ns:1.0,vmax:25.9},
-    {n:"Carrasco Sofia",min:62,dist:4818.0,mxm:78.0,hsr:280.0,ai18:356.0,spr:3.0,acc:31.0,dsc:45.0,ns:0.0,vmax:24.4},
-    {n:"Errazu Sofia",min:63,dist:5027.0,mxm:80.0,hsr:287.0,ai18:519.0,spr:0.0,acc:40.0,dsc:22.0,ns:0.0,vmax:23.3},
-    {n:"Retamal Antonia",min:61,dist:4904.0,mxm:81.0,hsr:239.0,ai18:548.0,spr:0.0,acc:31.0,dsc:40.0,ns:0.0,vmax:23.0},
-    {n:"Silva Victoria",min:62,dist:4740.0,mxm:78.0,hsr:351.0,ai18:607.0,spr:0.0,acc:47.0,dsc:54.0,ns:0.0,vmax:23.0},
-    {n:"Mateluna Florencia",min:63,dist:5489.0,mxm:88.0,hsr:423.0,ai18:577.0,spr:0.0,acc:40.0,dsc:33.0,ns:0.0,vmax:22.4},
-    {n:"Alfaro Javiera",min:62,dist:4594.0,mxm:74.0,hsr:251.0,ai18:389.0,spr:0.0,acc:24.0,dsc:27.0,ns:0.0,vmax:21.8},
-    {n:"Pareja Camila",min:62,dist:4638.0,mxm:75.0,hsr:382.0,ai18:371.0,spr:0.0,acc:29.0,dsc:20.0,ns:0.0,vmax:21.0},
-    {n:"Gutierrez Renata",min:62,dist:4176.0,mxm:68.0,hsr:381.0,ai18:100.0,spr:0.0,acc:14.0,dsc:21.0,ns:0.0,vmax:21.0}
+    {n:"Gacitua Emilia",min:63,dist:4268.0,mxm:68.0,hsr:851.0,ai18:533.0,spr:74.0,acc:42.0,dsc:21.0,ns:4.0,vmax:26.8},
+    {n:"Sierra Julieta",min:32,dist:2883.0,mxm:91.0,hsr:489.0,ai18:317.0,spr:35.0,acc:22.0,dsc:28.0,ns:1.0,vmax:25.9},
+    {n:"Carrasco Sofia",min:62,dist:4818.0,mxm:78.0,hsr:639.0,ai18:356.0,spr:3.0,acc:31.0,dsc:45.0,ns:0.0,vmax:24.4},
+    {n:"Errazu Sofia",min:63,dist:5027.0,mxm:80.0,hsr:806.0,ai18:519.0,spr:0.0,acc:40.0,dsc:22.0,ns:0.0,vmax:23.3},
+    {n:"Retamal Antonia",min:61,dist:4904.0,mxm:81.0,hsr:787.0,ai18:548.0,spr:0.0,acc:31.0,dsc:40.0,ns:0.0,vmax:23.0},
+    {n:"Silva Victoria",min:62,dist:4740.0,mxm:78.0,hsr:958.0,ai18:607.0,spr:0.0,acc:47.0,dsc:54.0,ns:0.0,vmax:23.0},
+    {n:"Mateluna Florencia",min:63,dist:5489.0,mxm:88.0,hsr:1000.0,ai18:577.0,spr:0.0,acc:40.0,dsc:33.0,ns:0.0,vmax:22.4},
+    {n:"Alfaro Javiera",min:62,dist:4594.0,mxm:74.0,hsr:640.0,ai18:389.0,spr:0.0,acc:24.0,dsc:27.0,ns:0.0,vmax:21.8},
+    {n:"Pareja Camila",min:62,dist:4638.0,mxm:75.0,hsr:752.0,ai18:371.0,spr:0.0,acc:29.0,dsc:20.0,ns:0.0,vmax:21.0},
+    {n:"Gutierrez Renata",min:62,dist:4176.0,mxm:68.0,hsr:481.0,ai18:100.0,spr:0.0,acc:14.0,dsc:21.0,ns:0.0,vmax:21.0}
   ]},
 ];
 
