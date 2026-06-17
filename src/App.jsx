@@ -370,19 +370,19 @@ const YOYO=[
 // Actualizado: VS COGS, VS PWCC, VS MANQUEHUE, VS CATÓLICA B, VS OLD REDS, VS OLD GIRLS
 const PUESTOS=[
   {p:"DC",n:"Def. Central", jugadoras:["Muñoz Constanza","Pareja Camila"],
-   dist:5847,mxm:88.9,hsr:392,ai18:108,spr:4,ns:0,acc:10,dsc:16,vmax:22.5},
+   dist:5796,mxm:88.1,hsr:374,ai18:104,spr:4,ns:0,acc:10,dsc:16,vmax:22.4},
   {p:"LT",n:"Lateral",      jugadoras:["Gomez Camila","Gutierrez Renata","Hevia Valentina","Mateluna Florencia","Retamal Antonia"],
-   dist:6403,mxm:102.5,hsr:629,ai18:161,spr:8,ns:0,acc:13,dsc:20,vmax:21.8},
-  {p:"MC",n:"Med. Central", jugadoras:["Sierra Julieta"],
-   dist:7095,mxm:109.7,hsr:966,ai18:302,spr:9,ns:1,acc:28,dsc:46,vmax:23.4},
+   dist:6430,mxm:102.1,hsr:626,ai18:167,spr:7,ns:0,acc:13,dsc:22,vmax:21.9},
+  {p:"MC",n:"Med. Central", jugadoras:["Sierra Julieta","Manriquez Fernanda"],
+   dist:7045,mxm:111.0,hsr:974,ai18:291,spr:8,ns:1,acc:27,dsc:47,vmax:23.3},
   {p:"VL",n:"Volante",      jugadoras:["Carrasco Sofia","Gacitua Emilia","Silva Victoria"],
-   dist:7026,mxm:112.7,hsr:1201,ai18:409,spr:89,ns:6,acc:33,dsc:45,vmax:24.4},
-  {p:"WG",n:"Wing",         jugadoras:["Alfaro Javiera","Errazu Sofia","Liu Macarena"],
-   dist:6158,mxm:111.0,hsr:892,ai18:233,spr:22,ns:1,acc:27,dsc:21,vmax:22.4},
+   dist:7003,mxm:111.1,hsr:1170,ai18:409,spr:77,ns:5,acc:32,dsc:45,vmax:24.3},
+  {p:"WG",n:"Wing",         jugadoras:["Alfaro Javiera","Errazu Sofia","Liu Macarena","Arau María Paz"],
+   dist:6033,mxm:112.2,hsr:890,ai18:240,spr:18,ns:1,acc:26,dsc:22,vmax:22.4},
   {p:"DL",n:"Del. Central", jugadoras:["Pollmann Marianne","Sepulveda Eileen"],
-   dist:6112,mxm:99.6,hsr:596,ai18:136,spr:4,ns:0,acc:18,dsc:18,vmax:22.2},
+   dist:6206,mxm:100.0,hsr:581,ai18:135,spr:3,ns:0,acc:17,dsc:16,vmax:22.4},
   {p:"PROM",n:"Promedio",   jugadoras:[],
-   dist:6460,mxm:103.1,hsr:778,ai18:233,spr:29,ns:2,acc:21,dsc:29,vmax:22.9},
+   dist:6449,mxm:103.0,hsr:769,ai18:233,spr:25,ns:2,acc:21,dsc:29,vmax:22.9},
 ];
 
 // ─── ASISTENCIA — hoja PF Old Gabs (datos previos del Drive) ─────────────────
