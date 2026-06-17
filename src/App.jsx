@@ -306,6 +306,18 @@ const ENTRENOS=[
     {n:"Gomez Camila",min:80,dist:4576.0,mxm:59.0,hsr:457.0,ai18:196.0,spr:0.0,acc:26.0,dsc:36.0,ns:0.0,vmax:21.0},
     {n:"Arau Maria",min:73,dist:1715.0,mxm:24.0,hsr:11.0,ai18:0.0,spr:0.0,acc:13.0,dsc:7.0,ns:0.0,vmax:17.0}
   ]},
+  {id:"e15jun",label:"15-jun",fecha:"15-jun",tipo:"entreno",jugadoras:[
+    {n:"Gacitua Emilia",min:63,dist:4268.0,mxm:68.0,hsr:244.0,ai18:533.0,spr:74.0,acc:42.0,dsc:21.0,ns:4.0,vmax:26.8},
+    {n:"Sierra Julieta",min:32,dist:2883.0,mxm:91.0,hsr:137.0,ai18:317.0,spr:35.0,acc:22.0,dsc:28.0,ns:1.0,vmax:25.9},
+    {n:"Carrasco Sofia",min:62,dist:4818.0,mxm:78.0,hsr:280.0,ai18:356.0,spr:3.0,acc:31.0,dsc:45.0,ns:0.0,vmax:24.4},
+    {n:"Errazu Sofia",min:63,dist:5027.0,mxm:80.0,hsr:287.0,ai18:519.0,spr:0.0,acc:40.0,dsc:22.0,ns:0.0,vmax:23.3},
+    {n:"Retamal Antonia",min:61,dist:4904.0,mxm:81.0,hsr:239.0,ai18:548.0,spr:0.0,acc:31.0,dsc:40.0,ns:0.0,vmax:23.0},
+    {n:"Silva Victoria",min:62,dist:4740.0,mxm:78.0,hsr:351.0,ai18:607.0,spr:0.0,acc:47.0,dsc:54.0,ns:0.0,vmax:23.0},
+    {n:"Mateluna Florencia",min:63,dist:5489.0,mxm:88.0,hsr:423.0,ai18:577.0,spr:0.0,acc:40.0,dsc:33.0,ns:0.0,vmax:22.4},
+    {n:"Alfaro Javiera",min:62,dist:4594.0,mxm:74.0,hsr:251.0,ai18:389.0,spr:0.0,acc:24.0,dsc:27.0,ns:0.0,vmax:21.8},
+    {n:"Pareja Camila",min:62,dist:4638.0,mxm:75.0,hsr:382.0,ai18:371.0,spr:0.0,acc:29.0,dsc:20.0,ns:0.0,vmax:21.0},
+    {n:"Gutierrez Renata",min:62,dist:4176.0,mxm:68.0,hsr:381.0,ai18:100.0,spr:0.0,acc:14.0,dsc:21.0,ns:0.0,vmax:21.0}
+  ]},
 ];
 
 // ─── MINUTOS DE JUEGO — hoja Minutos Juego del Drive ───────────────────────
