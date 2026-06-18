@@ -116,20 +116,34 @@ function parseGPSSheet(rows, tipo){
 }
 
 function useGPSData(){
-  const [data,setData]=useState({partidos:null,amistosos:null,entrenos:null,loading:true,error:null});
+  const [data,setData]=useState({
+    partidos:PARTIDOS_FB,
+    amistosos:AMISTOSOS_FB,
+    entrenos:ENTRENOS_FB,
+    loading:false, // empieza con fallback, no bloqueante
+    error:null
+  });
   React.useEffect(()=>{
     fetch(APPS_URL)
       .then(r=>r.json())
       .then(d=>{
-        const pSheet=d["Partidos"]||[];
-        const eSheet=d["Entrenamientos"]||[];
-        const allP=parseGPSSheet(pSheet,"partido");
-        const partidos=allP.filter(s=>s.tipo==="partido");
-        const amistosos=allP.filter(s=>s.tipo==="amistoso");
-        const entrenos=parseGPSSheet(eSheet,"entreno");
-        setData({partidos,amistosos,entrenos,loading:false,error:null});
+        try{
+          const pSheet=d["Partidos"]||[];
+          const eSheet=d["Entrenamientos"]||[];
+          const allP=pSheet.length>1?parseGPSSheet(pSheet,"partido"):[];
+          const partidos=allP.filter(s=>s.tipo==="partido");
+          const amistosos=allP.filter(s=>s.tipo==="amistoso");
+          const entrenos=eSheet.length>1?parseGPSSheet(eSheet,"entreno"):[];
+          // Solo actualizar si efectivamente parseó datos
+          if(partidos.length>0||entrenos.length>0){
+            setData({partidos:partidos.length?partidos:PARTIDOS_FB,amistosos,entrenos,loading:false,error:null});
+          }
+        }catch(parseErr){
+          console.error("GPS parse error:",parseErr);
+          // Mantener fallback, no crashear
+        }
       })
-      .catch(err=>setData(prev=>({...prev,loading:false,error:err.message})));
+      .catch(err=>console.error("GPS fetch error:",err));
   },[]);
   return data;
 }
