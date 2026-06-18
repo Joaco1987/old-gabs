@@ -820,23 +820,23 @@ function StaffGPS(){
             <CT text="Datos individuales"/>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-                <TH cols={["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx"]}/>
+                <thead><tr>{["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx"].map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
                 <tbody>{[...sess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
                 const {h15,h18,sp}=calcZonas(j,sess);
                   return(
                     <tr key={j.n}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{j.n}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{j.min}'</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{j.dist.toLocaleString()}m</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{j.mxm}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{j.min}'</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500,textAlign:"center"}}>{j.dist.toLocaleString()}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{j.mxm}</td>
                       
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green}}>{h15!=null?`${Math.max(0,h15)}m`:"—"}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{h18!=null?`${Math.max(0,h18)}m`:"—"}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400}}>{sp!=null?`${sp}m`:"—"}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{j.dsc}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{h15!=null?`${Math.max(0,h15)}m`:"—"}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,textAlign:"center"}}>{h18!=null?`${Math.max(0,h18)}m`:"—"}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400,textAlign:"center"}}>{sp!=null?`${sp}m`:"—"}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple,textAlign:"center"}}>{j.acc}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{j.dsc}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{j.vmax}</td>
                     </tr>
                   );
                 })}</tbody>
@@ -2955,7 +2955,7 @@ function PlayerGPS({player}){
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <TH cols={selId?["Jugadora","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]:["Sesión","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]}/>
+            <thead><tr>{(selId?["Jugadora","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]:["Sesión","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]).map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
             <tbody>{selId?(
               (()=>{
                 const selSess=sess.find(s=>s.id===selId);
@@ -2967,16 +2967,16 @@ function PlayerGPS({player}){
                   return(
                     <tr key={j.n} style={{background:isMe?"#0d1f35":"transparent"}}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>{isMe?"▶ ":""}{j.n.split(" ")[0]}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{j.min}'</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?600:400}}>{j.dist.toLocaleString()}m</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{j.mxm}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green}}>{h15}m</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{h18}m</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400}}>{sp}m</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{j.acc||0}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{j.dsc||0}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{j.min}'</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?600:400,textAlign:"center"}}>{j.dist.toLocaleString()}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{j.mxm}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{h15}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,textAlign:"center"}}>{h18}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400,textAlign:"center"}}>{sp}m</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple,textAlign:"center"}}>{j.acc||0}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{j.dsc||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{j.vmax}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{j.vmax}</td>
                     </tr>
                   );
                 });
@@ -2989,16 +2989,16 @@ function PlayerGPS({player}){
                 return(
                   <tr key={s.id}>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{s.data.min}'</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500}}>{s.data.dist.toLocaleString()}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{s.data.mxm}</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green}}>{h15}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{h18}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400}}>{sp}m</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{s.data.acc||0}</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{s.data.dsc||0}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{s.data.min}'</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500,textAlign:"center"}}>{s.data.dist.toLocaleString()}m</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{s.data.mxm}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{h15}m</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,textAlign:"center"}}>{h18}m</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:sp>0?T.red:T.muted,fontWeight:sp>0?700:400,textAlign:"center"}}>{sp}m</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.purple,textAlign:"center"}}>{s.data.acc||0}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{s.data.dsc||0}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(s.data.ns||0)>0?T.text:T.muted,fontWeight:(s.data.ns||0)>0?600:400,textAlign:"center"}}>{s.data.ns||0}</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{s.data.vmax}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{s.data.vmax}</td>
                   </tr>
                 );
               })
