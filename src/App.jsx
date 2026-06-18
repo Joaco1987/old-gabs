@@ -69,63 +69,55 @@ const GPS_SKIP=new Set(["Promedio","Max","Min","JUGADORA","PROMEDIOS",""]);
 function parseGPSSheet(rows, tipo){
   const sessions=[];
   const processed=new Set();
-  let i=0;
-  while(i<rows.length){
-    const row=rows[i]||[];
-    // El label está en columna 1 (índice 1, col B)
-    const cell=String(row[1]||"").trim();
+  // Collect all JUGADORA header rows
+  const headerRows=[];
+  for(let i=0;i<rows.length;i++){
+    if(String(rows[i]?.[1]||"").trim()==="JUGADORA") headerRows.push(i);
+  }
 
-    const isPartido=cell.startsWith("PARTIDO VS ");
-    const isAmistoso=cell.startsWith("AMISTOSO VS ");
-    // Para entrenamientos: cualquier valor no vacío y no skip en col 1
-    const isEntreno=tipo==="entreno"&&!isPartido&&!isAmistoso&&!!cell&&!GPS_SKIP.has(cell)&&cell!=="JUGADORA";
-
-    if(isPartido||isAmistoso||isEntreno){
-      let sessionLabel="";
-      let sessionTipo="";
-      if(isPartido){sessionLabel=cell.replace("PARTIDO VS ","").trim();sessionTipo="partido";}
-      else if(isAmistoso){sessionLabel=cell.replace("AMISTOSO VS ","").trim();sessionTipo="amistoso";}
-      else{sessionLabel=fmtDate(cell);sessionTipo="entreno";}
-
-      // Buscar fila JUGADORA en las próximas 5 filas
-      let headerRow=-1;
-      for(let j=i+1;j<Math.min(i+6,rows.length);j++){
-        if(String(rows[j][1]||"").trim()==="JUGADORA"){headerRow=j;break;}
-      }
-
-      if(headerRow>=0){
-        const key=`${sessionTipo}-${sessionLabel}`;
-        if(!processed.has(key)){
-          processed.add(key);
-          const jugadoras=[];
-          for(let k=headerRow+1;k<rows.length;k++){
-            const r=rows[k]||[];
-            const name=String(r[1]||"").trim();
-            if(!name) break;
-            if(GPS_SKIP.has(name)) continue;
-            const mins=parseMin(r[2]);
-            const dist_raw=parseNum(r[3]);
-            if(mins<=0||!dist_raw||dist_raw<=0) continue;
-            const g=(idx)=>parseNum(r[idx]);
-            const rnd=(v)=>v!=null?Math.round(v):null;
-            const rnd1=(v)=>v!=null?Math.round(v*10)/10:null;
-            jugadoras.push({
-              n:name,min:mins,dist:Math.round(dist_raw),
-              mxm:rnd1(g(4)),hsr:rnd(g(5)),ai18:rnd(g(6)),
-              spr:rnd(g(7)),acc:rnd(g(8)),dsc:rnd(g(9)),
-              ns:rnd(g(10)),vmax:rnd1(g(11))
-            });
-          }
-          if(jugadoras.length>0){
-            const id=(sessionTipo==="partido"?"p":sessionTipo==="amistoso"?"a":"e")+sessionLabel.replace(/\s+/g,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase();
-            sessions.push({id,label:`vs ${sessionLabel}`,fecha:sessionLabel,tipo:sessionTipo,jugadoras});
-          }
-        }
-        i=headerRow+1;
-        continue;
-      }
+  for(const hRow of headerRows){
+    // Look for label 1-3 rows above the header
+    let label="";
+    let sessionTipo=tipo;
+    for(let k=hRow-1;k>=Math.max(0,hRow-4);k--){
+      const cell=String(rows[k]?.[1]||"").trim();
+      if(!cell) continue;
+      if(cell.startsWith("PARTIDO VS ")){label=cell.replace("PARTIDO VS ","").trim();sessionTipo="partido";}
+      else if(cell.startsWith("AMISTOSO VS ")){label=cell.replace("AMISTOSO VS ","").trim();sessionTipo="amistoso";}
+      else if(tipo==="entreno"&&!GPS_SKIP.has(cell)&&cell!=="JUGADORA"){label=fmtDate(cell);sessionTipo="entreno";}
+      if(label) break;
     }
-    i++;
+    // Fallback label
+    if(!label) label=`Sesión ${sessions.length+1}`;
+
+    const key=`${sessionTipo}-${label}`;
+    if(processed.has(key)) continue;
+    processed.add(key);
+
+    const jugadoras=[];
+    for(let k=hRow+1;k<rows.length;k++){
+      const r=rows[k]||[];
+      const name=String(r[1]||"").trim();
+      if(!name) break;
+      if(GPS_SKIP.has(name)) continue;
+      const mins=parseMin(r[2]);
+      const dist_raw=parseNum(r[3]);
+      if(mins<=0||!dist_raw||dist_raw<=0) continue;
+      const g=(idx)=>parseNum(r[idx]);
+      const rnd=(v)=>v!=null?Math.round(v):null;
+      const rnd1=(v)=>v!=null?Math.round(v*10)/10:null;
+      jugadoras.push({
+        n:name,min:mins,dist:Math.round(dist_raw),
+        mxm:rnd1(g(4)),hsr:rnd(g(5)),ai18:rnd(g(6)),
+        spr:rnd(g(7)),acc:rnd(g(8)),dsc:rnd(g(9)),
+        ns:rnd(g(10)),vmax:rnd1(g(11))
+      });
+    }
+
+    if(jugadoras.length>0){
+      const id=(sessionTipo==="partido"?"p":sessionTipo==="amistoso"?"a":"e")+label.replace(/\s+/g,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase();
+      sessions.push({id,label:label.startsWith("Sesión")?" "+label:`vs ${label}`,fecha:label,tipo:sessionTipo,jugadoras});
+    }
   }
   return sessions;
 }
@@ -146,15 +138,6 @@ function useGPSData(){
           const pSheet=d["Partidos"]||[];
           const eSheet=d["Entrenamientos"]||[];
           const aSheet=d["Amistosos"]||[];
-          
-          console.log("GPS sheets:", Object.keys(d));
-          console.log("Partidos rows:", pSheet.length);
-          if(pSheet.length>0) console.log("Partidos row[0]:", JSON.stringify(pSheet[0]));
-          if(pSheet.length>1) console.log("Partidos row[1]:", JSON.stringify(pSheet[1]));
-          if(pSheet.length>2) console.log("Partidos row[2]:", JSON.stringify(pSheet[2]));
-          if(pSheet.length>3) console.log("Partidos row[3]:", JSON.stringify(pSheet[3]));
-          console.log("Entrenos rows:", eSheet.length);
-          if(eSheet.length>1) console.log("Entrenos row[1]:", JSON.stringify(eSheet[1]));
 
           const partidos=pSheet.length>1?parseGPSSheet(pSheet,"partido").filter(s=>s.tipo==="partido"):[];
           const amistososFromPartidos=pSheet.length>1?parseGPSSheet(pSheet,"partido").filter(s=>s.tipo==="amistoso"):[];
