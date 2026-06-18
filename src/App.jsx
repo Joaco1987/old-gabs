@@ -2369,9 +2369,10 @@ function StaffAsistenciaReporte({onTomar,onFechas}){
           const mar=pctMes("2026-03");
           const abr=pctMes("2026-04");
           const may=pctMes("2026-05");
-          const vals=[mar,abr,may].filter(v=>v!==null);
+          const jun=pctMes("2026-06");
+          const vals=[mar,abr,may,jun].filter(v=>v!==null);
           const tot=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):0;
-          return {n,mar:mar!==null?mar+"%":"—",abr:abr!==null?abr+"%":"—",may:may!==null?may+"%":"—",tot:tot+"%",pct:tot};
+          return {n,mar:mar!==null?mar+"%":"—",abr:abr!==null?abr+"%":"—",may:may!==null?may+"%":"—",jun:jun!==null?jun+"%":"—",tot:tot+"%",pct:tot};
         }).sort((a,b)=>b.pct-a.pct);
         setRows(result);
       })
@@ -2383,6 +2384,7 @@ function StaffAsistenciaReporte({onTomar,onFechas}){
     {key:"2026-03",label:"Mar",color:T.green},
     {key:"2026-04",label:"Abr",color:T.amber},
     {key:"2026-05",label:"May",color:T.blue},
+    {key:"2026-06",label:"Jun",color:T.cyan||"#06b6d4"},
   ];
 
   const openModal=(jugadora,mesKey)=>{
@@ -2458,6 +2460,7 @@ function StaffAsistenciaReporte({onTomar,onFechas}){
                   "2026-03":{val:r.mar,color:T.green},
                   "2026-04":{val:r.abr,color:T.amber},
                   "2026-05":{val:r.may,color:T.blue},
+                  "2026-06":{val:r.jun,color:T.cyan||"#06b6d4"},
                 };
                 return(
                   <tr key={i}>
@@ -3417,7 +3420,8 @@ function PlayerAsistencia({player}){
   const mar=pctMes("2026-03");
   const abr=pctMes("2026-04");
   const may=pctMes("2026-05");
-  const vals=[feb,mar,abr,may].filter(v=>v!==null);
+  const jun=pctMes("2026-06");
+  const vals=[feb,mar,abr,may,jun].filter(v=>v!==null);
   const tot=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):pct;
 
   // Construir filas del calendario: todas las fechas únicas en orden
@@ -3426,6 +3430,13 @@ function PlayerAsistencia({player}){
     {key:"2026-03",label:"MARZO",color:T.green},
     {key:"2026-04",label:"ABRIL",color:T.blue},
     {key:"2026-05",label:"MAYO",color:T.amber},
+    {key:"2026-06",label:"JUNIO",color:T.cyan||"#06b6d4"},
+    {key:"2026-07",label:"JULIO",color:T.red||"#e05555"},
+    {key:"2026-08",label:"AGOSTO",color:"#a78bfa"},
+    {key:"2026-09",label:"SEPTIEMBRE",color:T.green},
+    {key:"2026-10",label:"OCTUBRE",color:T.blue},
+    {key:"2026-11",label:"NOVIEMBRE",color:T.amber},
+    {key:"2026-12",label:"DICIEMBRE",color:T.cyan||"#06b6d4"},
   ];
 
   // Formato fecha columna: "4/3"
@@ -3484,6 +3495,7 @@ function PlayerAsistencia({player}){
             {l:"Marzo",v:mar!==null?mar+"%":"—",c:T.green},
             {l:"Abril",v:abr!==null?abr+"%":"—",c:T.blue},
             {l:"Mayo",v:may!==null?may+"%":"—",c:T.amber},
+            {l:"Junio",v:jun!==null?jun+"%":"—",c:T.cyan||"#06b6d4"},
             {l:"Total",v:tot+"%",c:pct>=80?T.green:pct>=60?T.amber:T.red}
           ].map((m,i)=>(
             <div key={i} style={{background:"#0d1020",borderRadius:8,padding:"8px 14px",border:`1px solid ${m.c}33`}}>
