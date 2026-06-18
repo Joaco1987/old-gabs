@@ -69,34 +69,39 @@ const GPS_SKIP=new Set(["Promedio","Max","Min","JUGADORA","PROMEDIOS",""]);
 function parseGPSSheet(rows, tipo){
   const sessions=[];
   const COLS=12;
+  const processed=new Set();// evitar duplicar sesiones
 
   for(let i=0;i<rows.length;i++){
     const row=rows[i];
-    // Check each potential offset (1, 13, 25...) for session labels
-    for(let offset=1;offset<(row.length||0);offset+=COLS){
+    // Buscar labels en cada posición de columna (1, 13, 25...)
+    for(let offset=1;offset<Math.max(row.length,2);offset+=COLS){
       const cell=String(row[offset]||"").trim();
       if(!cell) continue;
 
-      const isPartido=cell.includes("PARTIDO VS ");
-      const isAmistoso=cell.includes("AMISTOSO VS ");
-      const isEntreno=tipo==="entreno"&&!isPartido&&!isAmistoso&&cell&&!GPS_SKIP.has(cell);
+      const isPartido=cell.startsWith("PARTIDO VS ");
+      const isAmistoso=cell.startsWith("AMISTOSO VS ");
+      const isEntreno=tipo==="entreno"&&!isPartido&&!isAmistoso&&!GPS_SKIP.has(cell);
 
       if(!isPartido&&!isAmistoso&&!isEntreno) continue;
 
-      // Find header row (JUGADORA)
+      // Buscar fila JUGADORA en las próximas filas (mismo offset)
       let headerRow=-1;
       for(let j=i+1;j<Math.min(i+5,rows.length);j++){
         if(String(rows[j][offset]||"").trim()==="JUGADORA"){headerRow=j;break;}
       }
       if(headerRow<0) continue;
 
-      let sessionLabel=cell;
-      let sessionTipo="entreno";
+      let sessionLabel="";
+      let sessionTipo="";
       if(isPartido){sessionLabel=cell.replace("PARTIDO VS ","").trim();sessionTipo="partido";}
       else if(isAmistoso){sessionLabel=cell.replace("AMISTOSO VS ","").trim();sessionTipo="amistoso";}
       else{sessionLabel=fmtDate(cell);sessionTipo="entreno";}
 
-      // Parse player data
+      const key=`${sessionTipo}-${sessionLabel}-${offset}`;
+      if(processed.has(key)) continue;
+      processed.add(key);
+
+      // Parsear jugadoras
       const jugadoras=[];
       for(let k=headerRow+1;k<rows.length;k++){
         const r=rows[k];
@@ -106,25 +111,16 @@ function parseGPSSheet(rows, tipo){
         const mins=parseMin(r[offset+1]);
         const dist_raw=parseNum(r[offset+2]);
         if(mins<=0||!dist_raw||dist_raw<=0) continue;
-        const dist=Math.round(dist_raw);
-        const mxm_r=parseNum(r[offset+3]);
-        const hsr_r=parseNum(r[offset+4]);
-        const ai18_r=parseNum(r[offset+5]);
-        const spr_r=parseNum(r[offset+6]);
-        const acc_r=parseNum(r[offset+7]);
-        const dsc_r=parseNum(r[offset+8]);
-        const ns_r=parseNum(r[offset+9]);
-        const vmax_r=parseNum(r[offset+10]);
         jugadoras.push({
-          n:name, min:mins, dist,
-          mxm:mxm_r!=null?Math.round(mxm_r*10)/10:null,
-          hsr:hsr_r!=null?Math.round(hsr_r):null,
-          ai18:ai18_r!=null?Math.round(ai18_r):null,
-          spr:spr_r!=null?Math.round(spr_r):null,
-          acc:acc_r!=null?Math.round(acc_r):null,
-          dsc:dsc_r!=null?Math.round(dsc_r):null,
-          ns:ns_r!=null?Math.round(ns_r):null,
-          vmax:vmax_r!=null?Math.round(vmax_r*10)/10:null
+          n:name, min:mins, dist:Math.round(dist_raw),
+          mxm:parseNum(r[offset+3])!=null?Math.round(parseNum(r[offset+3])*10)/10:null,
+          hsr:parseNum(r[offset+4])!=null?Math.round(parseNum(r[offset+4])):null,
+          ai18:parseNum(r[offset+5])!=null?Math.round(parseNum(r[offset+5])):null,
+          spr:parseNum(r[offset+6])!=null?Math.round(parseNum(r[offset+6])):null,
+          acc:parseNum(r[offset+7])!=null?Math.round(parseNum(r[offset+7])):null,
+          dsc:parseNum(r[offset+8])!=null?Math.round(parseNum(r[offset+8])):null,
+          ns:parseNum(r[offset+9])!=null?Math.round(parseNum(r[offset+9])):null,
+          vmax:parseNum(r[offset+10])!=null?Math.round(parseNum(r[offset+10])*10)/10:null
         });
       }
 
@@ -142,7 +138,7 @@ function useGPSData(){
     partidos:PARTIDOS_FB,
     amistosos:AMISTOSOS_FB,
     entrenos:ENTRENOS_FB,
-    loading:false, // empieza con fallback, no bloqueante
+    loading:false,
     error:null
   });
   React.useEffect(()=>{
@@ -152,17 +148,22 @@ function useGPSData(){
         try{
           const pSheet=d["Partidos"]||[];
           const eSheet=d["Entrenamientos"]||[];
-          const allP=pSheet.length>1?parseGPSSheet(pSheet,"partido"):[];
-          const partidos=allP.filter(s=>s.tipo==="partido");
-          const amistosos=allP.filter(s=>s.tipo==="amistoso");
+          const aSheet=d["Amistosos"]||[];
+
+          const partidos=pSheet.length>1?parseGPSSheet(pSheet,"partido").filter(s=>s.tipo==="partido"):[];
+          const amistososFromPartidos=pSheet.length>1?parseGPSSheet(pSheet,"partido").filter(s=>s.tipo==="amistoso"):[];
+          const amistososFromSheet=aSheet.length>1?parseGPSSheet(aSheet,"amistoso"):[];
+          const amistosos=[...amistososFromPartidos,...amistososFromSheet];
           const entrenos=eSheet.length>1?parseGPSSheet(eSheet,"entreno"):[];
-          // Solo actualizar si efectivamente parseó datos
-          if(partidos.length>0||entrenos.length>0){
-            setData({partidos:partidos.length?partidos:PARTIDOS_FB,amistosos,entrenos,loading:false,error:null});
-          }
+
+          setData({
+            partidos:partidos.length?partidos:PARTIDOS_FB,
+            amistosos,
+            entrenos,
+            loading:false,error:null
+          });
         }catch(parseErr){
           console.error("GPS parse error:",parseErr);
-          // Mantener fallback, no crashear
         }
       })
       .catch(err=>console.error("GPS fetch error:",err));
