@@ -97,7 +97,7 @@ function parseGPSSheet(rows, tipo){
     }
     if(!label) label=`Sesión ${sessions.length+1}`;
 
-    const key=`${sessionTipo}-${label}`;
+    const key=`${sessionTipo}-${label}-${hRow}`;
     if(processed.has(key)) continue;
     processed.add(key);
 
@@ -123,7 +123,7 @@ function parseGPSSheet(rows, tipo){
     }
 
     if(jugadoras.length>0){
-      const id=(sessionTipo==="partido"?"p":sessionTipo==="amistoso"?"a":"e")+label.replace(/\s+/g,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase();
+      const id=(sessionTipo==="partido"?"p":sessionTipo==="amistoso"?"a":"e")+label.replace(/\s+/g,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase()+"_"+hRow;
       sessions.push({id,label:`vs ${label}`,fecha:label,tipo:sessionTipo,jugadoras});
     }
   }
