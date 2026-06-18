@@ -146,6 +146,15 @@ function useGPSData(){
           const pSheet=d["Partidos"]||[];
           const eSheet=d["Entrenamientos"]||[];
           const aSheet=d["Amistosos"]||[];
+          
+          console.log("GPS sheets:", Object.keys(d));
+          console.log("Partidos rows:", pSheet.length);
+          if(pSheet.length>0) console.log("Partidos row[0]:", JSON.stringify(pSheet[0]));
+          if(pSheet.length>1) console.log("Partidos row[1]:", JSON.stringify(pSheet[1]));
+          if(pSheet.length>2) console.log("Partidos row[2]:", JSON.stringify(pSheet[2]));
+          if(pSheet.length>3) console.log("Partidos row[3]:", JSON.stringify(pSheet[3]));
+          console.log("Entrenos rows:", eSheet.length);
+          if(eSheet.length>1) console.log("Entrenos row[1]:", JSON.stringify(eSheet[1]));
 
           const partidos=pSheet.length>1?parseGPSSheet(pSheet,"partido").filter(s=>s.tipo==="partido"):[];
           const amistososFromPartidos=pSheet.length>1?parseGPSSheet(pSheet,"partido").filter(s=>s.tipo==="amistoso"):[];
