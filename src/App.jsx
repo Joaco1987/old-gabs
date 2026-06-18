@@ -139,31 +139,30 @@ function useGPSData(){
     error:null
   });
   React.useEffect(()=>{
-    fetch(APPS_URL)
-      .then(r=>r.json())
-      .then(d=>{
-        try{
-          const pSheet=d["Partidos"]||[];
-          const eSheet=d["Entrenamientos"]||[];
-          const aSheet=d["Amistosos"]||[];
+    const fetchSheet=(hoja)=>
+      fetch(`${APPS_URL}?accion=gps&hoja=${encodeURIComponent(hoja)}`)
+        .then(r=>r.json())
+        .catch(()=>null);
 
-          const partidos=pSheet.length>1?parseGPSSheet(pSheet,"partido").filter(s=>s.tipo==="partido"):[];
-          const amistososFromPartidos=pSheet.length>1?parseGPSSheet(pSheet,"partido").filter(s=>s.tipo==="amistoso"):[];
-          const amistososFromSheet=aSheet.length>1?parseGPSSheet(aSheet,"amistoso"):[];
-          const amistosos=[...amistososFromPartidos,...amistososFromSheet];
-          const entrenos=eSheet.length>1?parseGPSSheet(eSheet,"entreno"):[];
-
-          setData({
-            partidos:partidos.length?partidos:PARTIDOS_FB,
-            amistosos,
-            entrenos,
-            loading:false,error:null
-          });
-        }catch(parseErr){
-          console.error("GPS parse error:",parseErr);
-        }
-      })
-      .catch(err=>console.error("GPS fetch error:",err));
+    Promise.all([
+      fetchSheet("Partidos"),
+      fetchSheet("Entrenamientos"),
+      fetchSheet("Amistosos")
+    ]).then(([pRows,eRows,aRows])=>{
+      try{
+        const partidos=pRows&&pRows.length>1?parseGPSSheet(pRows,"partido"):[];
+        const entrenos=eRows&&eRows.length>1?parseGPSSheet(eRows,"entreno"):[];
+        const amistosos=aRows&&aRows.length>1?parseGPSSheet(aRows,"amistoso"):[];
+        setData({
+          partidos:partidos.length?partidos:PARTIDOS_FB,
+          amistosos:amistosos.length?amistosos:AMISTOSOS_FB,
+          entrenos:entrenos.length?entrenos:ENTRENOS_FB,
+          loading:false,error:null
+        });
+      }catch(err){
+        console.error("GPS parse error:",err);
+      }
+    }).catch(err=>console.error("GPS fetch error:",err));
   },[]);
   return data;
 }
