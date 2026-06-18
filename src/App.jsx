@@ -1083,7 +1083,7 @@ function StaffEvoGPS(){
       </div>
       {vista==="jugadora"&&(
         <select value={jugSel} onChange={e=>setJugSel(e.target.value)} style={{background:T.surf,border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"5px 10px",outline:"none",marginBottom:10,width:"100%"}}>
-          {allNames().map(n=><option key={n}>{n}</option>)}
+          {ALL_JUGADORAS.map(n=><option key={n}>{n}</option>)}
         </select>
       )}
       <div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:10}}>
@@ -3761,7 +3761,7 @@ function LoginScreen({onLogin}){
                 <div style={{fontSize:11,color:T.muted,marginBottom:6}}>Tu nombre</div>
                 <select value={player} onChange={e=>setPlayer(e.target.value)} style={{width:"100%",background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:player?T.text:T.muted,fontSize:13,padding:"10px 12px",outline:"none",boxSizing:"border-box"}}>
                   <option value="">Seleccioná tu nombre...</option>
-                  {allNames().map(n=><option key={n} value={n}>{n}</option>)}
+                  {ALL_JUGADORAS.map(n=><option key={n} value={n}>{n}</option>)}
                 </select>
               </div>
             )}
@@ -3815,7 +3815,7 @@ function AppInner(){
   const PARTIDOS=P.length?P:PARTIDOS_FB;
   const [session,setSession]=useState(null);
   const [tab,setTab]=useState(0);
-  const [player,setPlayer]=useState(()=>allNames(PARTIDOS_FB)[0]);
+  const [player,setPlayer]=useState(()=>ALL_JUGADORAS[0]);
   const handleLogin=(tipo,playerName)=>{setSession({tipo,player:playerName});setTab(0);if(playerName)setPlayer(playerName);};
   const handleLogout=()=>{localStorage.removeItem("oldgabs_session");setSession(null);setTab(0);};
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
