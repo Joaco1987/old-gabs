@@ -1041,6 +1041,7 @@ function StaffEvoGPS(){
     if(k==="spr")return jAvg("spr");
     if(k==="acc")return jAvg("acc");
     if(k==="vmax")return jAvgF("vmax");
+    if(k==="ns")return jAvg("ns");
     if(false&&s.prom_hsr!==undefined){
       if(k==="vmax"){
         const vmaxArr=s.jugadoras?.map(j=>j.vmax||0)||[];
