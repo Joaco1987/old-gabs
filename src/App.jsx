@@ -1316,7 +1316,7 @@ function StaffYoyo(){
         sheet.slice(1).forEach(r=>{
           const fecha=String(r[iF]||"").slice(0,10);
           const jug=String(r[iJ]||"").trim();
-          const nivel=parseFloat(r[iN])||0;
+          const nivel=parseNum(r[iN])||0;
           const dist=Number(r[iD])||0;
           const rawVam=parseFloat(r[iV])||0;
           if(!jug||!nivel)return;
@@ -3094,7 +3094,7 @@ function PlayerYoyo({player}){
         sheet.slice(1).forEach(r=>{
           const fecha=String(r[iF]||"").slice(0,10);
           const jug=String(r[iJ]||"").trim();
-          const nivel=parseFloat(r[iN])||0;
+          const nivel=parseNum(r[iN])||0;
           const dist=Number(r[iD])||0;
           const rawVam=parseFloat(r[iV])||0;
           const vam=dist>0?Math.round(((dist*0.0024)+10.4)/3.6*10)/10:Math.round(rawVam*10)/10;
