@@ -1301,6 +1301,8 @@ function StaffYoyo(){
   const [vista,setVista]=useState("reporte");
   const [loading,setLoading]=useState(true);
   const [driveData,setDriveData]=useState([]);
+  const [historial,setHistorial]=useState({});// {jugadora:[{fecha,nivel,dist,vam}]}
+  const [expandida,setExpandida]=useState(null);
 
   React.useEffect(()=>{
     if(vista!=="reporte")return;
@@ -1309,10 +1311,11 @@ function StaffYoyo(){
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Yoyo App"]||d["YOYO App"]||[];
-        if(sheet.length<2){setDriveData([]);return;}
+        if(sheet.length<2){setDriveData([]);setHistorial({});return;}
         const headers=sheet[0].map(h=>String(h).trim());
         const iF=headers.indexOf("Fecha"),iJ=headers.indexOf("Jugadora"),iN=headers.indexOf("Nivel"),iD=headers.indexOf("Distancia"),iV=headers.indexOf("VAM");
         const last={};
+        const hist={};
         sheet.slice(1).forEach(r=>{
           const fecha=String(r[iF]||"").slice(0,10);
           const jug=String(r[iJ]||"").trim();
@@ -1322,11 +1325,16 @@ function StaffYoyo(){
           if(!jug||!nivel)return;
           // Recalcular VAM con Bangsbo para asegurar 1 decimal
           const vam=dist>0?Math.round(((dist*0.0024)+10.4)/3.6*10)/10:Math.round(rawVam*10)/10;
+          if(!hist[jug])hist[jug]=[];
+          hist[jug].push({fecha,nivel,dist,vam});
           if(!last[jug]||fecha>last[jug].fecha) last[jug]={n:jug,fecha,nivel,dist,vam};
         });
+        // Ordenar historial por fecha ascendente para cada jugadora
+        Object.keys(hist).forEach(j=>hist[j].sort((a,b)=>a.fecha.localeCompare(b.fecha)));
+        setHistorial(hist);
         setDriveData(Object.values(last).sort((a,b)=>b.nivel-a.nivel));
       })
-      .catch(()=>setDriveData([]))
+      .catch(()=>{setDriveData([]);setHistorial({});})
       .finally(()=>setLoading(false));
   },[vista]);
 
@@ -1364,29 +1372,84 @@ function StaffYoyo(){
         </div>
       </Card>
       <Card>
-        <CT text="Ranking Yo-Yo IRT1 — grupos por VAM"/>
+        <CT text="Ranking Yo-Yo IRT1 — último test, grupos por VAM"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
             <thead><tr>
-              {["#","Jugadora","Nivel","Distancia","VAM","Grupo"].map((c,i)=>(
-                <th key={i} style={{textAlign:i===5?"center":"left",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
+              {["#","Jugadora","Fecha","Nivel","Evolución","Distancia","VAM","Grupo",""].map((c,i)=>(
+                <th key={i} style={{textAlign:i===7?"center":"left",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
               ))}
             </tr></thead>
             <tbody>{sorted.map((p,i)=>{
               const nivelCol=yoyoColor(p.nivel);
               const gInfo=p.vam?vamGrupo[p.vam]:null;
               const col=gInfo?gInfo.color:T.muted;
+              const h=historial[p.n]||[];
+              const tieneHist=h.length>1;
+              // Evolución: último vs anteúltimo
+              let evolNode="—";
+              if(tieneHist){
+                const prev=h[h.length-2];
+                const delta=p.nivel-prev.nivel;
+                const deltaPct=prev.nivel?((delta/prev.nivel)*100).toFixed(1):"0";
+                const up=delta>0,down=delta<0;
+                evolNode=(
+                  <span style={{color:up?T.green:down?T.red:T.muted,fontWeight:600,whiteSpace:"nowrap"}}>
+                    {up?"▲":down?"▼":"●"} {up?"+":""}{deltaPct}%
+                  </span>
+                );
+              }
+              const isOpen=expandida===p.n;
               return(
-                <tr key={p.n}>
+                <React.Fragment key={p.n}>
+                <tr>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{i<3?medals[i]:i+1}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:500,whiteSpace:"nowrap"}}>{p.n}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,fontSize:11,whiteSpace:"nowrap"}}>{p.fecha}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:nivelCol,fontWeight:700,fontSize:14}}>{p.nivel}</td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>{evolNode}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.dist?`${p.dist}m`:"—"}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:600}}>{p.vam||"—"}</td>
                   <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
                     {gInfo&&<span style={{background:col,color:"#111",padding:"2px 8px",borderRadius:10,fontSize:11,fontWeight:700,display:"inline-block"}}>G{gInfo.num}</span>}
                   </td>
+                  <td style={{padding:"5px 6px",borderBottom:"1px solid #141824"}}>
+                    {tieneHist&&(
+                      <button onClick={()=>setExpandida(isOpen?null:p.n)} style={{background:"transparent",border:`1px solid ${T.border2}`,borderRadius:6,color:T.blue,fontSize:11,padding:"3px 8px",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}>
+                        {isOpen?"Ocultar":`Historial (${h.length})`}
+                      </button>
+                    )}
+                  </td>
                 </tr>
+                {isOpen&&tieneHist&&(
+                  <tr>
+                    <td colSpan={9} style={{padding:"8px 12px 12px 30px",borderBottom:"1px solid #141824",background:"#0a0d18"}}>
+                      <div style={{fontSize:10,color:T.muted,textTransform:"uppercase",letterSpacing:".4px",marginBottom:6}}>Historial completo</div>
+                      {h.map((ht,idx)=>{
+                        const prevH=idx>0?h[idx-1]:null;
+                        const dlt=prevH?ht.nivel-prevH.nivel:null;
+                        const dltPct=prevH&&prevH.nivel?((dlt/prevH.nivel)*100).toFixed(1):null;
+                        const htCol=yoyoColor(ht.nivel);
+                        return(
+                          <div key={idx} style={{display:"flex",alignItems:"center",gap:10,padding:"5px 0",borderBottom:idx<h.length-1?"1px solid #141824":"none"}}>
+                            <span style={{fontSize:11,color:T.muted,width:80}}>{ht.fecha}</span>
+                            <span style={{fontSize:13,fontWeight:700,color:htCol,width:50}}>{ht.nivel}</span>
+                            <span style={{fontSize:11,color:T.text,width:70}}>{ht.dist}m</span>
+                            <span style={{fontSize:11,color:T.muted2,width:60}}>{ht.vam} m/s</span>
+                            {dltPct!==null?(
+                              <span style={{fontSize:11,fontWeight:600,color:dlt>0?T.green:dlt<0?T.red:T.muted}}>
+                                {dlt>0?"▲":dlt<0?"▼":"●"} {dlt>0?"+":""}{dltPct}% vs anterior
+                              </span>
+                            ):(
+                              <span style={{fontSize:11,color:T.muted}}>— primer test</span>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </td>
+                  </tr>
+                )}
+                </React.Fragment>
               );
             })}</tbody>
           </table>
