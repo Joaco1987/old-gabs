@@ -10,5 +10,24 @@
   </head>
   <body style="margin:0;background:#0d0f14">
     <div id="root"></div>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').then(reg => {
+            // Verificar actualizaciones cada vez que se abre la app
+            reg.update();
+            // Cuando hay una nueva versión disponible, recargar automáticamente
+            reg.addEventListener('updatefound', () => {
+              const newWorker = reg.installing;
+              newWorker.addEventListener('statechange', () => {
+                if (newWorker.state === 'activated') {
+                  window.location.reload();
+                }
+              });
+            });
+          });
+        });
+      }
+    </script>
   </body>
 </html>
