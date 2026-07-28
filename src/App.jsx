@@ -2973,11 +2973,12 @@ function PlayerGPS({player}){
 
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess(PARTIDOS,AMISTOSOS,ENTRENOS);
   const sess=mySess(player,pool);
+  const noData=!sess.length;
 
   return(
     <>
       {fbtn(tipo,(t)=>{setTipo(t);setSelId(null);},[["partidos","🏑 Partidos"],["amistosos","⚡ Amistosos"],["entrenos","🏃 Entrenos"],["todos","Todo"]])}
-      {!sess.length?(
+      {noData?(
         <Card>
           <div style={{textAlign:"center",padding:"24px 0",color:T.muted}}>
             <div style={{fontSize:28,marginBottom:8}}>📭</div>
@@ -2990,7 +2991,7 @@ function PlayerGPS({player}){
         <MR>
         <MetCard label="Dist. prom." value={`${Math.round(avg(sess.map(s=>s.data.dist))).toLocaleString()}m`}/>
         <MetCard label="Sesiones" value={sess.length}/>
-        <MetCard label="Vel. máx" value={`${Math.max(...sess.map(s=>s.data.vmax))} km/h`} sc={T.amber}/>
+        <MetCard label="Vel. máx" value={sess.some(s=>s.data?.vmax)?`${Math.max(...sess.map(s=>s.data?.vmax||0))} km/h`:"—"} sc={T.amber}/>
       </MR>
       
       {/* Gráfico HSR por zonas — todas las sesiones */}
