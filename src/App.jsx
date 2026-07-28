@@ -2954,25 +2954,38 @@ function PlayerGPS({player}){
   const AMISTOSOS=A;
   const ENTRENOS=E;
   const [tipo,setTipo]=useState("partidos");
+  const [autoSet,setAutoSet]=useState(false);
   const [selId,setSelId]=useState(null);
 
-  // Cuando lleguen datos del Drive, auto-seleccionar el tab donde tenga datos
+  // Solo la primera vez que llegan datos, auto-seleccionar el tab con datos
   React.useEffect(()=>{
+    if(autoSet)return;
+    if(ENTRENOS.length===0&&PARTIDOS.length<=1)return;// datos aún no llegaron
     const tienePartidos=PARTIDOS.some(s=>s.jugadoras.find(j=>j.n===player));
     const tieneEntrenos=ENTRENOS.some(s=>s.jugadoras.find(j=>j.n===player));
     const tieneAmistosos=AMISTOSOS.some(s=>s.jugadoras.find(j=>j.n===player));
-    if(!tienePartidos&&tieneEntrenos) setTipo("entrenos");
-    else if(!tienePartidos&&tieneAmistosos) setTipo("amistosos");
-    else if(tienePartidos) setTipo("partidos");
-  },[PARTIDOS.length,ENTRENOS.length,AMISTOSOS.length,player]);
+    if(!tienePartidos&&tieneEntrenos){setTipo("entrenos");setAutoSet(true);}
+    else if(!tienePartidos&&tieneAmistosos){setTipo("amistosos");setAutoSet(true);}
+    else if(tienePartidos){setTipo("partidos");setAutoSet(true);}
+  },[PARTIDOS.length,ENTRENOS.length,AMISTOSOS.length]);
 
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess(PARTIDOS,AMISTOSOS,ENTRENOS);
   const sess=mySess(player,pool);
-  if(!sess.length)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos GPS en esta selección</div>;
+
   return(
     <>
       {fbtn(tipo,(t)=>{setTipo(t);setSelId(null);},[["partidos","🏑 Partidos"],["amistosos","⚡ Amistosos"],["entrenos","🏃 Entrenos"],["todos","Todo"]])}
-      <MR>
+      {!sess.length?(
+        <Card>
+          <div style={{textAlign:"center",padding:"24px 0",color:T.muted}}>
+            <div style={{fontSize:28,marginBottom:8}}>📭</div>
+            <div style={{fontSize:13,marginBottom:4}}>Sin datos GPS en {tipo}</div>
+            <div style={{fontSize:11,color:T.muted2}}>Seleccioná otra categoría arriba</div>
+          </div>
+        </Card>
+      ):(
+      <>
+        <MR>
         <MetCard label="Dist. prom." value={`${Math.round(avg(sess.map(s=>s.data.dist))).toLocaleString()}m`}/>
         <MetCard label="Sesiones" value={sess.length}/>
         <MetCard label="Vel. máx" value={`${Math.max(...sess.map(s=>s.data.vmax))} km/h`} sc={T.amber}/>
@@ -3124,6 +3137,7 @@ function PlayerGPS({player}){
       {sess.length>0&&(
         <RadarChart player={player} sesion={selId?sess.find(s=>s.id===selId)||sess[0]:sess[0]}/>
       )}
+      </>)}
     </>
   );
 }
