@@ -2957,17 +2957,19 @@ function PlayerGPS({player}){
   const [autoSet,setAutoSet]=useState(false);
   const [selId,setSelId]=useState(null);
 
-  // Solo la primera vez que llegan datos, auto-seleccionar el tab con datos
+  // Solo cuando lleguen datos reales del Drive, auto-seleccionar el tab con datos
   React.useEffect(()=>{
-    if(autoSet)return;
-    if(ENTRENOS.length===0&&PARTIDOS.length<=1)return;// datos aún no llegaron
+    if(autoSet) return;
+    // Esperar a que lleguen datos reales (ENTRENOS tiene 18 sesiones desde Drive)
+    const totalSess=PARTIDOS.length+ENTRENOS.length+AMISTOSOS.length;
+    if(totalSess<5) return; // aún no llegaron datos suficientes
     const tienePartidos=PARTIDOS.some(s=>s.jugadoras.find(j=>j.n===player));
     const tieneEntrenos=ENTRENOS.some(s=>s.jugadoras.find(j=>j.n===player));
     const tieneAmistosos=AMISTOSOS.some(s=>s.jugadoras.find(j=>j.n===player));
     if(!tienePartidos&&tieneEntrenos){setTipo("entrenos");setAutoSet(true);}
     else if(!tienePartidos&&tieneAmistosos){setTipo("amistosos");setAutoSet(true);}
-    else if(tienePartidos){setTipo("partidos");setAutoSet(true);}
-  },[PARTIDOS.length,ENTRENOS.length,AMISTOSOS.length]);
+    else{setAutoSet(true);}
+  },[PARTIDOS.length,ENTRENOS.length,AMISTOSOS.length,player]);
 
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess(PARTIDOS,AMISTOSOS,ENTRENOS);
   const sess=mySess(player,pool);
