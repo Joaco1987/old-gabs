@@ -2953,14 +2953,19 @@ function PlayerGPS({player}){
   const PARTIDOS=P.length?P:PARTIDOS_FB;
   const AMISTOSOS=A;
   const ENTRENOS=E;
-  const initTipo=(()=>{
-    if(PARTIDOS.some(s=>s.jugadoras.find(j=>j.n===player)))return"partidos";
-    if(AMISTOSOS.some(s=>s.jugadoras.find(j=>j.n===player)))return"amistosos";
-    if(ENTRENOS.some(s=>s.jugadoras.find(j=>j.n===player)))return"entrenos";
-    return"partidos";
-  })();
   const [tipo,setTipo]=useState("partidos");
   const [selId,setSelId]=useState(null);
+
+  // Cuando lleguen datos del Drive, auto-seleccionar el tab donde tenga datos
+  React.useEffect(()=>{
+    const tienePartidos=PARTIDOS.some(s=>s.jugadoras.find(j=>j.n===player));
+    const tieneEntrenos=ENTRENOS.some(s=>s.jugadoras.find(j=>j.n===player));
+    const tieneAmistosos=AMISTOSOS.some(s=>s.jugadoras.find(j=>j.n===player));
+    if(!tienePartidos&&tieneEntrenos) setTipo("entrenos");
+    else if(!tienePartidos&&tieneAmistosos) setTipo("amistosos");
+    else if(tienePartidos) setTipo("partidos");
+  },[PARTIDOS.length,ENTRENOS.length,AMISTOSOS.length,player]);
+
   const pool=tipo==="partidos"?PARTIDOS:tipo==="amistosos"?AMISTOSOS:tipo==="entrenos"?ENTRENOS:allSess(PARTIDOS,AMISTOSOS,ENTRENOS);
   const sess=mySess(player,pool);
   if(!sess.length)return<div style={{color:T.muted,padding:20,textAlign:"center"}}>Sin datos GPS en esta selección</div>;
