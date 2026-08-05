@@ -911,10 +911,145 @@ function StaffGPS(){
   );
 }
 
-// ─── STAFF PUESTOS ────────────────────────────────────────────────────────────
-// ─── PUESTOS CONTEXT — carga desde Drive, disponible globalmente ──────────────
-const PuestosCtx=React.createContext(PUESTOS);
-function usePuestos(){return React.useContext(PuestosCtx);}
+// ─── STAFF ACTIVIDADES — hoja "Actividades" (períodos con nombre: AC, CD, etc.) ─
+function StaffActividades(){
+  const [loading,setLoading]=useState(true);
+  const [rows,setRows]=useState([]);
+  const [fecha,setFecha]=useState("");
+  const [periodo,setPeriodo]=useState("");
+  const [jugSel,setJugSel]=useState("");
+
+  React.useEffect(()=>{
+    fetch(`${APPS_URL}?accion=gps&hoja=${encodeURIComponent("Actividades")}`)
+      .then(r=>r.json())
+      .then(data=>{
+        if(!Array.isArray(data)||data.length<2){setRows([]);setLoading(false);return;}
+        const headers=data[0].map(h=>String(h).trim());
+        const idx=k=>headers.findIndex(h=>h.toLowerCase().startsWith(k.toLowerCase()));
+        const iFecha=idx("Fecha"),iPer=idx("Periodo"),iNro=idx("Nro Periodo"),iJug=idx("Jugadora"),
+          iMin=idx("Minutos"),iPL=idx("Player Load"),iDist=idx("Distancia Total"),iMxm=idx("m/min"),
+          iHsr=idx("HSR"),iAi18=idx("18-21"),iSpr=idx("Sprint"),iAcc=idx("ACC"),iDsc=idx("DSC"),
+          iNs=idx("Nro Sprint"),iVmax=idx("Vel");
+        const parsed=data.slice(1).filter(r=>r[iJug]).map(r=>({
+          fecha:fmtDate(r[iFecha])||String(r[iFecha]||""),
+          fechaRaw:String(r[iFecha]||""),
+          periodo:String(r[iPer]||"").trim(),
+          nroPeriodo:r[iNro]||"",
+          jugadora:String(r[iJug]||"").trim(),
+          min:parseNum(r[iMin])??0,
+          pl:parseNum(r[iPL])??0,
+          dist:parseNum(r[iDist])??0,
+          mxm:parseNum(r[iMxm])??0,
+          hsr:parseNum(r[iHsr])??0,
+          ai18:parseNum(r[iAi18])??0,
+          spr:parseNum(r[iSpr])??0,
+          acc:parseNum(r[iAcc])??0,
+          dsc:parseNum(r[iDsc])??0,
+          ns:parseNum(r[iNs])??0,
+          vmax:parseNum(r[iVmax])??0,
+        }));
+        setRows(parsed);
+        setLoading(false);
+      })
+      .catch(()=>setLoading(false));
+  },[]);
+
+  const fechas=[...new Set(rows.map(r=>r.fechaRaw))].filter(Boolean);
+  React.useEffect(()=>{if(!fecha&&fechas.length)setFecha(fechas[fechas.length-1]);},[fechas.length]); // eslint-disable-line
+
+  const periodosDeFecha=[...new Set(rows.filter(r=>r.fechaRaw===fecha).map(r=>r.periodo))].filter(Boolean);
+  React.useEffect(()=>{if(periodosDeFecha.length&&!periodosDeFecha.includes(periodo))setPeriodo(periodosDeFecha[0]);},[fecha,periodosDeFecha.join(",")]); // eslint-disable-line
+
+  const filtradas=rows.filter(r=>r.fechaRaw===fecha&&r.periodo===periodo);
+
+  if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Cargando actividades...</div></Card>;
+  if(!rows.length)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>No hay actividades importadas todavía.</div></Card>;
+
+  const avg=k=>filtradas.length?Math.round(filtradas.reduce((s,r)=>s+(r[k]||0),0)/filtradas.length*10)/10:0;
+
+  // Objeto "sesion" en el formato que espera RadarChart
+  const sesionRadar={jugadoras:filtradas.map(r=>({n:r.jugadora,dist:r.dist,mxm:r.mxm,hsr:r.hsr,acc:r.acc,ns:r.ns}))};
+
+  return(
+    <>
+      <Card style={{marginBottom:12}}>
+        <CT text="Filtrar actividad"/>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+          <select value={fecha} onChange={e=>{setFecha(e.target.value);setPeriodo("");}} style={{flex:1,minWidth:140,background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:T.text,fontSize:12,padding:"8px 10px",outline:"none"}}>
+            {fechas.map(f=><option key={f} value={f}>{fmtDate(f)||f}</option>)}
+          </select>
+          <select value={periodo} onChange={e=>setPeriodo(e.target.value)} style={{flex:1,minWidth:140,background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:T.text,fontSize:12,padding:"8px 10px",outline:"none"}}>
+            {periodosDeFecha.map(p=><option key={p} value={p}>{p}</option>)}
+          </select>
+        </div>
+      </Card>
+
+      {filtradas.length===0?(
+        <Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>No hay datos para esa fecha/actividad.</div></Card>
+      ):(
+        <>
+          <Card style={{marginBottom:12,overflowX:"auto"}}>
+            <CT text={`${periodo} — ${fmtDate(fecha)||fecha} (${filtradas.length} jugadoras)`}/>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,minWidth:640}}>
+              <thead>
+                <tr style={{borderBottom:`1px solid ${T.border}`}}>
+                  {["Jugadora","Min","PL","Dist","m/min","HSR","18-21","Sprint","ACC","DSC","NSpr","VMax"].map(h=>
+                    <th key={h} style={{textAlign:h==="Jugadora"?"left":"right",padding:"6px 8px",color:T.muted,fontWeight:600,whiteSpace:"nowrap"}}>{h}</th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {filtradas.map((r,i)=>(
+                  <tr key={i} style={{borderBottom:`1px solid ${T.border}`}}>
+                    <td style={{padding:"6px 8px",color:T.text}}>{r.jugadora}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.min}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.pl}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.dist}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.mxm}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.hsr}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.ai18}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.spr}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.acc}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.dsc}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.ns}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.vmax}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr style={{borderTop:`2px solid ${T.border2}`}}>
+                  <td style={{padding:"6px 8px",color:T.green,fontWeight:700}}>Prom. equipo</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("min")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("pl")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("dist")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("mxm")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("hsr")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("ai18")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("spr")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("acc")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("dsc")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("ns")}</td>
+                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("vmax")}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </Card>
+
+          <Card style={{marginBottom:12}}>
+            <CT text="Radar comparativo"/>
+            <select value={jugSel} onChange={e=>setJugSel(e.target.value)} style={{width:"100%",background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:jugSel?T.text:T.muted,fontSize:13,padding:"10px 12px",outline:"none",boxSizing:"border-box"}}>
+              <option value="">Seleccioná una jugadora para ver radar...</option>
+              {filtradas.map(r=><option key={r.jugadora} value={r.jugadora}>{r.jugadora}</option>)}
+            </select>
+          </Card>
+          {jugSel&&<RadarChart player={jugSel} sesion={sesionRadar}/>}
+        </>
+      )}
+    </>
+  );
+}
+
+
 
 function PuestosProvider({children}){
   const [puestos,setPuestos]=useState(PUESTOS);
@@ -3996,7 +4131,7 @@ function AppInner(){
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
   const readOnly=session.tipo==="visita";
   const mode=session.subTipo==="staff"?"staff":"player";
-  const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
+  const STAFF_TABS=["GPS","Actividades","Evolución GPS","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
   const PLAYER_TABS=["Mi GPS","Evolución GPS","Evaluaciones","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
@@ -4030,7 +4165,7 @@ function AppInner(){
           </div>
         )}
         {mode==="staff"?(
-          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffPuestos/>}{tab===3&&<StaffEvaluaciones/>}{tab===4&&<StaffMinutos/>}{tab===5&&<StaffAsistencia/>}{tab===6&&<StaffRPE/>}{tab===7&&<StaffWellness/>}</></ErrorBoundary>
+          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffActividades/>}{tab===2&&<StaffEvoGPS/>}{tab===3&&<StaffPuestos/>}{tab===4&&<StaffEvaluaciones/>}{tab===5&&<StaffMinutos/>}{tab===6&&<StaffAsistencia/>}{tab===7&&<StaffRPE/>}{tab===8&&<StaffWellness/>}</></ErrorBoundary>
         ):(
           <ErrorBoundary><>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerEvaluaciones player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</></ErrorBoundary>
         )}
