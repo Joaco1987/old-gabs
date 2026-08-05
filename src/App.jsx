@@ -2295,6 +2295,8 @@ function StaffMinutos(){
   const [posiciones,setPosiciones]=useState([]);
   const [enTracker,setEnTracker]=useState(false);
   const [jugPendiente,setJugPendiente]=useState(null);
+  const [extraJugadoras,setExtraJugadoras]=useState([]);
+  const [nuevaJugadora,setNuevaJugadora]=useState("");
   // Hooks del reporte — siempre al inicio
   const [driveData,setDriveData]=useState(null);
   const [loadingDrive,setLoadingDrive]=useState(true);
@@ -2422,8 +2424,8 @@ function StaffMinutos(){
         {/* Plantel */}
         <Card style={{marginBottom:8}}>
           <CT text="Plantel — tocá para agregar a la cancha o al banco"/>
-          <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-            {ALL_JUGADORAS.map(j=>{
+          <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:10}}>
+            {[...ALL_JUGADORAS,...extraJugadoras].map(j=>{
               const enC=enCanchaNames.includes(j);
               const enB=banco.includes(j);
               const esPend=jugPendiente===j;
@@ -2443,12 +2445,26 @@ function StaffMinutos(){
               );
             })}
           </div>
+          <div style={{display:"flex",gap:6}}>
+            <input value={nuevaJugadora} onChange={e=>setNuevaJugadora(e.target.value)} onKeyDown={e=>{
+              if(e.key==="Enter"){
+                const nombre=nuevaJugadora.trim();
+                if(nombre&&![...ALL_JUGADORAS,...extraJugadoras].includes(nombre)){setExtraJugadoras(prev=>[...prev,nombre]);}
+                setNuevaJugadora("");
+              }
+            }} placeholder="Agregar jugadora no listada..." style={{flex:1,background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"7px 10px",fontSize:12,boxSizing:"border-box",fontFamily:"inherit"}}/>
+            <button onClick={()=>{
+              const nombre=nuevaJugadora.trim();
+              if(nombre&&![...ALL_JUGADORAS,...extraJugadoras].includes(nombre)){setExtraJugadoras(prev=>[...prev,nombre]);}
+              setNuevaJugadora("");
+            }} style={{padding:"7px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>+ Agregar</button>
+          </div>
           <div style={{fontSize:10,color:T.muted,marginTop:6}}>Verde ✓ = en cancha · Naranja B = banco · Las 11 primeras van a cancha automáticamente</div>
         </Card>
 
         <button onClick={()=>{
           if(!rival.trim()){alert("Ingresá el rival");return;}
-          if(enCanchaCount<11){alert(`Faltan ${11-enCanchaCount} jugadoras en cancha`);return;}
+          if(enCanchaCount<11&&!window.confirm(`Solo hay ${enCanchaCount}/11 jugadoras en cancha. ¿Iniciar igual?`))return;
           setEnTracker(true);
         }} style={{width:"100%",padding:13,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
           ▶ Iniciar partido
@@ -3994,7 +4010,7 @@ function LoginScreen({onLogin}){
         onLogin("jugadora",player,"jugadora");
       }else{setError("Contraseña incorrecta");setPass("");}
     }else if(tipo==="visita"){
-      if(pass==="Invitadooldgabs"){
+      if(pass==="Invitado"){
         setError("");setVisitaAuth(true);
       }else{setError("Contraseña incorrecta");setPass("");}
     }
