@@ -2,7 +2,7 @@
 // Estrategia: network-first. Siempre intenta obtener la versión más nueva.
 // Si no hay red, usa la caché como fallback.
 
-const CACHE_NAME = 'oldgabs-v1';
+const CACHE_NAME = 'oldgabs-v2';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting(); // Activa el SW nuevo inmediatamente
