@@ -1051,6 +1051,10 @@ function StaffActividades(){
 
 
 
+// ─── PUESTOS CONTEXT — carga desde Drive, disponible globalmente ──────────────
+const PuestosCtx=React.createContext(PUESTOS);
+function usePuestos(){return React.useContext(PuestosCtx);}
+
 function PuestosProvider({children}){
   const [puestos,setPuestos]=useState(PUESTOS);
   React.useEffect(()=>{
