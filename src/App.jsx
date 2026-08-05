@@ -4137,7 +4137,7 @@ const ReadOnlyCtx=React.createContext(false);
 function useReadOnly(){return React.useContext(ReadOnlyCtx);}
 
 export default function App(){
-  return <GPSProvider><AppInner/></GPSProvider>;
+  return <ErrorBoundary><GPSProvider><AppInner/></GPSProvider></ErrorBoundary>;
 }
 
 function AppInner(){
