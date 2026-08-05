@@ -15,13 +15,17 @@
     <div id="root"></div>
     <script>
       if ('serviceWorker' in navigator) {
+        var swReg = null;
+        function checkForUpdate() {
+          if (swReg) swReg.update();
+        }
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js').then(reg => {
-            // Verificar actualizaciones cada vez que se abre la app
+            swReg = reg;
             reg.update();
-            // Cuando hay una nueva versión disponible, recargar automáticamente
             reg.addEventListener('updatefound', () => {
               const newWorker = reg.installing;
+              if (!newWorker) return;
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'activated') {
                   window.location.reload();
@@ -30,6 +34,14 @@
             });
           });
         });
+        // Clave para la PWA instalada en el celular: al reabrirla desde el
+        // icono, iOS/Android muchas veces no vuelve a disparar 'load'
+        // (retoman la sesion en pausa) — por eso revisamos tambien aca.
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') checkForUpdate();
+        });
+        window.addEventListener('pageshow', checkForUpdate);
+        window.addEventListener('focus', checkForUpdate);
       }
     </script>
   </body>
