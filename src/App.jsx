@@ -4151,7 +4151,7 @@ function AppInner(){
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
   const readOnly=session.tipo==="visita";
   const mode=session.subTipo==="staff"?"staff":"player";
-  const STAFF_TABS=["GPS","Actividades","Evolución GPS","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
+  const STAFF_TABS=["GPS","Evolución GPS","Actividades","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
   const PLAYER_TABS=["Mi GPS","Evolución GPS","Evaluaciones","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
@@ -4185,7 +4185,7 @@ function AppInner(){
           </div>
         )}
         {mode==="staff"?(
-          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffActividades/>}{tab===2&&<StaffEvoGPS/>}{tab===3&&<StaffPuestos/>}{tab===4&&<StaffEvaluaciones/>}{tab===5&&<StaffMinutos/>}{tab===6&&<StaffAsistencia/>}{tab===7&&<StaffRPE/>}{tab===8&&<StaffWellness/>}</></ErrorBoundary>
+          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffActividades/>}{tab===3&&<StaffPuestos/>}{tab===4&&<StaffEvaluaciones/>}{tab===5&&<StaffMinutos/>}{tab===6&&<StaffAsistencia/>}{tab===7&&<StaffRPE/>}{tab===8&&<StaffWellness/>}</></ErrorBoundary>
         ):(
           <ErrorBoundary><>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerEvaluaciones player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</></ErrorBoundary>
         )}
