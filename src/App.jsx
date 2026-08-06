@@ -944,7 +944,7 @@ function StaffActividades(){
           periodo:String(r[iPer]||"").trim(),
           nroPeriodo:r[iNro]||"",
           jugadora:String(r[iJug]||"").trim(),
-          min:parseNum(r[iMin])??0,
+          min:Math.round(parseMin(r[iMin])||0),
           pl:parseNum(r[iPL])??0,
           dist:parseNum(r[iDist])??0,
           mxm:parseNum(r[iMxm])??0,
@@ -1010,17 +1010,17 @@ function StaffActividades(){
                 {filtradas.map((r,i)=>(
                   <tr key={i} style={{borderBottom:`1px solid ${T.border}`}}>
                     <td style={{padding:"6px 8px",color:T.text}}>{r.jugadora}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.min}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted}}>{r.min}</td>
                     <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.pl}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.dist}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.blue,fontWeight:500}}>{r.dist}</td>
                     <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.mxm}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.hsr}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.ai18}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.spr}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.acc}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.dsc}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.ns}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.vmax}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.green}}>{r.hsr}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.amber}}>{r.ai18}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:r.spr>0?T.red:T.muted,fontWeight:r.spr>0?700:400}}>{r.spr}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.purple}}>{r.acc}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.cyan}}>{r.dsc}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:r.ns>0?T.text:T.muted,fontWeight:r.ns>0?600:400}}>{r.ns}</td>
+                    <td style={{padding:"6px 8px",textAlign:"right",color:T.amber,fontWeight:500}}>{r.vmax}</td>
                   </tr>
                 ))}
               </tbody>
