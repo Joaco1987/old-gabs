@@ -124,7 +124,7 @@ function parseGPSSheet(rows, tipo){
 
     if(jugadoras.length>0){
       const id=(sessionTipo==="partido"?"p":sessionTipo==="amistoso"?"a":"e")+label.replace(/\s+/g,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase()+"_"+hRow;
-      sessions.push({id,label:`vs ${label}`,fecha:label,tipo:sessionTipo,jugadoras});
+      sessions.push({id,label:sessionTipo==="entreno"?label:`vs ${label}`,fecha:label,tipo:sessionTipo,jugadoras});
     }
   }
   return sessions;
@@ -811,7 +811,10 @@ function StaffGPS(){
       {sess?(
         <>
           <div style={{marginBottom:10,fontSize:12,color:T.muted2}}>
-            {sIcon(sess.tipo)} <strong style={{color:T.text}}>{sess.label}</strong> — {sess.fecha} · {sess.jugadoras.length} jugadoras
+            {sess.tipo==="entreno"
+              ? <>{sIcon(sess.tipo)} <strong style={{color:T.text}}>{sess.fecha}</strong> · {sess.jugadoras.length} jugadoras</>
+              : <>{sIcon(sess.tipo)} <strong style={{color:T.text}}>{sess.label}</strong> — {sess.fecha} · {sess.jugadoras.length} jugadoras</>
+            }
           </div>
           {/* Promedio HSR por zonas de esta sesión */}
           {(sess.prom||sess.zonas)&&<GraficoHSR sesiones={[sess]} titulo="HSR por zonas — promedio equipo"/>}
