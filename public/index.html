@@ -14,34 +14,13 @@
   <body style="margin:0;background:#0d0f14">
     <div id="root"></div>
     <script>
+      // Ya no usamos Service Worker — el vercel.json se encarga de que
+      // el HTML nunca quede cacheado. Esto desregistra cualquier SW viejo
+      // que pueda haber quedado instalado en el dispositivo.
       if ('serviceWorker' in navigator) {
-        var swReg = null;
-        function checkForUpdate() {
-          if (swReg) swReg.update();
-        }
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').then(reg => {
-            swReg = reg;
-            reg.update();
-            reg.addEventListener('updatefound', () => {
-              const newWorker = reg.installing;
-              if (!newWorker) return;
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'activated') {
-                  window.location.reload();
-                }
-              });
-            });
-          });
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          regs.forEach(reg => reg.unregister());
         });
-        // Clave para la PWA instalada en el celular: al reabrirla desde el
-        // icono, iOS/Android muchas veces no vuelve a disparar 'load'
-        // (retoman la sesion en pausa) — por eso revisamos tambien aca.
-        document.addEventListener('visibilitychange', () => {
-          if (document.visibilityState === 'visible') checkForUpdate();
-        });
-        window.addEventListener('pageshow', checkForUpdate);
-        window.addEventListener('focus', checkForUpdate);
       }
     </script>
   </body>
