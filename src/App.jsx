@@ -107,6 +107,11 @@ function parseGPSSheet(rows, tipo){
       const r=rows[k]||[];
       const name=String(r[o]||"").trim();
       if(!name) break;
+      // Si empieza otro bloque (con o sin fila en blanco de por medio),
+      // hay que CORTAR aca — si no, se "pegan" los jugadores del
+      // siguiente partido/entreno al actual (bug reportado: 22
+      // jugadoras en vez de 11, valores repetidos y distintos).
+      if(name==="JUGADORA"||name.startsWith("PARTIDO VS ")||name.startsWith("AMISTOSO VS ")) break;
       if(GPS_SKIP.has(name)) continue;
       const mins=parseMin(r[o+1]);
       const dist_raw=parseNum(r[o+2]);
