@@ -107,11 +107,6 @@ function parseGPSSheet(rows, tipo){
       const r=rows[k]||[];
       const name=String(r[o]||"").trim();
       if(!name) break;
-      // Si empieza otro bloque (con o sin fila en blanco de por medio),
-      // hay que CORTAR aca — si no, se "pegan" los jugadores del
-      // siguiente partido/entreno al actual (bug reportado: 22
-      // jugadoras en vez de 11, valores repetidos y distintos).
-      if(name==="JUGADORA"||name.startsWith("PARTIDO VS ")||name.startsWith("AMISTOSO VS ")) break;
       if(GPS_SKIP.has(name)) continue;
       const mins=parseMin(r[o+1]);
       const dist_raw=parseNum(r[o+2]);
@@ -123,13 +118,13 @@ function parseGPSSheet(rows, tipo){
         n:name,min:mins,dist:Math.round(dist_raw),
         mxm:rnd1(g(3)),hsr:rnd(g(4)),ai18:rnd(g(5)),
         spr:rnd(g(6)),acc:rnd(g(7)),dsc:rnd(g(8)),
-        ns:rnd(g(9)),vmax:rnd1(g(10)),pl:rnd(g(11))
+        ns:rnd(g(9)),vmax:rnd1(g(10))
       });
     }
 
     if(jugadoras.length>0){
       const id=(sessionTipo==="partido"?"p":sessionTipo==="amistoso"?"a":"e")+label.replace(/\s+/g,"").replace(/[^a-zA-Z0-9]/g,"").toLowerCase()+"_"+hRow;
-      sessions.push({id,label:sessionTipo==="entreno"?label:`vs ${label}`,fecha:label,tipo:sessionTipo,jugadoras});
+      sessions.push({id,label:`vs ${label}`,fecha:label,tipo:sessionTipo,jugadoras});
     }
   }
   return sessions;
@@ -816,10 +811,7 @@ function StaffGPS(){
       {sess?(
         <>
           <div style={{marginBottom:10,fontSize:12,color:T.muted2}}>
-            {sess.tipo==="entreno"
-              ? <>{sIcon(sess.tipo)} <strong style={{color:T.text}}>{sess.fecha}</strong> · {sess.jugadoras.length} jugadoras</>
-              : <>{sIcon(sess.tipo)} <strong style={{color:T.text}}>{sess.label}</strong> — {sess.fecha} · {sess.jugadoras.length} jugadoras</>
-            }
+            {sIcon(sess.tipo)} <strong style={{color:T.text}}>{sess.label}</strong> — {sess.fecha} · {sess.jugadoras.length} jugadoras
           </div>
           {/* Promedio HSR por zonas de esta sesión */}
           {(sess.prom||sess.zonas)&&<GraficoHSR sesiones={[sess]} titulo="HSR por zonas — promedio equipo"/>}
@@ -828,14 +820,13 @@ function StaffGPS(){
             <CT text="Datos individuales"/>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-                <thead><tr>{["Jugadora","Min","PL","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx"].map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
+                <thead><tr>{["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx"].map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
                 <tbody>{[...sess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
                 const {h15,h18,sp}=calcZonas(j,sess);
                   return(
                     <tr key={j.n}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{j.n}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{j.min}'</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{j.pl||"—"}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500,textAlign:"center"}}>{j.dist.toLocaleString()}m</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{j.mxm}</td>
                       
@@ -868,7 +859,6 @@ function StaffGPS(){
             const dsc=avg("dsc");
             const ns=avg("ns");
             const vmax=avgf("vmax");
-            const pl=jugs.some(j=>j.pl)?avg("pl"):null;
             return(
               <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020"}}>
                 <CT text="Promedio equipo"/>
@@ -882,8 +872,7 @@ function StaffGPS(){
                     ["ACC",acc,T.purple],
                     ["DSC",dsc,T.cyan],
                     ["N Spr",ns,"#06b6d4"],
-                    ["Vmáx",`${vmax}km/h`,"#e879f9"],
-                    ...(pl!=null?[["PL",pl,T.text]]:[])
+                    ["Vmáx",`${vmax}km/h`,"#e879f9"]
                   ].map(([l,v,c])=>(
                     <div key={l} style={{textAlign:"center",minWidth:55}}>
                       <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{l}</div>
@@ -922,146 +911,7 @@ function StaffGPS(){
   );
 }
 
-// ─── STAFF ACTIVIDADES — hoja "Actividades" (períodos con nombre: AC, CD, etc.) ─
-function StaffActividades(){
-  const [loading,setLoading]=useState(true);
-  const [rows,setRows]=useState([]);
-  const [fecha,setFecha]=useState("");
-  const [periodo,setPeriodo]=useState("");
-  const [jugSel,setJugSel]=useState("");
-
-  React.useEffect(()=>{
-    fetch(`${APPS_URL}?accion=gps&hoja=${encodeURIComponent("Actividades")}`)
-      .then(r=>r.json())
-      .then(data=>{
-        if(!Array.isArray(data)||data.length<2){setRows([]);setLoading(false);return;}
-        const headers=data[0].map(h=>String(h).trim());
-        const idx=k=>headers.findIndex(h=>h.toLowerCase().startsWith(k.toLowerCase()));
-        const iFecha=idx("Fecha"),iPer=idx("Periodo"),iNro=idx("Nro Periodo"),iJug=idx("Jugadora"),
-          iMin=idx("Minutos"),iPL=idx("Player Load"),iDist=idx("Distancia Total"),iMxm=idx("m/min"),
-          iHsr=idx("HSR"),iAi18=idx("18-21"),iSpr=idx("Sprint"),iAcc=idx("ACC"),iDsc=idx("DSC"),
-          iNs=idx("Nro Sprint"),iVmax=idx("Vel");
-        const parsed=data.slice(1).filter(r=>r[iJug]).map(r=>({
-          fecha:fmtDate(r[iFecha])||String(r[iFecha]||""),
-          fechaRaw:String(r[iFecha]||""),
-          periodo:String(r[iPer]||"").trim(),
-          nroPeriodo:r[iNro]||"",
-          jugadora:String(r[iJug]||"").trim(),
-          min:Math.round(parseMin(r[iMin])||0),
-          pl:parseNum(r[iPL])??0,
-          dist:parseNum(r[iDist])??0,
-          mxm:parseNum(r[iMxm])??0,
-          hsr:parseNum(r[iHsr])??0,
-          ai18:parseNum(r[iAi18])??0,
-          spr:parseNum(r[iSpr])??0,
-          acc:parseNum(r[iAcc])??0,
-          dsc:parseNum(r[iDsc])??0,
-          ns:parseNum(r[iNs])??0,
-          vmax:parseNum(r[iVmax])??0,
-        }));
-        setRows(parsed);
-        setLoading(false);
-      })
-      .catch(()=>setLoading(false));
-  },[]);
-
-  const fechas=[...new Set(rows.map(r=>r.fechaRaw))].filter(Boolean);
-  React.useEffect(()=>{if(!fecha&&fechas.length)setFecha(fechas[fechas.length-1]);},[fechas.length]); // eslint-disable-line
-
-  const periodosDeFecha=[...new Set(rows.filter(r=>r.fechaRaw===fecha).map(r=>r.periodo))].filter(Boolean);
-  React.useEffect(()=>{if(periodosDeFecha.length&&!periodosDeFecha.includes(periodo))setPeriodo(periodosDeFecha[0]);},[fecha,periodosDeFecha.join(",")]); // eslint-disable-line
-
-  const filtradas=rows.filter(r=>r.fechaRaw===fecha&&r.periodo===periodo);
-
-  if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Cargando actividades...</div></Card>;
-  if(!rows.length)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>No hay actividades importadas todavía.</div></Card>;
-
-  const avg=k=>filtradas.length?Math.round(filtradas.reduce((s,r)=>s+(r[k]||0),0)/filtradas.length*10)/10:0;
-
-  // Objeto "sesion" en el formato que espera RadarChart
-  const sesionRadar={jugadoras:filtradas.map(r=>({n:r.jugadora,dist:r.dist,mxm:r.mxm,hsr:r.hsr,acc:r.acc,ns:r.ns}))};
-
-  return(
-    <>
-      <Card style={{marginBottom:12}}>
-        <CT text="Filtrar actividad"/>
-        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-          <select value={fecha} onChange={e=>{setFecha(e.target.value);setPeriodo("");}} style={{flex:1,minWidth:140,background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:T.text,fontSize:12,padding:"8px 10px",outline:"none"}}>
-            {fechas.map(f=><option key={f} value={f}>{fmtDate(f)||f}</option>)}
-          </select>
-          <select value={periodo} onChange={e=>setPeriodo(e.target.value)} style={{flex:1,minWidth:140,background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:T.text,fontSize:12,padding:"8px 10px",outline:"none"}}>
-            {periodosDeFecha.map(p=><option key={p} value={p}>{p}</option>)}
-          </select>
-        </div>
-      </Card>
-
-      {filtradas.length===0?(
-        <Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>No hay datos para esa fecha/actividad.</div></Card>
-      ):(
-        <>
-          <Card style={{marginBottom:12,overflowX:"auto"}}>
-            <CT text={`${periodo} — ${fmtDate(fecha)||fecha} (${filtradas.length} jugadoras)`}/>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,minWidth:640}}>
-              <thead>
-                <tr style={{borderBottom:`1px solid ${T.border}`}}>
-                  {["Jugadora","Min","PL","Dist","m/min","HSR","18-21","Sprint","ACC","DSC","NSpr","VMax"].map(h=>
-                    <th key={h} style={{textAlign:h==="Jugadora"?"left":"right",padding:"6px 8px",color:T.muted,fontWeight:600,whiteSpace:"nowrap"}}>{h}</th>
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {filtradas.map((r,i)=>(
-                  <tr key={i} style={{borderBottom:`1px solid ${T.border}`}}>
-                    <td style={{padding:"6px 8px",color:T.text}}>{r.jugadora}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted}}>{r.min}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.pl}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.blue,fontWeight:500}}>{r.dist}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.muted2}}>{r.mxm}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.green}}>{r.hsr}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.amber}}>{r.ai18}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:r.spr>0?T.red:T.muted,fontWeight:r.spr>0?700:400}}>{r.spr}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.purple}}>{r.acc}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.cyan}}>{r.dsc}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:r.ns>0?T.text:T.muted,fontWeight:r.ns>0?600:400}}>{r.ns}</td>
-                    <td style={{padding:"6px 8px",textAlign:"right",color:T.amber,fontWeight:500}}>{r.vmax}</td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr style={{borderTop:`2px solid ${T.border2}`}}>
-                  <td style={{padding:"6px 8px",color:T.green,fontWeight:700}}>Prom. equipo</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("min")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("pl")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("dist")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("mxm")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("hsr")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("ai18")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("spr")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("acc")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("dsc")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("ns")}</td>
-                  <td style={{padding:"6px 8px",textAlign:"right",color:T.green,fontWeight:700}}>{avg("vmax")}</td>
-                </tr>
-              </tfoot>
-            </table>
-          </Card>
-
-          <Card style={{marginBottom:12}}>
-            <CT text="Radar comparativo"/>
-            <select value={jugSel} onChange={e=>setJugSel(e.target.value)} style={{width:"100%",background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:jugSel?T.text:T.muted,fontSize:13,padding:"10px 12px",outline:"none",boxSizing:"border-box"}}>
-              <option value="">Seleccioná una jugadora para ver radar...</option>
-              {filtradas.map(r=><option key={r.jugadora} value={r.jugadora}>{r.jugadora}</option>)}
-            </select>
-          </Card>
-          {jugSel&&<RadarChart player={jugSel} sesion={sesionRadar}/>}
-        </>
-      )}
-    </>
-  );
-}
-
-
-
+// ─── STAFF PUESTOS ────────────────────────────────────────────────────────────
 // ─── PUESTOS CONTEXT — carga desde Drive, disponible globalmente ──────────────
 const PuestosCtx=React.createContext(PUESTOS);
 function usePuestos(){return React.useContext(PuestosCtx);}
@@ -1448,7 +1298,6 @@ function StaffEvaluaciones(){
 }
 
 function StaffYoyo(){
-  const readOnly=useReadOnly();
   const [vista,setVista]=useState("reporte");
   const [loading,setLoading]=useState(true);
   const [driveData,setDriveData]=useState([]);
@@ -1503,7 +1352,7 @@ function StaffYoyo(){
     <>
       <div style={{display:"flex",gap:8,marginBottom:10}}>
         <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>📊 Reporte</button>
-        {!readOnly&&<button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📝 Tomar Test</button>}
+        <button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📝 Tomar Test</button>
       </div>
       {loading?<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Cargando desde Drive...</div></Card>:<>
       <MR>
@@ -1705,7 +1554,6 @@ function StaffTomarYoyo({onVolver}){
 }
 
 function StaffCargas(){
-  const readOnly=useReadOnly();
   const [vista,setVista]=useState("reporte");
   const [loading,setLoading]=useState(true);
   const [data,setData]=useState(null);
@@ -1745,7 +1593,7 @@ function StaffCargas(){
     <>
       <div style={{display:"flex",gap:8,marginBottom:10}}>
         <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.amber}`,background:"#2d2a0f",color:T.amber,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>📊 Reporte</button>
-        {!readOnly&&<button onClick={()=>setVista("cargar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>➕ Cargar Pesos</button>}
+        <button onClick={()=>setVista("cargar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>➕ Cargar Pesos</button>
       </div>
       {loading?<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Cargando desde Drive...</div></Card>:
       !data||!Object.keys(data).length?<Card><div style={{color:T.muted,textAlign:"center",padding:20}}>Sin datos de cargas todavía</div></Card>:
@@ -2302,7 +2150,6 @@ function StaffMinutosTracker({onVolver,rival,sistema,posicionesIniciales,banco:b
 }
 
 function StaffMinutos(){
-  const readOnly=useReadOnly();
   const [vista,setVista]=useState("reporte");
   const [rival,setRival]=useState("");
   const [sistema,setSistema]=useState("4-4-2");
@@ -2310,8 +2157,6 @@ function StaffMinutos(){
   const [posiciones,setPosiciones]=useState([]);
   const [enTracker,setEnTracker]=useState(false);
   const [jugPendiente,setJugPendiente]=useState(null);
-  const [extraJugadoras,setExtraJugadoras]=useState([]);
-  const [nuevaJugadora,setNuevaJugadora]=useState("");
   // Hooks del reporte — siempre al inicio
   const [driveData,setDriveData]=useState(null);
   const [loadingDrive,setLoadingDrive]=useState(true);
@@ -2325,31 +2170,19 @@ function StaffMinutos(){
         const sheet=d["Minutos App"]||[];
         if(sheet.length<2){setDriveData({partidos:[],jugMap:{}});return;}
         const headers=sheet[0].map(h=>String(h).trim());
-        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total"),iTs=headers.indexOf("Timestamp");
-        const rows=sheet.slice(1).map(r=>({
-          rival:String(r[iR]||"").trim(),
-          jug:String(r[iJ]||"").trim(),
-          tot:Number(r[iT])||0,
-          ts:String(r[iTs]||"").trim()
-        })).filter(r=>r.rival&&r.jug&&r.tot);
-        // Si el mismo rival aparece con mas de un Timestamp, son partidos
-        // distintos (ej. PWCC en marzo y PWCC en agosto) — no hay que sumarlos.
-        const tsByRival={};
-        rows.forEach(r=>{ if(!tsByRival[r.rival])tsByRival[r.rival]=new Set(); tsByRival[r.rival].add(r.ts); });
-        const MESES_MIN=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-        const labelFor=(rival,ts)=>{
-          if((tsByRival[rival]?.size||1)<=1) return rival;
-          const d=new Date(ts);
-          if(isNaN(d)) return rival;
-          return `${rival} ${d.getDate()}-${MESES_MIN[d.getMonth()]}`;
-        };
+        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
         const partidos=[],partSet=new Set();
         const jugMap={};
-        rows.forEach(({rival,jug,tot,ts})=>{
-          const label=labelFor(rival,ts);
-          if(!partSet.has(label)){partSet.add(label);partidos.push(label);}
+        sheet.slice(1).forEach(r=>{
+          const rivalRaw=String(r[iR]||"").trim();
+          // Sacar fecha del rival si viene con formato "PWCC 15-MAR" → "PWCC"
+          const rival=rivalRaw.replace(/\s+\d{1,2}-[A-Z]{3}$/,"").replace(/\s+\d{1,2}\/\d{1,2}$/,"").trim();
+          const jug=String(r[iJ]||"").trim();
+          const tot=Number(r[iT])||0;
+          if(!rival||!jug||!tot)return;
+          if(!partSet.has(rival)){partSet.add(rival);partidos.push(rival);}
           if(!jugMap[jug])jugMap[jug]={};
-          jugMap[jug][label]=(jugMap[jug][label]||0)+tot;
+          jugMap[jug][rival]=(jugMap[jug][rival]||0)+tot;
         });
         setDriveData({partidos,jugMap});
       })
@@ -2453,8 +2286,8 @@ function StaffMinutos(){
         {/* Plantel */}
         <Card style={{marginBottom:8}}>
           <CT text="Plantel — tocá para agregar a la cancha o al banco"/>
-          <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:10}}>
-            {[...ALL_JUGADORAS,...extraJugadoras].map(j=>{
+          <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+            {ALL_JUGADORAS.map(j=>{
               const enC=enCanchaNames.includes(j);
               const enB=banco.includes(j);
               const esPend=jugPendiente===j;
@@ -2474,26 +2307,12 @@ function StaffMinutos(){
               );
             })}
           </div>
-          <div style={{display:"flex",gap:6}}>
-            <input value={nuevaJugadora} onChange={e=>setNuevaJugadora(e.target.value)} onKeyDown={e=>{
-              if(e.key==="Enter"){
-                const nombre=nuevaJugadora.trim();
-                if(nombre&&![...ALL_JUGADORAS,...extraJugadoras].includes(nombre)){setExtraJugadoras(prev=>[...prev,nombre]);}
-                setNuevaJugadora("");
-              }
-            }} placeholder="Agregar jugadora no listada..." style={{flex:1,background:"#1a2035",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,padding:"7px 10px",fontSize:12,boxSizing:"border-box",fontFamily:"inherit"}}/>
-            <button onClick={()=>{
-              const nombre=nuevaJugadora.trim();
-              if(nombre&&![...ALL_JUGADORAS,...extraJugadoras].includes(nombre)){setExtraJugadoras(prev=>[...prev,nombre]);}
-              setNuevaJugadora("");
-            }} style={{padding:"7px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>+ Agregar</button>
-          </div>
           <div style={{fontSize:10,color:T.muted,marginTop:6}}>Verde ✓ = en cancha · Naranja B = banco · Las 11 primeras van a cancha automáticamente</div>
         </Card>
 
         <button onClick={()=>{
           if(!rival.trim()){alert("Ingresá el rival");return;}
-          if(enCanchaCount<11&&!window.confirm(`Solo hay ${enCanchaCount}/11 jugadoras en cancha. ¿Iniciar igual?`))return;
+          if(enCanchaCount<11){alert(`Faltan ${11-enCanchaCount} jugadoras en cancha`);return;}
           setEnTracker(true);
         }} style={{width:"100%",padding:13,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
           ▶ Iniciar partido
@@ -2517,7 +2336,7 @@ function StaffMinutos(){
     <>
       <div style={{display:"flex",gap:8,marginBottom:10}}>
         <button style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"default",fontFamily:"inherit"}}>📊 Reporte</button>
-        {!readOnly&&<button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>⏱ Tomar Minutos</button>}
+        <button onClick={()=>setVista("tomar")} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>⏱ Tomar Minutos</button>
       </div>
       {loadingDrive?(
         <Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Cargando minutos desde Drive...</div></Card>
@@ -2571,10 +2390,9 @@ function StaffMinutos(){
 
 // ─── STAFF ASISTENCIA ──────────────────────────────────────────────────────────
 function StaffAsistencia(){
-  const readOnly=useReadOnly();
   const [vista,setVista]=useState("reporte");
   if(vista==="tomar")return <StaffTomarAsistencia onVolver={()=>setVista("reporte")}/>;
-  return <StaffAsistenciaReporte onTomar={readOnly?null:()=>setVista("tomar")} onFechas={()=>{}}/>;
+  return <StaffAsistenciaReporte onTomar={()=>setVista("tomar")} onFechas={()=>{}}/>;
 }
 function StaffAsistenciaReporte({onTomar,onFechas}){
   const [rows,setRows]=useState(null);
@@ -2680,7 +2498,7 @@ function StaffAsistenciaReporte({onTomar,onFechas}){
 
       <div style={{display:"flex",gap:8,marginBottom:10}}>
         <button onClick={()=>{}} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.blue}`,background:"#1e3a5f",color:T.blue,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>📊 Reporte</button>
-        {onTomar&&<button onClick={onTomar} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>✓ Tomar Asistencia</button>}
+        <button onClick={onTomar} style={{padding:"6px 14px",borderRadius:6,border:`1px solid ${T.green}`,background:"#0f2d1f",color:T.green,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>✓ Tomar Asistencia</button>
       </div>
       {loading&&<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:13}}>Cargando asistencias desde Drive...</div></Card>}
       {!loading&&rows!==null&&(
@@ -3227,7 +3045,7 @@ function PlayerGPS({player}){
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <thead><tr>{(selId?["Jugadora","Min","PL","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]:["Sesión","Min","PL","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]).map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
+            <thead><tr>{(selId?["Jugadora","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]:["Sesión","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]).map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
             <tbody>{selId?(
               (()=>{
                 const selSess=sess.find(s=>s.id===selId);
@@ -3240,7 +3058,6 @@ function PlayerGPS({player}){
                     <tr key={j.n} style={{background:isMe?"#0d1f35":"transparent"}}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>{isMe?"▶ ":""}{j.n.split(" ")[0]}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{j.min}'</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{j.pl||"—"}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?600:400,textAlign:"center"}}>{j.dist.toLocaleString()}m</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{j.mxm}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{h15}m</td>
@@ -3263,7 +3080,6 @@ function PlayerGPS({player}){
                   <tr key={s.id}>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{s.data.min}'</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{s.data.pl||"—"}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500,textAlign:"center"}}>{s.data.dist.toLocaleString()}m</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{s.data.mxm}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{h15}m</td>
@@ -3563,29 +3379,18 @@ function PlayerMinutos({player}){
         const sheet=d["Minutos App"]||[];
         if(sheet.length<2){setJugMap({});setPartidos([]);setRanking([]);return;}
         const headers=sheet[0].map(h=>String(h).trim());
-        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total"),iTs=headers.indexOf("Timestamp");
-        const rowsMin=sheet.slice(1).map(r=>({
-          rival:String(r[iR]||"").trim(),
-          jug:String(r[iJ]||"").trim(),
-          tot:Number(r[iT])||0,
-          ts:String(r[iTs]||"").trim()
-        })).filter(r=>r.rival&&r.jug&&r.tot);
-        const tsByRival2={};
-        rowsMin.forEach(r=>{ if(!tsByRival2[r.rival])tsByRival2[r.rival]=new Set(); tsByRival2[r.rival].add(r.ts); });
-        const MESES_MIN2=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-        const labelFor2=(rival,ts)=>{
-          if((tsByRival2[rival]?.size||1)<=1) return rival;
-          const d=new Date(ts);
-          if(isNaN(d)) return rival;
-          return `${rival} ${d.getDate()}-${MESES_MIN2[d.getMonth()]}`;
-        };
+        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
         const partSet=new Set(), parts=[];
         const allMap={};// {jugadora:{rival:tot}}
-        rowsMin.forEach(({rival,jug,tot,ts})=>{
-          const label=labelFor2(rival,ts);
-          if(!partSet.has(label)){partSet.add(label);parts.push(label);}
+        sheet.slice(1).forEach(r=>{
+          const rivalRaw=String(r[iR]||"").trim();
+          const rival=rivalRaw.replace(/\s+\d{1,2}-[A-Z]{3}$/,"").replace(/\s+\d{1,2}\/\d{1,2}$/,"").trim();
+          const jug=String(r[iJ]||"").trim();
+          const tot=Number(r[iT])||0;
+          if(!rival||!jug||!tot)return;
+          if(!partSet.has(rival)){partSet.add(rival);parts.push(rival);}
           if(!allMap[jug])allMap[jug]={};
-          allMap[jug][label]=(allMap[jug][label]||0)+tot;
+          allMap[jug][rival]=(allMap[jug][rival]||0)+tot;
         });
         setPartidos(parts);
         setJugMap(allMap[player]||{});
@@ -3805,7 +3610,6 @@ const saveToSheet=(jugadora,tipo,datos)=>{
     .catch(()=>true);
 };
 function PlayerRPE({player}){
-  const readOnly=useReadOnly();
   const [yaDone,setYaDone]=useState(false);
   const [checking,setChecking]=useState(true);
   const [rpe,setRpe]=useState(RPE_DATA[player]||5);
@@ -3835,15 +3639,6 @@ function PlayerRPE({player}){
   },[player]);
 
   if(checking)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Verificando...</div></Card>;
-  if(readOnly)return(
-    <Card>
-      <div style={{textAlign:"center",padding:"30px 10px"}}>
-        <div style={{fontSize:28,marginBottom:8}}>👁</div>
-        <div style={{color:T.muted,fontSize:13,fontWeight:600}}>Modo Visita — solo lectura</div>
-        <div style={{color:T.muted,fontSize:12,marginTop:4}}>No se puede cargar RPE desde esta sesión.</div>
-      </div>
-    </Card>
-  );
   if(yaDone)return(
     <Card>
       <div style={{textAlign:"center",padding:"30px 10px"}}>
@@ -3890,7 +3685,6 @@ function PlayerRPE({player}){
 
 // ─── PLAYER WELLNESS ──────────────────────────────────────────────────────────
 function PlayerWellness({player}){
-  const readOnly=useReadOnly();
   const base=WELLNESS[player]||{horas:"7hs",calidad:3,fatiga:3,dolor:3,estres:3,animo:3};
   const [yaDone,setYaDone]=useState(false);
   const [checking,setChecking]=useState(true);
@@ -3934,15 +3728,6 @@ function PlayerWellness({player}){
     </div>
   );
   if(checking)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Verificando...</div></Card>;
-  if(readOnly)return(
-    <Card>
-      <div style={{textAlign:"center",padding:"30px 10px"}}>
-        <div style={{fontSize:28,marginBottom:8}}>👁</div>
-        <div style={{color:T.muted,fontSize:13,fontWeight:600}}>Modo Visita — solo lectura</div>
-        <div style={{color:T.muted,fontSize:12,marginTop:4}}>No se puede cargar Wellness desde esta sesión.</div>
-      </div>
-    </Card>
-  );
   if(yaDone)return(
     <Card>
       <div style={{textAlign:"center",padding:"30px 10px"}}>
@@ -4024,19 +3809,12 @@ function LoginScreen({onLogin}){
   const [player,setPlayer]=useState("");
   const [error,setError]=useState("");
   const [recordar,setRecordar]=useState(false);
-  const [visitaAuth,setVisitaAuth]=useState(false);
-  const [visitaComo,setVisitaComo]=useState(null);
 
   // Auto-login si hay sesión guardada
   React.useEffect(()=>{
     try{
       const saved=localStorage.getItem("oldgabs_session");
-      if(saved){
-        const s=JSON.parse(saved);
-        if(s.tipo==="staff")onLogin("staff",null,"staff");
-        else if(s.tipo==="jugadora"&&s.player)onLogin("jugadora",s.player,"jugadora");
-        else if(s.tipo==="visita"&&s.subTipo&&(s.subTipo==="staff"||s.player))onLogin("visita",s.player||null,s.subTipo);
-      }
+      if(saved){const s=JSON.parse(saved);if(s.tipo&&(s.tipo==="staff"||(s.tipo==="jugadora"&&s.player)))onLogin(s.tipo,s.player||null);}
     }catch(e){}
   },[]);
 
@@ -4044,29 +3822,15 @@ function LoginScreen({onLogin}){
     if(tipo==="staff"){
       if(pass==="Staffoldgabs"){
         if(recordar)localStorage.setItem("oldgabs_session",JSON.stringify({tipo:"staff"}));
-        onLogin("staff",null,"staff");
+        onLogin("staff",null);
       }else{setError("Contraseña incorrecta");setPass("");}
-    }else if(tipo==="jugadora"){
+    }else{
       if(pass==="1eraoldgabs"){
         if(!player){setError("Seleccioná tu nombre");return;}
         if(recordar)localStorage.setItem("oldgabs_session",JSON.stringify({tipo:"jugadora",player}));
-        onLogin("jugadora",player,"jugadora");
-      }else{setError("Contraseña incorrecta");setPass("");}
-    }else if(tipo==="visita"){
-      if(pass==="Invitado"){
-        setError("");setVisitaAuth(true);
+        onLogin("jugadora",player);
       }else{setError("Contraseña incorrecta");setPass("");}
     }
-  };
-
-  const handleVisitaStaff=()=>{
-    if(recordar)localStorage.setItem("oldgabs_session",JSON.stringify({tipo:"visita",subTipo:"staff"}));
-    onLogin("visita",null,"staff");
-  };
-  const handleVisitaJugadora=()=>{
-    if(!player){setError("Seleccioná una jugadora");return;}
-    if(recordar)localStorage.setItem("oldgabs_session",JSON.stringify({tipo:"visita",subTipo:"jugadora",player}));
-    onLogin("visita",player,"jugadora");
   };
   return(
     <div style={{background:T.bg,minHeight:"100vh",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",fontFamily:"system-ui,sans-serif",padding:20}}>
@@ -4086,42 +3850,13 @@ function LoginScreen({onLogin}){
             <button onClick={()=>{setTipo("jugadora");setError("");}} style={{padding:16,borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12}}>
               <span style={{fontSize:24}}>🏑</span><div style={{textAlign:"left"}}><div>Jugadora</div><div style={{fontSize:11,color:T.muted,fontWeight:400}}>Mis datos personales</div></div>
             </button>
-            <button onClick={()=>{setTipo("visita");setError("");}} style={{padding:16,borderRadius:10,border:`1px solid ${T.border2}`,background:T.surf,color:T.text,fontSize:15,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:12}}>
-              <span style={{fontSize:24}}>👁</span><div style={{textAlign:"left"}}><div>Visita</div><div style={{fontSize:11,color:T.muted,fontWeight:400}}>Solo ver, sin editar</div></div>
-            </button>
-          </div>
-        </div>
-      ):tipo==="visita"&&visitaAuth?(
-        <div style={{width:"100%",maxWidth:320}}>
-          <button onClick={()=>{setTipo(null);setPass("");setPlayer("");setError("");setVisitaAuth(false);setVisitaComo(null);}} style={{background:"transparent",border:"none",color:T.muted,fontSize:12,cursor:"pointer",marginBottom:20,padding:0,fontFamily:"inherit"}}>← Volver</button>
-          <div style={{background:T.surf,borderRadius:12,padding:24,border:`1px solid ${T.border}`}}>
-            <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:4}}>Visita 👁</div>
-            <div style={{fontSize:11,color:T.muted,marginBottom:16}}>Modo solo lectura — no se puede editar ni enviar datos</div>
-            {visitaComo!=="jugadora"?(
-              <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                <button onClick={handleVisitaStaff} style={{padding:14,borderRadius:8,border:`1px solid ${T.border2}`,background:"#0d1020",color:T.text,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",textAlign:"left"}}>👤 Ver como Staff Técnico</button>
-                <button onClick={()=>setVisitaComo("jugadora")} style={{padding:14,borderRadius:8,border:`1px solid ${T.border2}`,background:"#0d1020",color:T.text,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",textAlign:"left"}}>🏑 Ver como Jugadora</button>
-              </div>
-            ):(
-              <div>
-                <div style={{marginBottom:12}}>
-                  <div style={{fontSize:11,color:T.muted,marginBottom:6}}>Jugadora a ver</div>
-                  <select value={player} onChange={e=>{setPlayer(e.target.value);setError("");}} style={{width:"100%",background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:player?T.text:T.muted,fontSize:13,padding:"10px 12px",outline:"none",boxSizing:"border-box"}}>
-                    <option value="">Seleccioná una jugadora...</option>
-                    {ALL_JUGADORAS.map(n=><option key={n} value={n}>{n}</option>)}
-                  </select>
-                </div>
-                {error&&<div style={{fontSize:11,color:T.red,marginBottom:12}}>{error}</div>}
-                <button onClick={handleVisitaJugadora} style={{width:"100%",padding:12,background:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Ingresar</button>
-              </div>
-            )}
           </div>
         </div>
       ):(
         <div style={{width:"100%",maxWidth:320}}>
-          <button onClick={()=>{setTipo(null);setPass("");setPlayer("");setError("");setVisitaAuth(false);setVisitaComo(null);}} style={{background:"transparent",border:"none",color:T.muted,fontSize:12,cursor:"pointer",marginBottom:20,padding:0,fontFamily:"inherit"}}>← Volver</button>
+          <button onClick={()=>{setTipo(null);setPass("");setPlayer("");setError("");}} style={{background:"transparent",border:"none",color:T.muted,fontSize:12,cursor:"pointer",marginBottom:20,padding:0,fontFamily:"inherit"}}>← Volver</button>
           <div style={{background:T.surf,borderRadius:12,padding:24,border:`1px solid ${T.border}`}}>
-            <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:16}}>{tipo==="staff"?"Staff Técnico 👤":tipo==="visita"?"Visita 👁":"Jugadora 🏑"}</div>
+            <div style={{fontSize:14,fontWeight:600,color:T.text,marginBottom:16}}>{tipo==="staff"?"Staff Técnico 👤":"Jugadora 🏑"}</div>
             {tipo==="jugadora"&&(
               <div style={{marginBottom:12}}>
                 <div style={{fontSize:11,color:T.muted,marginBottom:6}}>Tu nombre</div>
@@ -4145,7 +3880,7 @@ function LoginScreen({onLogin}){
               <div style={{width:18,height:18,borderRadius:4,border:`1px solid ${T.border2}`,background:recordar?T.blue:"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"#fff",flexShrink:0}}>{recordar?"✓":""}</div>
               <span style={{fontSize:12,color:T.muted}}>Recordar sesión en este dispositivo</span>
             </div>
-            <button onClick={handleLogin} style={{width:"100%",padding:12,background:tipo==="staff"?T.blue:tipo==="visita"?T.muted2:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Ingresar</button>
+            <button onClick={handleLogin} style={{width:"100%",padding:12,background:tipo==="staff"?T.blue:T.green,border:"none",borderRadius:8,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>Ingresar</button>
           </div>
         </div>
       )}
@@ -4172,11 +3907,8 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-const ReadOnlyCtx=React.createContext(false);
-function useReadOnly(){return React.useContext(ReadOnlyCtx);}
-
 export default function App(){
-  return <ErrorBoundary><GPSProvider><AppInner/></GPSProvider></ErrorBoundary>;
+  return <GPSProvider><AppInner/></GPSProvider>;
 }
 
 function AppInner(){
@@ -4185,16 +3917,14 @@ function AppInner(){
   const [session,setSession]=useState(null);
   const [tab,setTab]=useState(0);
   const [player,setPlayer]=useState(()=>ALL_JUGADORAS[0]);
-  const handleLogin=(tipo,playerName,subTipo)=>{setSession({tipo,player:playerName,subTipo:subTipo||tipo});setTab(0);if(playerName)setPlayer(playerName);};
+  const handleLogin=(tipo,playerName)=>{setSession({tipo,player:playerName});setTab(0);if(playerName)setPlayer(playerName);};
   const handleLogout=()=>{localStorage.removeItem("oldgabs_session");setSession(null);setTab(0);};
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
-  const readOnly=session.tipo==="visita";
-  const mode=session.subTipo==="staff"?"staff":"player";
-  const STAFF_TABS=["GPS","Evolución GPS","Actividades","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
+  const mode=session.tipo==="staff"?"staff":"player";
+  const STAFF_TABS=["GPS","Evolución GPS","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
   const PLAYER_TABS=["Mi GPS","Evolución GPS","Evaluaciones","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
-    <ReadOnlyCtx.Provider value={readOnly}>
     <PuestosProvider>
     <div style={{background:T.bg,color:T.text,minHeight:"100vh",fontFamily:"system-ui,sans-serif"}}>
       {/* Header */}
@@ -4203,7 +3933,7 @@ function AppInner(){
           <img src="data:image/jpeg;base64,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" alt="Old Gabs" style={{width:28,height:28,borderRadius:"50%",objectFit:"cover",border:"2px solid #8B1A2A"}}/>
           <div>
             <div style={{fontSize:11,fontWeight:700,color:T.text,letterSpacing:"1px",textTransform:"uppercase"}}>Old Gabs 1era</div>
-            <div style={{fontSize:9,color:readOnly?T.amber:T.muted}}>{mode==="staff"?"Staff Técnico":"Jugadora"}{readOnly?" · 👁 Visita (solo lectura)":""}</div>
+            <div style={{fontSize:9,color:T.muted}}>{mode==="staff"?"Staff Técnico":"Jugadora"}</div>
           </div>
         </div>
         <button onClick={handleLogout} style={{padding:"4px 10px",borderRadius:5,border:`1px solid ${T.border}`,fontSize:10,cursor:"pointer",background:"transparent",color:T.muted,fontFamily:"inherit"}}>Salir</button>
@@ -4224,14 +3954,13 @@ function AppInner(){
           </div>
         )}
         {mode==="staff"?(
-          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffActividades/>}{tab===3&&<StaffPuestos/>}{tab===4&&<StaffEvaluaciones/>}{tab===5&&<StaffMinutos/>}{tab===6&&<StaffAsistencia/>}{tab===7&&<StaffRPE/>}{tab===8&&<StaffWellness/>}</></ErrorBoundary>
+          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffPuestos/>}{tab===3&&<StaffEvaluaciones/>}{tab===4&&<StaffMinutos/>}{tab===5&&<StaffAsistencia/>}{tab===6&&<StaffRPE/>}{tab===7&&<StaffWellness/>}</></ErrorBoundary>
         ):(
           <ErrorBoundary><>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerEvaluaciones player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</></ErrorBoundary>
         )}
       </div>
     </div>
     </PuestosProvider>
-    </ReadOnlyCtx.Provider>
   );
 // Asistencias — datos exactos del Drive hoja "Asistencias"
 // MAR: 2,4,6,9,11,13,16,18,20,23,25,27,30 (13 fechas)
