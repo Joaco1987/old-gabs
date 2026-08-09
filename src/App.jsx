@@ -684,7 +684,7 @@ const MetCard=({label,value,sub,sc=T.green})=>(
 );
 const Card=({children,style={}})=><div style={{background:T.surf,border:`1px solid ${T.border}`,borderRadius:8,padding:12,...style}}>{children}</div>;
 const CT=({text})=><div style={{fontSize:10,color:T.muted,textTransform:"uppercase",letterSpacing:".5px",marginBottom:10}}>{text}</div>;
-const TH=({cols})=><thead><tr>{cols.map((c,i)=><th key={i} style={{textAlign:"left",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>;
+const TH=({cols})=><thead><tr>{cols.map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>;
 const fbtn=(val,set,opts)=>(
   <div style={{display:"flex",gap:2,background:T.surf2,borderRadius:6,padding:2,width:"fit-content",marginBottom:12,flexWrap:"wrap"}}>
     {opts.map(([v,l])=><button key={v} onClick={()=>set(v)} style={{padding:"4px 10px",borderRadius:5,border:"none",fontSize:10,fontWeight:500,cursor:"pointer",background:val===v?T.blue+"33":"transparent",color:val===v?T.blue:T.muted,fontFamily:"inherit"}}>{l}</button>)}
@@ -2336,22 +2336,21 @@ function StaffMinutos(){
         // distintos (ej. PWCC en marzo y PWCC en agosto) — no hay que sumarlos.
         const tsByRival={};
         rows.forEach(r=>{ if(!tsByRival[r.rival])tsByRival[r.rival]=new Set(); tsByRival[r.rival].add(r.ts); });
-        const MESES_MIN=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-        const labelFor=(rival,ts)=>{
+        // La key interna puede repetir el rival (para no sumar partidos distintos),
+        // pero lo que se MUESTRA en la columna es siempre solo el rival, sin fecha.
+        const keyFor=(rival,ts)=>{
           if((tsByRival[rival]?.size||1)<=1) return rival;
-          const d=new Date(ts);
-          if(isNaN(d)) return rival;
-          return `${rival} ${d.getDate()}-${MESES_MIN[d.getMonth()]}`;
+          return `${rival}||${ts}`;
         };
-        const partidos=[],partSet=new Set();
+        const partidos=[],partidosDisplay=[],partSet=new Set();
         const jugMap={};
         rows.forEach(({rival,jug,tot,ts})=>{
-          const label=labelFor(rival,ts);
-          if(!partSet.has(label)){partSet.add(label);partidos.push(label);}
+          const key=keyFor(rival,ts);
+          if(!partSet.has(key)){partSet.add(key);partidos.push(key);partidosDisplay.push(rival);}
           if(!jugMap[jug])jugMap[jug]={};
-          jugMap[jug][label]=(jugMap[jug][label]||0)+tot;
+          jugMap[jug][key]=(jugMap[jug][key]||0)+tot;
         });
-        setDriveData({partidos,jugMap});
+        setDriveData({partidos,partidosDisplay,jugMap});
       })
       .catch(()=>setDriveData({partidos:[],jugMap:{}}))
       .finally(()=>setLoadingDrive(false));
@@ -2504,6 +2503,7 @@ function StaffMinutos(){
 
 
   const partidos=driveData?.partidos||[];
+  const partidosDisplay=driveData?.partidosDisplay||partidos;
   const jugMap=driveData?.jugMap||{};
   const jugadoras=Object.keys(jugMap).sort((a,b)=>{
     const totA=Object.values(jugMap[a]).reduce((s,v)=>s+v,0);
@@ -2533,7 +2533,7 @@ function StaffMinutos(){
             <CT text="Minutos de juego por jugadora — en vivo desde Drive"/>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-                <TH cols={["Jugadora",...partidos,"Total","Prom."]}/>
+                <TH cols={["Jugadora",...partidosDisplay,"Total","Prom."]}/>
                 <tbody>{jugadoras.map(j=>{
                   const tot=getTot(j);
                   const col=tot>=200?T.green:tot>=100?T.amber:T.muted;
@@ -2544,8 +2544,8 @@ function StaffMinutos(){
                       const v=jugMap[j][p];
                       return<td key={p} style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:v?T.text:T.muted,textAlign:"center"}}>{v?`${v}'`:"—"}</td>;
                     })}
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700}}>{tot}'</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2}}>{np?`${Math.round(tot/np*10)/10}'`:"—"}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:col,fontWeight:700,textAlign:"center"}}>{tot}'</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{np?`${Math.round(tot/np*10)/10}'`:"—"}</td>
                   </tr>);
                 })}</tbody>
               </table>
@@ -3554,6 +3554,7 @@ function PlayerMinutos({player}){
   const [loading,setLoading]=useState(true);
   const [jugMap,setJugMap]=useState(null);// {rival: total}
   const [partidos,setPartidos]=useState([]);
+  const [partidosDisplay,setPartidosDisplay]=useState([]);
   const [ranking,setRanking]=useState([]);// [{n, tot}]
 
   React.useEffect(()=>{
@@ -3573,21 +3574,20 @@ function PlayerMinutos({player}){
         const tsByRival2={};
         rowsMin.forEach(r=>{ if(!tsByRival2[r.rival])tsByRival2[r.rival]=new Set(); tsByRival2[r.rival].add(r.ts); });
         const MESES_MIN2=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-        const labelFor2=(rival,ts)=>{
+        const keyFor2=(rival,ts)=>{
           if((tsByRival2[rival]?.size||1)<=1) return rival;
-          const d=new Date(ts);
-          if(isNaN(d)) return rival;
-          return `${rival} ${d.getDate()}-${MESES_MIN2[d.getMonth()]}`;
+          return `${rival}||${ts}`;
         };
-        const partSet=new Set(), parts=[];
+        const partSet=new Set(), parts=[], partsDisplay=[];
         const allMap={};// {jugadora:{rival:tot}}
         rowsMin.forEach(({rival,jug,tot,ts})=>{
-          const label=labelFor2(rival,ts);
-          if(!partSet.has(label)){partSet.add(label);parts.push(label);}
+          const key=keyFor2(rival,ts);
+          if(!partSet.has(key)){partSet.add(key);parts.push(key);partsDisplay.push(rival);}
           if(!allMap[jug])allMap[jug]={};
-          allMap[jug][label]=(allMap[jug][label]||0)+tot;
+          allMap[jug][key]=(allMap[jug][key]||0)+tot;
         });
         setPartidos(parts);
+        setPartidosDisplay(partsDisplay);
         setJugMap(allMap[player]||{});
         // Ranking
         const rank=Object.entries(allMap).map(([n,m])=>({n,tot:Object.values(m).reduce((s,v)=>s+v,0)}))
@@ -3602,6 +3602,7 @@ function PlayerMinutos({player}){
 
   const tot=Object.values(jugMap||{}).reduce((s,v)=>s+v,0);
   const jugados=partidos.filter(p=>jugMap[p]);
+  const displayFor=(key)=>{const idx=partidos.indexOf(key);return idx>=0?partidosDisplay[idx]:key;};
   const prom=jugados.length?Math.round(tot/jugados.length*10)/10:0;
   const colors=[T.blue,T.green,T.amber,T.red,T.purple,T.cyan,"#e879f9","#fb923c"];
   const mx=ranking[0]?.tot||1;
@@ -3622,7 +3623,7 @@ function PlayerMinutos({player}){
           return(
             <div key={p} style={{marginBottom:12}}>
               <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
-                <span style={{fontSize:12,color:T.text,fontWeight:500}}>{p}</span>
+                <span style={{fontSize:12,color:T.text,fontWeight:500}}>{displayFor(p)}</span>
                 <span style={{fontSize:12,color:c,fontWeight:600}}>{v} min</span>
               </div>
               <div style={{background:"#1a1e2a",borderRadius:4,height:10}}>
