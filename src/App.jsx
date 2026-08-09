@@ -828,13 +828,14 @@ function StaffGPS(){
             <CT text="Datos individuales"/>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-                <thead><tr>{["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx","PL"].map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
+                <thead><tr>{["Jugadora","Min","PL","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx"].map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
                 <tbody>{[...sess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
                 const {h15,h18,sp}=calcZonas(j,sess);
                   return(
                     <tr key={j.n}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{j.n}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{j.min}'</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{j.pl||"—"}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500,textAlign:"center"}}>{j.dist.toLocaleString()}m</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{j.mxm}</td>
                       
@@ -845,7 +846,6 @@ function StaffGPS(){
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{j.dsc}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{j.vmax}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{j.pl||"—"}</td>
                     </tr>
                   );
                 })}</tbody>
@@ -2325,17 +2325,31 @@ function StaffMinutos(){
         const sheet=d["Minutos App"]||[];
         if(sheet.length<2){setDriveData({partidos:[],jugMap:{}});return;}
         const headers=sheet[0].map(h=>String(h).trim());
-        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
+        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total"),iTs=headers.indexOf("Timestamp");
+        const rows=sheet.slice(1).map(r=>({
+          rival:String(r[iR]||"").trim(),
+          jug:String(r[iJ]||"").trim(),
+          tot:Number(r[iT])||0,
+          ts:String(r[iTs]||"").trim()
+        })).filter(r=>r.rival&&r.jug&&r.tot);
+        // Si el mismo rival aparece con mas de un Timestamp, son partidos
+        // distintos (ej. PWCC en marzo y PWCC en agosto) — no hay que sumarlos.
+        const tsByRival={};
+        rows.forEach(r=>{ if(!tsByRival[r.rival])tsByRival[r.rival]=new Set(); tsByRival[r.rival].add(r.ts); });
+        const MESES_MIN=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+        const labelFor=(rival,ts)=>{
+          if((tsByRival[rival]?.size||1)<=1) return rival;
+          const d=new Date(ts);
+          if(isNaN(d)) return rival;
+          return `${rival} ${d.getDate()}-${MESES_MIN[d.getMonth()]}`;
+        };
         const partidos=[],partSet=new Set();
         const jugMap={};
-        sheet.slice(1).forEach(r=>{
-          const rival=String(r[iR]||"").trim();
-          const jug=String(r[iJ]||"").trim();
-          const tot=Number(r[iT])||0;
-          if(!rival||!jug||!tot)return;
-          if(!partSet.has(rival)){partSet.add(rival);partidos.push(rival);}
+        rows.forEach(({rival,jug,tot,ts})=>{
+          const label=labelFor(rival,ts);
+          if(!partSet.has(label)){partSet.add(label);partidos.push(label);}
           if(!jugMap[jug])jugMap[jug]={};
-          jugMap[jug][rival]=(jugMap[jug][rival]||0)+tot;
+          jugMap[jug][label]=(jugMap[jug][label]||0)+tot;
         });
         setDriveData({partidos,jugMap});
       })
@@ -3213,7 +3227,7 @@ function PlayerGPS({player}){
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <thead><tr>{(selId?["Jugadora","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx","PL"]:["Sesión","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx","PL"]).map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
+            <thead><tr>{(selId?["Jugadora","Min","PL","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]:["Sesión","Min","PL","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]).map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
             <tbody>{selId?(
               (()=>{
                 const selSess=sess.find(s=>s.id===selId);
@@ -3226,6 +3240,7 @@ function PlayerGPS({player}){
                     <tr key={j.n} style={{background:isMe?"#0d1f35":"transparent"}}>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?700:400,whiteSpace:"nowrap"}}>{isMe?"▶ ":""}{j.n.split(" ")[0]}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{j.min}'</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{j.pl||"—"}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:isMe?T.blue:T.text,fontWeight:isMe?600:400,textAlign:"center"}}>{j.dist.toLocaleString()}m</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{j.mxm}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{h15}m</td>
@@ -3235,7 +3250,6 @@ function PlayerGPS({player}){
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{j.dsc||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{j.vmax}</td>
-                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{j.pl||"—"}</td>
                     </tr>
                   );
                 });
@@ -3249,6 +3263,7 @@ function PlayerGPS({player}){
                   <tr key={s.id}>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{sIcon(s.tipo)} {s.label}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{s.data.min}'</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{s.data.pl||"—"}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:500,textAlign:"center"}}>{s.data.dist.toLocaleString()}m</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.muted2,textAlign:"center"}}>{s.data.mxm}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{h15}m</td>
@@ -3258,7 +3273,6 @@ function PlayerGPS({player}){
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{s.data.dsc||0}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(s.data.ns||0)>0?T.text:T.muted,fontWeight:(s.data.ns||0)>0?600:400,textAlign:"center"}}>{s.data.ns||0}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{s.data.vmax}</td>
-                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{s.data.pl||"—"}</td>
                   </tr>
                 );
               })
@@ -3549,17 +3563,29 @@ function PlayerMinutos({player}){
         const sheet=d["Minutos App"]||[];
         if(sheet.length<2){setJugMap({});setPartidos([]);setRanking([]);return;}
         const headers=sheet[0].map(h=>String(h).trim());
-        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
+        const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total"),iTs=headers.indexOf("Timestamp");
+        const rowsMin=sheet.slice(1).map(r=>({
+          rival:String(r[iR]||"").trim(),
+          jug:String(r[iJ]||"").trim(),
+          tot:Number(r[iT])||0,
+          ts:String(r[iTs]||"").trim()
+        })).filter(r=>r.rival&&r.jug&&r.tot);
+        const tsByRival2={};
+        rowsMin.forEach(r=>{ if(!tsByRival2[r.rival])tsByRival2[r.rival]=new Set(); tsByRival2[r.rival].add(r.ts); });
+        const MESES_MIN2=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+        const labelFor2=(rival,ts)=>{
+          if((tsByRival2[rival]?.size||1)<=1) return rival;
+          const d=new Date(ts);
+          if(isNaN(d)) return rival;
+          return `${rival} ${d.getDate()}-${MESES_MIN2[d.getMonth()]}`;
+        };
         const partSet=new Set(), parts=[];
         const allMap={};// {jugadora:{rival:tot}}
-        sheet.slice(1).forEach(r=>{
-          const rival=String(r[iR]||"").trim();
-          const jug=String(r[iJ]||"").trim();
-          const tot=Number(r[iT])||0;
-          if(!rival||!jug||!tot)return;
-          if(!partSet.has(rival)){partSet.add(rival);parts.push(rival);}
+        rowsMin.forEach(({rival,jug,tot,ts})=>{
+          const label=labelFor2(rival,ts);
+          if(!partSet.has(label)){partSet.add(label);parts.push(label);}
           if(!allMap[jug])allMap[jug]={};
-          allMap[jug][rival]=(allMap[jug][rival]||0)+tot;
+          allMap[jug][label]=(allMap[jug][label]||0)+tot;
         });
         setPartidos(parts);
         setJugMap(allMap[player]||{});
