@@ -2173,16 +2173,25 @@ function StaffMinutos(){
         const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
         const partidos=[],partSet=new Set();
         const jugMap={};
+        const rivalOcurrencias={};
+        const rivalKeyMap={};// rivalRaw -> rivalKey con sufijo
         sheet.slice(1).forEach(r=>{
           const rivalRaw=String(r[iR]||"").trim();
-          // Sacar fecha del rival si viene con formato "PWCC 15-MAR" → "PWCC"
-          const rival=rivalRaw.replace(/\s+\d{1,2}-[A-Z]{3}$/,"").replace(/\s+\d{1,2}\/\d{1,2}$/,"").trim();
+          const rivalBase=rivalRaw.replace(/\s+\d{1,2}-[A-Z]{3}$/,"").replace(/\s+\d{1,2}\/\d{1,2}$/,"").trim();
           const jug=String(r[iJ]||"").trim();
           const tot=Number(r[iT])||0;
-          if(!rival||!jug||!tot)return;
-          if(!partSet.has(rival)){partSet.add(rival);partidos.push(rival);}
+          if(!rivalBase||!jug||!tot)return;
+          // Asignar key con sufijo si el rival se repite
+          if(!rivalKeyMap[rivalRaw]){
+            if(!rivalOcurrencias[rivalBase]) rivalOcurrencias[rivalBase]=0;
+            rivalOcurrencias[rivalBase]++;
+            const sufijos=["A","B","C","D","E"];
+            rivalKeyMap[rivalRaw]=rivalBase+" "+sufijos[rivalOcurrencias[rivalBase]-1];
+          }
+          const rivalKey=rivalKeyMap[rivalRaw];
+          if(!partSet.has(rivalKey)){partSet.add(rivalKey);partidos.push(rivalKey);}
           if(!jugMap[jug])jugMap[jug]={};
-          jugMap[jug][rival]=(jugMap[jug][rival]||0)+tot;
+          jugMap[jug][rivalKey]=(jugMap[jug][rivalKey]||0)+tot;
         });
         setDriveData({partidos,jugMap});
       })
@@ -3381,16 +3390,25 @@ function PlayerMinutos({player}){
         const headers=sheet[0].map(h=>String(h).trim());
         const iR=headers.indexOf("Rival"),iJ=headers.indexOf("Jugadora"),iT=headers.indexOf("Total");
         const partSet=new Set(), parts=[];
-        const allMap={};// {jugadora:{rival:tot}}
+        const allMap={};
+        const rivalOcurrencias2={};
+        const rivalKeyMap2={};
         sheet.slice(1).forEach(r=>{
           const rivalRaw=String(r[iR]||"").trim();
-          const rival=rivalRaw.replace(/\s+\d{1,2}-[A-Z]{3}$/,"").replace(/\s+\d{1,2}\/\d{1,2}$/,"").trim();
+          const rivalBase=rivalRaw.replace(/\s+\d{1,2}-[A-Z]{3}$/,"").replace(/\s+\d{1,2}\/\d{1,2}$/,"").trim();
           const jug=String(r[iJ]||"").trim();
           const tot=Number(r[iT])||0;
-          if(!rival||!jug||!tot)return;
-          if(!partSet.has(rival)){partSet.add(rival);parts.push(rival);}
+          if(!rivalBase||!jug||!tot)return;
+          if(!rivalKeyMap2[rivalRaw]){
+            if(!rivalOcurrencias2[rivalBase]) rivalOcurrencias2[rivalBase]=0;
+            rivalOcurrencias2[rivalBase]++;
+            const sufijos=["A","B","C","D","E"];
+            rivalKeyMap2[rivalRaw]=rivalBase+" "+sufijos[rivalOcurrencias2[rivalBase]-1];
+          }
+          const rivalKey=rivalKeyMap2[rivalRaw];
+          if(!partSet.has(rivalKey)){partSet.add(rivalKey);parts.push(rivalKey);}
           if(!allMap[jug])allMap[jug]={};
-          allMap[jug][rival]=(allMap[jug][rival]||0)+tot;
+          allMap[jug][rivalKey]=(allMap[jug][rivalKey]||0)+tot;
         });
         setPartidos(parts);
         setJugMap(allMap[player]||{});
