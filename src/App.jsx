@@ -123,7 +123,7 @@ function parseGPSSheet(rows, tipo){
         n:name,min:mins,dist:Math.round(dist_raw),
         mxm:rnd1(g(3)),hsr:rnd(g(4)),ai18:rnd(g(5)),
         spr:rnd(g(6)),acc:rnd(g(7)),dsc:rnd(g(8)),
-        ns:rnd(g(9)),vmax:rnd1(g(10))
+        ns:rnd(g(9)),vmax:rnd1(g(10)),pl:rnd(g(11))
       });
     }
 
@@ -828,7 +828,7 @@ function StaffGPS(){
             <CT text="Datos individuales"/>
             <div style={{overflowX:"auto"}}>
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-                <thead><tr>{["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx"].map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
+                <thead><tr>{["Jugadora","Min","Dist.","m/min","15-18km/h","18-21km/h",">21km/h","ACC","DSC","Nº Spr","V.máx","PL"].map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
                 <tbody>{[...sess.jugadoras].sort((a,b)=>b.dist-a.dist).map(j=>{
                 const {h15,h18,sp}=calcZonas(j,sess);
                   return(
@@ -845,6 +845,7 @@ function StaffGPS(){
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{j.dsc}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{j.vmax}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{j.pl||"—"}</td>
                     </tr>
                   );
                 })}</tbody>
@@ -867,6 +868,7 @@ function StaffGPS(){
             const dsc=avg("dsc");
             const ns=avg("ns");
             const vmax=avgf("vmax");
+            const pl=jugs.some(j=>j.pl)?avg("pl"):null;
             return(
               <Card style={{border:`1px solid ${T.border2}`,background:"#0d1020"}}>
                 <CT text="Promedio equipo"/>
@@ -880,7 +882,8 @@ function StaffGPS(){
                     ["ACC",acc,T.purple],
                     ["DSC",dsc,T.cyan],
                     ["N Spr",ns,"#06b6d4"],
-                    ["Vmáx",`${vmax}km/h`,"#e879f9"]
+                    ["Vmáx",`${vmax}km/h`,"#e879f9"],
+                    ...(pl!=null?[["PL",pl,T.text]]:[])
                   ].map(([l,v,c])=>(
                     <div key={l} style={{textAlign:"center",minWidth:55}}>
                       <div style={{fontSize:9,color:T.muted,marginBottom:2}}>{l}</div>
@@ -3210,7 +3213,7 @@ function PlayerGPS({player}){
         <CT text="Detalle por sesión"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-            <thead><tr>{(selId?["Jugadora","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]:["Sesión","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx"]).map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
+            <thead><tr>{(selId?["Jugadora","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx","PL"]:["Sesión","Min","Dist.","m/min","15-18","18-21",">21","ACC","DSC","N Spr","V.máx","PL"]).map((c,i)=><th key={i} style={{textAlign:i===0?"left":"center",fontWeight:500,fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>)}</tr></thead>
             <tbody>{selId?(
               (()=>{
                 const selSess=sess.find(s=>s.id===selId);
@@ -3232,6 +3235,7 @@ function PlayerGPS({player}){
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{j.dsc||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(j.ns||0)>0?T.text:T.muted,fontWeight:(j.ns||0)>0?600:400,textAlign:"center"}}>{j.ns||0}</td>
                       <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{j.vmax}</td>
+                      <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{j.pl||"—"}</td>
                     </tr>
                   );
                 });
@@ -3254,6 +3258,7 @@ function PlayerGPS({player}){
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{s.data.dsc||0}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:(s.data.ns||0)>0?T.text:T.muted,fontWeight:(s.data.ns||0)>0?600:400,textAlign:"center"}}>{s.data.ns||0}</td>
                     <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500,textAlign:"center"}}>{s.data.vmax}</td>
+                    <td style={{padding:"4px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{s.data.pl||"—"}</td>
                   </tr>
                 );
               })
