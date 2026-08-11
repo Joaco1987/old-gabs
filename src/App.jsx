@@ -927,7 +927,7 @@ function StaffActividades(){
   const [loading,setLoading]=useState(true);
   const [rows,setRows]=useState([]);
   const [fecha,setFecha]=useState("");
-  const [periodo,setPeriodo]=useState("");
+  const [periodosSel,setPeriodosSel]=useState([]);
   const [jugSel,setJugSel]=useState("");
 
   React.useEffect(()=>{
@@ -969,9 +969,29 @@ function StaffActividades(){
   React.useEffect(()=>{if(!fecha&&fechas.length)setFecha(fechas[fechas.length-1]);},[fechas.length]); // eslint-disable-line
 
   const periodosDeFecha=[...new Set(rows.filter(r=>r.fechaRaw===fecha).map(r=>r.periodo))].filter(Boolean);
-  React.useEffect(()=>{if(periodosDeFecha.length&&!periodosDeFecha.includes(periodo))setPeriodo(periodosDeFecha[0]);},[fecha,periodosDeFecha.join(",")]); // eslint-disable-line
+  React.useEffect(()=>{if(periodosDeFecha.length&&periodosSel.length===0)setPeriodosSel([periodosDeFecha[0]]);},[fecha,periodosDeFecha.join(",")]); // eslint-disable-line
 
-  const filtradas=rows.filter(r=>r.fechaRaw===fecha&&r.periodo===periodo);
+  const togglePeriodo=p=>{
+    setPeriodosSel(prev=>prev.includes(p)?prev.filter(x=>x!==p):[...prev,p]);
+  };
+
+  const filasCrudas=rows.filter(r=>r.fechaRaw===fecha&&periodosSel.includes(r.periodo));
+  const combinando=periodosSel.length>1;
+
+  // Si hay mas de una actividad seleccionada, sumar por jugadora en vez de
+  // mostrar una fila por actividad. m/min se recalcula (no se suma) y
+  // Vel. Max toma el maximo observado (no tiene sentido sumarla).
+  const filtradas=!combinando?filasCrudas:(()=>{
+    const byJug={};
+    filasCrudas.forEach(r=>{
+      if(!byJug[r.jugadora])byJug[r.jugadora]={jugadora:r.jugadora,min:0,pl:0,dist:0,hsr:0,ai18:0,spr:0,acc:0,dsc:0,ns:0,vmax:0};
+      const a=byJug[r.jugadora];
+      a.min+=r.min;a.pl+=r.pl;a.dist+=r.dist;a.hsr+=r.hsr;a.ai18+=r.ai18;
+      a.spr+=r.spr;a.acc+=r.acc;a.dsc+=r.dsc;a.ns+=r.ns;
+      a.vmax=Math.max(a.vmax,r.vmax);
+    });
+    return Object.values(byJug).map(a=>({...a,mxm:a.min>0?Math.round(a.dist/a.min*10)/10:0}));
+  })();
 
   if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Cargando actividades...</div></Card>;
   if(!rows.length)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>No hay actividades importadas todavía.</div></Card>;
@@ -981,26 +1001,38 @@ function StaffActividades(){
   // Objeto "sesion" en el formato que espera RadarChart
   const sesionRadar={jugadoras:filtradas.map(r=>({n:r.jugadora,dist:r.dist,mxm:r.mxm,hsr:r.hsr,acc:r.acc,ns:r.ns}))};
 
+  const tituloSeccion=combinando
+    ? `Suma de ${periodosSel.length} actividades — ${fmtDate(fecha)||fecha} (${filtradas.length} jugadoras)`
+    : `${periodosSel[0]||""} — ${fmtDate(fecha)||fecha} (${filtradas.length} jugadoras)`;
+
   return(
     <>
       <Card style={{marginBottom:12}}>
         <CT text="Filtrar actividad"/>
-        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-          <select value={fecha} onChange={e=>{setFecha(e.target.value);setPeriodo("");}} style={{flex:1,minWidth:140,background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:T.text,fontSize:12,padding:"8px 10px",outline:"none"}}>
-            {fechas.map(f=><option key={f} value={f}>{fmtDate(f)||f}</option>)}
-          </select>
-          <select value={periodo} onChange={e=>setPeriodo(e.target.value)} style={{flex:1,minWidth:140,background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:T.text,fontSize:12,padding:"8px 10px",outline:"none"}}>
-            {periodosDeFecha.map(p=><option key={p} value={p}>{p}</option>)}
-          </select>
+        <select value={fecha} onChange={e=>{setFecha(e.target.value);setPeriodosSel([]);}} style={{width:"100%",marginBottom:10,background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:8,color:T.text,fontSize:12,padding:"8px 10px",outline:"none",boxSizing:"border-box"}}>
+          {fechas.map(f=><option key={f} value={f}>{fmtDate(f)||f}</option>)}
+        </select>
+        <div style={{fontSize:10,color:T.muted,marginBottom:6,textTransform:"uppercase",letterSpacing:".4px"}}>
+          Actividades del día — tocá para sumar varias
+        </div>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+          {periodosDeFecha.map(p=>{
+            const on=periodosSel.includes(p);
+            return(
+              <button key={p} onClick={()=>togglePeriodo(p)} style={{padding:"6px 12px",borderRadius:6,border:`1px solid ${on?T.green:T.border2}`,background:on?"#0f2d1f":"transparent",color:on?T.green:T.muted,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+                {on?"✓ ":""}{p}
+              </button>
+            );
+          })}
         </div>
       </Card>
 
       {filtradas.length===0?(
-        <Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>No hay datos para esa fecha/actividad.</div></Card>
+        <Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>{periodosSel.length===0?"Seleccioná al menos una actividad.":"No hay datos para esa fecha/actividad."}</div></Card>
       ):(
         <>
           <Card style={{marginBottom:12,overflowX:"auto"}}>
-            <CT text={`${periodo} — ${fmtDate(fecha)||fecha} (${filtradas.length} jugadoras)`}/>
+            <CT text={tituloSeccion}/>
             <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,minWidth:640}}>
               <thead>
                 <tr style={{borderBottom:`1px solid ${T.border}`}}>
