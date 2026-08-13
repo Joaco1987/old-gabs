@@ -4208,6 +4208,201 @@ class ErrorBoundary extends React.Component {
 const ReadOnlyCtx=React.createContext(false);
 function useReadOnly(){return React.useContext(ReadOnlyCtx);}
 
+// ─── VOL SEMANAL ──────────────────────────────────────────────────────────────
+function StaffVolSemanal(){
+  const {partidos:P=[],entrenos:E=[]}=useGPS();
+  const PARTIDOS=P.length?P:PARTIDOS_FB;
+  const ENTRENOS=E;
+
+  const [desde,setDesde]=useState("");
+  const [hasta,setHasta]=useState("");
+  const [resultado,setResultado]=useState(null);
+  const [loading,setLoading]=useState(false);
+
+  const GAME_REF={
+    DC:{hsr:374,acc:10,dsc:16,spr:4},
+    LT:{hsr:626,acc:13,dsc:22,spr:7},
+    MC:{hsr:974,acc:27,dsc:47,spr:8},
+    VL:{hsr:1170,acc:32,dsc:45,spr:77},
+    WG:{hsr:890,acc:26,dsc:22,spr:18},
+    DL:{hsr:581,acc:17,dsc:16,spr:3},
+  };
+  // Multiplicadores semana con partido
+  const MULT={
+    hsr:{lunes:0.4,miercoles:0.6,viernes:0.15,partido:1.0},
+    acc:{lunes:1.0,miercoles:0.5,viernes:0.6,partido:1.0},
+    dsc:{lunes:1.0,miercoles:0.5,viernes:0.6,partido:1.0},
+    spr:{lunes:0.1,miercoles:1.5,viernes:0.5,partido:1.0},
+  };
+  const targetSem=(ref,param)=>Math.round(ref*(MULT[param].lunes+MULT[param].miercoles+MULT[param].viernes+MULT[param].partido));
+
+  const calcular=()=>{
+    if(!desde||!hasta){alert("Ingresá ambas fechas");return;}
+    setLoading(true);
+    try{
+      const d1=new Date(desde),d2=new Date(hasta);
+      d2.setHours(23,59,59);
+
+      // Filtrar sesiones en el rango
+      const enRango=(fechaStr)=>{
+        const MESES={ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
+        const m=String(fechaStr).match(/^(\d+)-([a-z]+)$/i);
+        let d;
+        if(m){const mes=MESES[m[2].toLowerCase()];if(mes===undefined)return false;d=new Date(2026,mes,parseInt(m[1]));}
+        else{d=new Date(fechaStr);if(isNaN(d.getTime()))return false;}
+        return d>=d1&&d<=d2;
+      };
+
+      const sesiones=[];
+      [...ENTRENOS,...PARTIDOS].forEach(s=>{
+        if(!enRango(s.fecha))return;
+        s.jugadoras.forEach(j=>{
+          sesiones.push({jugadora:j.n,hsr:j.hsr||0,acc:j.acc||0,dsc:j.dsc||0,spr:j.spr||0});
+        });
+      });
+
+      // Agrupar por jugadora
+      const porJug={};
+      sesiones.forEach(r=>{
+        if(!porJug[r.jugadora])porJug[r.jugadora]={hsr:0,acc:0,dsc:0,spr:0,ses:0};
+        porJug[r.jugadora].hsr+=r.hsr;
+        porJug[r.jugadora].acc+=r.acc;
+        porJug[r.jugadora].dsc+=r.dsc;
+        porJug[r.jugadora].spr+=r.spr;
+        porJug[r.jugadora].ses++;
+      });
+
+      // Agrupar por puesto
+      const porPuesto={};
+      Object.keys(PUESTOS_MAP).forEach(jug=>{
+        const p=PUESTOS_MAP[jug];
+        if(!porPuesto[p])porPuesto[p]={jugs:[],hsr:0,acc:0,dsc:0,spr:0,count:0};
+        if(porJug[jug]){
+          porPuesto[p].jugs.push({n:jug,...porJug[jug]});
+          porPuesto[p].hsr+=porJug[jug].hsr;
+          porPuesto[p].acc+=porJug[jug].acc;
+          porPuesto[p].dsc+=porJug[jug].dsc;
+          porPuesto[p].spr+=porJug[jug].spr;
+          porPuesto[p].count++;
+        }
+      });
+      // Promedios por puesto
+      Object.keys(porPuesto).forEach(p=>{
+        const pp=porPuesto[p];
+        if(pp.count>0){pp.hsr=Math.round(pp.hsr/pp.count);pp.acc=Math.round(pp.acc/pp.count);pp.dsc=Math.round(pp.dsc/pp.count);pp.spr=Math.round(pp.spr/pp.count);}
+      });
+
+      setResultado({porPuesto,porJug,totalSesiones:sesiones.length});
+    }catch(e){alert("Error: "+e.message);}
+    setLoading(false);
+  };
+
+  const pct=(real,target)=>target>0?Math.round(real/target*100):0;
+  const pctColor=(p)=>p>=90?T.green:p>=70?T.amber:T.red;
+  const ORDEN=["DC","LT","MC","VL","WG","DL"];
+
+  return(
+    <>
+      <Card style={{marginBottom:10}}>
+        <CT text="Volumen Semanal — Seleccioná el período"/>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"flex-end"}}>
+          <div>
+            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Desde</div>
+            <input type="date" value={desde} onChange={e=>setDesde(e.target.value)}
+              style={{background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"7px 10px",outline:"none",fontFamily:"inherit"}}/>
+          </div>
+          <div>
+            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Hasta</div>
+            <input type="date" value={hasta} onChange={e=>setHasta(e.target.value)}
+              style={{background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"7px 10px",outline:"none",fontFamily:"inherit"}}/>
+          </div>
+          <button onClick={calcular} style={{padding:"8px 20px",borderRadius:6,border:"none",background:T.blue,color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
+            {loading?"Calculando...":"Calcular"}
+          </button>
+        </div>
+        <div style={{fontSize:10,color:T.muted,marginTop:8}}>Los targets se calculan con multiplicadores de semana CON partido (Lunes+Miérc+Viernes+Partido)</div>
+      </Card>
+
+      {resultado&&(<>
+        {/* Resumen por puesto */}
+        <Card style={{marginBottom:10}}>
+          <CT text={`Resumen por Puesto — ${resultado.totalSesiones} registros GPS`}/>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+              <thead><tr>{["Puesto","HSR Real","HSR Target","HSR %","ACC Real","ACC Target","ACC %","DSC Real","DSC Target","DSC %","SPR Real","SPR Target","SPR %"].map((c,i)=>(
+                <th key={i} style={{textAlign:i===0?"left":"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
+              ))}</tr></thead>
+              <tbody>{ORDEN.map(p=>{
+                const pp=resultado.porPuesto[p];
+                if(!pp||!pp.count)return null;
+                const ref=GAME_REF[p];
+                const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
+                const pH=pct(pp.hsr,tH),pA=pct(pp.acc,tA),pD=pct(pp.dsc,tD),pS=pct(pp.spr,tS);
+                return(
+                  <tr key={p}>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:600}}>{p}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,textAlign:"center"}}>{pp.hsr}m</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{tH}m</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pctColor(pH),fontWeight:700,textAlign:"center"}}>{pH}%</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.purple,textAlign:"center"}}>{pp.acc}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{tA}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pctColor(pA),fontWeight:700,textAlign:"center"}}>{pA}%</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{pp.dsc}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{tD}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pctColor(pD),fontWeight:700,textAlign:"center"}}>{pD}%</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.red,textAlign:"center"}}>{pp.spr}m</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{tS}m</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pctColor(pS),fontWeight:700,textAlign:"center"}}>{pS}%</td>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          </div>
+        </Card>
+
+        {/* Detalle por jugadora */}
+        <Card>
+          <CT text="Detalle por Jugadora"/>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+              <thead><tr>{["Jugadora","Puesto","Ses.","HSR Real","HSR Target","HSR %","ACC Real","ACC Target","ACC %","DSC Real","DSC Target","DSC %","SPR Real","SPR Target","SPR %"].map((c,i)=>(
+                <th key={i} style={{textAlign:i<2?"left":"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
+              ))}</tr></thead>
+              <tbody>{Object.keys(PUESTOS_MAP).sort().map(jug=>{
+                const d=resultado.porJug[jug];
+                if(!d)return null;
+                const p=PUESTOS_MAP[jug];
+                const ref=GAME_REF[p]||GAME_REF.DC;
+                const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
+                const pH=pct(d.hsr,tH),pA=pct(d.acc,tA),pD=pct(d.dsc,tD),pS=pct(d.spr,tS);
+                return(
+                  <tr key={jug}>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{jug}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{p}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{d.ses}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,textAlign:"center"}}>{Math.round(d.hsr)}m</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{tH}m</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pctColor(pH),fontWeight:700,textAlign:"center"}}>{pH}%</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.purple,textAlign:"center"}}>{Math.round(d.acc)}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{tA}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pctColor(pA),fontWeight:700,textAlign:"center"}}>{pA}%</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{Math.round(d.dsc)}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{tD}</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pctColor(pD),fontWeight:700,textAlign:"center"}}>{pD}%</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.red,textAlign:"center"}}>{Math.round(d.spr)}m</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{tS}m</td>
+                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:pctColor(pS),fontWeight:700,textAlign:"center"}}>{pS}%</td>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          </div>
+        </Card>
+      </>)}
+    </>
+  );
+}
+
 export default function App(){
   return <ErrorBoundary><GPSProvider><AppInner/></GPSProvider></ErrorBoundary>;
 }
@@ -4223,7 +4418,7 @@ function AppInner(){
   if(!session)return<LoginScreen onLogin={handleLogin}/>;
   const readOnly=session.tipo==="visita";
   const mode=session.subTipo==="staff"?"staff":"player";
-  const STAFF_TABS=["GPS","Evolución GPS","Actividades","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness"];
+  const STAFF_TABS=["GPS","Evolución GPS","Actividades","Perfil Puestos","Evaluaciones","Minutos","Asistencia","RPE","Wellness","Vol. Semanal"];
   const PLAYER_TABS=["Mi GPS","Evolución GPS","Evaluaciones","Minutos","Asistencia","Mi RPE","Mi Wellness"];
   const tabs=mode==="staff"?STAFF_TABS:PLAYER_TABS;
   return(
@@ -4257,7 +4452,7 @@ function AppInner(){
           </div>
         )}
         {mode==="staff"?(
-          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffActividades/>}{tab===3&&<StaffPuestos/>}{tab===4&&<StaffEvaluaciones/>}{tab===5&&<StaffMinutos/>}{tab===6&&<StaffAsistencia/>}{tab===7&&<StaffRPE/>}{tab===8&&<StaffWellness/>}</></ErrorBoundary>
+          <ErrorBoundary><>{tab===0&&<StaffGPS/>}{tab===1&&<StaffEvoGPS/>}{tab===2&&<StaffActividades/>}{tab===3&&<StaffPuestos/>}{tab===4&&<StaffEvaluaciones/>}{tab===5&&<StaffMinutos/>}{tab===6&&<StaffAsistencia/>}{tab===7&&<StaffRPE/>}{tab===8&&<StaffWellness/>}{tab===9&&<StaffVolSemanal/>}</></ErrorBoundary>
         ):(
           <ErrorBoundary><>{tab===0&&<PlayerGPS player={session.player||player}/>}{tab===1&&<PlayerEvoGPS player={session.player||player}/>}{tab===2&&<PlayerEvaluaciones player={session.player||player}/>}{tab===3&&<PlayerMinutos player={session.player||player}/>}{tab===4&&<PlayerAsistencia player={session.player||player}/>}{tab===5&&<PlayerRPE player={session.player||player}/>}{tab===6&&<PlayerWellness player={session.player||player}/>}</></ErrorBoundary>
         )}
