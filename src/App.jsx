@@ -4349,62 +4349,89 @@ function StaffVolSemanal(){
 
       {resultado&&(<>
         {/* Resumen por puesto */}
-        <Card style={{marginBottom:10}}>
-          <CT text={`Resumen por Puesto — ${resultado.totalSesiones} registros GPS`}/>
-          <div style={{overflowX:"auto"}}>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-              <thead><tr>{["Puesto","HSR>15","HSR>18","ACC","DSC","SPR","Nº Spr","PL"].map((c,i)=>(
-                <th key={i} style={{textAlign:i===0?"left":"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
-              ))}</tr></thead>
-              <tbody>{ORDEN.map(p=>{
-                const pp=resultado.porPuesto[p];
-                if(!pp||!pp.count)return null;
-                return(
-                  <tr key={p}>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:600}}>{p}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,textAlign:"center"}}>{pp.hsr}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:"#38bdf8",textAlign:"center"}}>{pp.ai18}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.purple,textAlign:"center"}}>{pp.acc}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{pp.dsc}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.red,textAlign:"center"}}>{pp.spr}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,textAlign:"center"}}>{pp.ns}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{pp.pl}</td>
-                  </tr>
-                );
-              })}</tbody>
-            </table>
-          </div>
-        </Card>
+        {ORDEN.map(p=>{
+          const pp=resultado.porPuesto[p];
+          if(!pp||!pp.count)return null;
+          const ref=GAME_REF[p];
+          const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
+          const metrics=[
+            {label:"HSR >15",real:pp.hsr,target:tH,unit:"m"},
+            {label:"HSR >18",real:pp.ai18,target:Math.round(tH*0.3),unit:"m"},
+            {label:"ACC",real:pp.acc,target:tA,unit:""},
+            {label:"DSC",real:pp.dsc,target:tD,unit:""},
+            {label:"Sprint",real:pp.spr,target:tS,unit:"m"},
+            {label:"Nº Spr",real:pp.ns,target:Math.round(targetSem(ref.spr,"spr")/10),unit:""},
+            {label:"PL",real:pp.pl,target:0,unit:""},
+          ];
+          return(
+            <Card key={p} style={{marginBottom:10}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+                <span style={{fontWeight:700,color:T.text,fontSize:14}}>{p}</span>
+                <span style={{fontSize:11,color:T.muted}}>{pp.count} jugadora{pp.count>1?"s":""}</span>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+                {metrics.map(({label,real,target,unit})=>{
+                  const p2=target>0?Math.round(real/target*100):null;
+                  const col=p2===null?T.muted:p2>=90?T.green:p2>=70?T.amber:T.red;
+                  return(
+                    <div key={label} style={{background:"#0d1020",borderRadius:8,padding:"8px 10px",border:`1px solid ${T.border}`}}>
+                      <div style={{fontSize:10,color:T.muted,marginBottom:4,textTransform:"uppercase",letterSpacing:".4px"}}>{label}</div>
+                      <div style={{fontSize:11,color:T.muted2,marginBottom:2}}>Plan: <span style={{color:T.text}}>{target>0?target+unit:"—"}</span></div>
+                      <div style={{display:"flex",alignItems:"baseline",gap:4}}>
+                        <span style={{fontSize:15,fontWeight:700,color:col}}>{real}{unit}</span>
+                        {p2!==null&&<span style={{fontSize:11,color:col}}>({p2}%)</span>}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          );
+        })}
 
         {/* Detalle por jugadora */}
         <Card>
           <CT text="Detalle por Jugadora"/>
-          <div style={{overflowX:"auto"}}>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-              <thead><tr>{["Jugadora","Puesto","Ses.","HSR>15","HSR>18","ACC","DSC","SPR","Nº Spr","PL"].map((c,i)=>(
-                <th key={i} style={{textAlign:i<2?"left":"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",letterSpacing:".4px",whiteSpace:"nowrap"}}>{c}</th>
-              ))}</tr></thead>
-              <tbody>{Object.keys(PUESTOS_MAP).sort().map(jug=>{
-                const d=resultado.porJug[jug];
-                if(!d)return null;
-                const p=PUESTOS_MAP[jug];
-                return(
-                  <tr key={jug}>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap"}}>{jug}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{p}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted,textAlign:"center"}}>{d.ses}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,textAlign:"center"}}>{Math.round(d.hsr)}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:"#38bdf8",textAlign:"center"}}>{Math.round(d.ai18)}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.purple,textAlign:"center"}}>{Math.round(d.acc)}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan,textAlign:"center"}}>{Math.round(d.dsc)}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.red,textAlign:"center"}}>{Math.round(d.spr)}m</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,textAlign:"center"}}>{Math.round(d.ns)}</td>
-                    <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.green,textAlign:"center"}}>{Math.round(d.pl)}</td>
-                  </tr>
-                );
-              })}</tbody>
-            </table>
-          </div>
+          {Object.keys(PUESTOS_MAP).sort().map(jug=>{
+            const d=resultado.porJug[jug];
+            if(!d)return null;
+            const p=PUESTOS_MAP[jug];
+            const ref=GAME_REF[p]||GAME_REF.DC;
+            const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
+            const metrics=[
+              {label:"HSR >15",real:Math.round(d.hsr),target:tH,unit:"m"},
+              {label:"HSR >18",real:Math.round(d.ai18),target:Math.round(tH*0.3),unit:"m"},
+              {label:"ACC",real:Math.round(d.acc),target:tA,unit:""},
+              {label:"DSC",real:Math.round(d.dsc),target:tD,unit:""},
+              {label:"Sprint",real:Math.round(d.spr),target:tS,unit:"m"},
+              {label:"Nº Spr",real:Math.round(d.ns),target:0,unit:""},
+              {label:"PL",real:Math.round(d.pl),target:0,unit:""},
+            ];
+            return(
+              <div key={jug} style={{marginBottom:12,paddingBottom:12,borderBottom:`1px solid ${T.border}`}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                  <span style={{fontWeight:600,color:T.text,fontSize:13}}>{jug}</span>
+                  <span style={{fontSize:10,color:T.muted}}>{p} · {d.ses} ses.</span>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}}>
+                  {metrics.map(({label,real,target,unit})=>{
+                    const p2=target>0?Math.round(real/target*100):null;
+                    const col=p2===null?T.muted:p2>=90?T.green:p2>=70?T.amber:T.red;
+                    return(
+                      <div key={label} style={{background:"#0d1020",borderRadius:6,padding:"6px 8px"}}>
+                        <div style={{fontSize:9,color:T.muted,marginBottom:3,textTransform:"uppercase"}}>{label}</div>
+                        <div style={{fontSize:10,color:T.muted2}}>Plan: <span style={{color:T.text}}>{target>0?target+unit:"—"}</span></div>
+                        <div style={{display:"flex",alignItems:"baseline",gap:3}}>
+                          <span style={{fontSize:13,fontWeight:700,color:col}}>{real}{unit}</span>
+                          {p2!==null&&<span style={{fontSize:10,color:col}}>({p2}%)</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </Card>
       </>)}
     </>
