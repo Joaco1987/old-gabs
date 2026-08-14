@@ -3910,11 +3910,12 @@ function PlayerRPE({player}){
           })}
         </div>
         <button onClick={async()=>{
+          if(saving||saved)return;
           setSaving(true);
           const today=new Date().toLocaleDateString("es-CL");
           await saveToSheet(player,"RPE",{fecha:today,rpe:rpe});
-          setSaving(false);setSaved(true);localStorage.setItem(todayKey(player),'1');setYaDone(true);localStorage.setItem(todayKey(player),'1');setYaDone(true);
-        }} style={{width:"100%",padding:10,background:T.blue,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit"}}>{saving?"Guardando...":"Guardar RPE"}</button>
+          setSaving(false);setSaved(true);localStorage.setItem(todayKey(player),'1');setYaDone(true);
+        }} disabled={saving||saved} style={{width:"100%",padding:10,background:saving?T.muted:T.blue,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:saving?"not-allowed":"pointer",fontFamily:"inherit",opacity:saving?0.7:1}}>{saving?"Guardando...":"Guardar RPE"}</button>
         {saved&&<div style={{textAlign:"center",marginTop:8,fontSize:12,color:T.green}}>✓ RPE guardado</div>}
       </Card>
     </>
@@ -4024,6 +4025,7 @@ function PlayerWellness({player}){
         <WRow field="estres" label="Nivel de estrés"/>
         <WRow field="animo" label="Estado anímico"/>
         <button onClick={async()=>{
+          if(saving||saved)return;
           setSaving(true);
           const today=new Date().toLocaleDateString("es-CL");
           await saveToSheet(player,"Wellness",{
@@ -4038,7 +4040,7 @@ function PlayerWellness({player}){
           });
           WELLNESS_DATA[player]=form;
           setSaving(false);setSaved(true);localStorage.setItem(todayKeyW(player),'1');setYaDone(true);
-        }} style={{width:"100%",padding:10,background:T.maroon,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:"pointer",fontFamily:"inherit",marginTop:4}}>{saving?"Guardando...":"Guardar Wellness"}</button>
+        }} disabled={saving||saved} style={{width:"100%",padding:10,background:saving?T.muted:T.maroon,border:"none",borderRadius:6,color:"#fff",fontSize:13,fontWeight:500,cursor:saving?"not-allowed":"pointer",fontFamily:"inherit",marginTop:4,opacity:saving?0.7:1}}>{saving?"Guardando...":"Guardar Wellness"}</button>
         {saved&&<div style={{textAlign:"center",marginTop:8,fontSize:12,color:T.green}}>✓ Wellness guardado</div>}
       </Card>
     </>
