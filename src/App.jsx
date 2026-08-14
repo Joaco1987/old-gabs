@@ -4240,16 +4240,22 @@ function StaffVolSemanal(){
     if(!desde||!hasta){alert("Ingresá ambas fechas");return;}
     setLoading(true);
     try{
-      const d1=new Date(desde),d2=new Date(hasta);
-      d2.setHours(23,59,59);
+      const d1=new Date(desde+"T00:00:00");
+      const d2=new Date(hasta+"T23:59:59");
 
-      // Filtrar sesiones en el rango
       const enRango=(fechaStr)=>{
         const MESES={ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
-        const m=String(fechaStr).match(/^(\d+)-([a-z]+)$/i);
+        const s=String(fechaStr).trim();
         let d;
+        // Formato "3-ago", "15-jun"
+        const m=s.match(/^(\d+)-([a-z]+)$/i);
         if(m){const mes=MESES[m[2].toLowerCase()];if(mes===undefined)return false;d=new Date(2026,mes,parseInt(m[1]));}
-        else{d=new Date(fechaStr);if(isNaN(d.getTime()))return false;}
+        // Formato "YYYY-MM-DD"
+        else if(s.match(/^\d{4}-\d{2}-\d{2}/)){d=new Date(s+"T12:00:00");}
+        // Formato "D/M/YYYY"
+        else if(s.match(/^\d+\/\d+\/\d{4}/)){const p=s.split("/");d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));}
+        else{d=new Date(s);if(isNaN(d.getTime()))return false;}
+        if(isNaN(d.getTime()))return false;
         return d>=d1&&d<=d2;
       };
 
