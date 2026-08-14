@@ -4349,89 +4349,98 @@ function StaffVolSemanal(){
 
       {resultado&&(<>
         {/* Resumen por puesto */}
-        {ORDEN.map(p=>{
-          const pp=resultado.porPuesto[p];
-          if(!pp||!pp.count)return null;
-          const ref=GAME_REF[p];
-          const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
-          const metrics=[
-            {label:"HSR >15",real:pp.hsr,target:tH,unit:"m"},
-            {label:"HSR >18",real:pp.ai18,target:Math.round(tH*0.3),unit:"m"},
-            {label:"ACC",real:pp.acc,target:tA,unit:""},
-            {label:"DSC",real:pp.dsc,target:tD,unit:""},
-            {label:"Sprint",real:pp.spr,target:tS,unit:"m"},
-            {label:"Nº Spr",real:pp.ns,target:Math.round(targetSem(ref.spr,"spr")/10),unit:""},
-            {label:"PL",real:pp.pl,target:0,unit:""},
-          ];
-          return(
-            <Card key={p} style={{marginBottom:10}}>
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
-                <span style={{fontWeight:700,color:T.text,fontSize:14}}>{p}</span>
-                <span style={{fontSize:11,color:T.muted}}>{pp.count} jugadora{pp.count>1?"s":""}</span>
-              </div>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
-                {metrics.map(({label,real,target,unit})=>{
+        <Card style={{marginBottom:10}}>
+          <CT text={`Resumen por Puesto — ${resultado.totalSesiones} registros GPS`}/>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+              <thead><tr>
+                <th style={{textAlign:"left",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>Puesto</th>
+                {["HSR >15","HSR >18","ACC","DSC","Sprint","Nº Spr","PL"].map(c=>(
+                  <th key={c} style={{textAlign:"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",whiteSpace:"nowrap"}}>{c}</th>
+                ))}
+              </tr></thead>
+              <tbody>{ORDEN.map(p=>{
+                const pp=resultado.porPuesto[p];
+                if(!pp||!pp.count)return null;
+                const ref=GAME_REF[p];
+                const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
+                const Cell=({real,target,unit})=>{
                   const p2=target>0?Math.round(real/target*100):null;
-                  const col=p2===null?T.muted:p2>=90?T.green:p2>=70?T.amber:T.red;
+                  const col=p2===null?T.text:p2>=90?T.green:p2>=70?T.amber:T.red;
                   return(
-                    <div key={label} style={{background:"#0d1020",borderRadius:8,padding:"8px 10px",border:`1px solid ${T.border}`}}>
-                      <div style={{fontSize:10,color:T.muted,marginBottom:4,textTransform:"uppercase",letterSpacing:".4px"}}>{label}</div>
-                      <div style={{fontSize:11,color:T.muted2,marginBottom:2}}>Plan: <span style={{color:T.text}}>{target>0?target+unit:"—"}</span></div>
-                      <div style={{display:"flex",alignItems:"baseline",gap:4}}>
-                        <span style={{fontSize:15,fontWeight:700,color:col}}>{real}{unit}</span>
-                        {p2!==null&&<span style={{fontSize:11,color:col}}>({p2}%)</span>}
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                      <div style={{fontSize:9,color:T.muted,marginBottom:2}}>Plan: {target>0?target+unit:"—"}</div>
+                      <div style={{display:"flex",justifyContent:"center",alignItems:"baseline",gap:3}}>
+                        <span style={{fontWeight:700,color:col}}>{real}{unit}</span>
+                        {p2!==null&&<span style={{fontSize:9,color:col}}>({p2}%)</span>}
                       </div>
-                    </div>
+                    </td>
                   );
-                })}
-              </div>
-            </Card>
-          );
-        })}
+                };
+                return(
+                  <tr key={p}>
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:600}}>{p}</td>
+                    <Cell real={pp.hsr} target={tH} unit="m"/>
+                    <Cell real={pp.ai18} target={Math.round(tH*0.3)} unit="m"/>
+                    <Cell real={pp.acc} target={tA} unit=""/>
+                    <Cell real={pp.dsc} target={tD} unit=""/>
+                    <Cell real={pp.spr} target={tS} unit="m"/>
+                    <Cell real={pp.ns} target={0} unit=""/>
+                    <Cell real={pp.pl} target={0} unit=""/>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          </div>
+        </Card>
 
         {/* Detalle por jugadora */}
         <Card>
           <CT text="Detalle por Jugadora"/>
-          {Object.keys(PUESTOS_MAP).sort().map(jug=>{
-            const d=resultado.porJug[jug];
-            if(!d)return null;
-            const p=PUESTOS_MAP[jug];
-            const ref=GAME_REF[p]||GAME_REF.DC;
-            const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
-            const metrics=[
-              {label:"HSR >15",real:Math.round(d.hsr),target:tH,unit:"m"},
-              {label:"HSR >18",real:Math.round(d.ai18),target:Math.round(tH*0.3),unit:"m"},
-              {label:"ACC",real:Math.round(d.acc),target:tA,unit:""},
-              {label:"DSC",real:Math.round(d.dsc),target:tD,unit:""},
-              {label:"Sprint",real:Math.round(d.spr),target:tS,unit:"m"},
-              {label:"Nº Spr",real:Math.round(d.ns),target:0,unit:""},
-              {label:"PL",real:Math.round(d.pl),target:0,unit:""},
-            ];
-            return(
-              <div key={jug} style={{marginBottom:12,paddingBottom:12,borderBottom:`1px solid ${T.border}`}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
-                  <span style={{fontWeight:600,color:T.text,fontSize:13}}>{jug}</span>
-                  <span style={{fontSize:10,color:T.muted}}>{p} · {d.ses} ses.</span>
-                </div>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}}>
-                  {metrics.map(({label,real,target,unit})=>{
-                    const p2=target>0?Math.round(real/target*100):null;
-                    const col=p2===null?T.muted:p2>=90?T.green:p2>=70?T.amber:T.red;
-                    return(
-                      <div key={label} style={{background:"#0d1020",borderRadius:6,padding:"6px 8px"}}>
-                        <div style={{fontSize:9,color:T.muted,marginBottom:3,textTransform:"uppercase"}}>{label}</div>
-                        <div style={{fontSize:10,color:T.muted2}}>Plan: <span style={{color:T.text}}>{target>0?target+unit:"—"}</span></div>
-                        <div style={{display:"flex",alignItems:"baseline",gap:3}}>
-                          <span style={{fontSize:13,fontWeight:700,color:col}}>{real}{unit}</span>
-                          {p2!==null&&<span style={{fontSize:10,color:col}}>({p2}%)</span>}
-                        </div>
+          <div style={{overflowX:"auto"}}>
+            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+              <thead><tr>
+                <th style={{textAlign:"left",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>Jugadora</th>
+                <th style={{textAlign:"left",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>P</th>
+                {["HSR >15","HSR >18","ACC","DSC","Sprint","Nº Spr","PL"].map(c=>(
+                  <th key={c} style={{textAlign:"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",whiteSpace:"nowrap"}}>{c}</th>
+                ))}
+              </tr></thead>
+              <tbody>{Object.keys(PUESTOS_MAP).sort().map(jug=>{
+                const d=resultado.porJug[jug];
+                if(!d)return null;
+                const p=PUESTOS_MAP[jug];
+                const ref=GAME_REF[p]||GAME_REF.DC;
+                const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
+                const Cell=({real,target,unit})=>{
+                  const p2=target>0?Math.round(real/target*100):null;
+                  const col=p2===null?T.text:p2>=90?T.green:p2>=70?T.amber:T.red;
+                  return(
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                      <div style={{fontSize:9,color:T.muted,marginBottom:2}}>Plan: {target>0?target+unit:"—"}</div>
+                      <div style={{display:"flex",justifyContent:"center",alignItems:"baseline",gap:3}}>
+                        <span style={{fontWeight:700,color:col}}>{real}{unit}</span>
+                        {p2!==null&&<span style={{fontSize:9,color:col}}>({p2}%)</span>}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
+                    </td>
+                  );
+                };
+                return(
+                  <tr key={jug}>
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{jug.split(" ")[0]}</td>
+                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.muted,fontSize:10}}>{p}</td>
+                    <Cell real={Math.round(d.hsr)} target={tH} unit="m"/>
+                    <Cell real={Math.round(d.ai18)} target={Math.round(tH*0.3)} unit="m"/>
+                    <Cell real={Math.round(d.acc)} target={tA} unit=""/>
+                    <Cell real={Math.round(d.dsc)} target={tD} unit=""/>
+                    <Cell real={Math.round(d.spr)} target={tS} unit="m"/>
+                    <Cell real={Math.round(d.ns)} target={0} unit=""/>
+                    <Cell real={Math.round(d.pl)} target={0} unit=""/>
+                  </tr>
+                );
+              })}</tbody>
+            </table>
+          </div>
         </Card>
       </>)}
     </>
