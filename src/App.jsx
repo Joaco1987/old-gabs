@@ -4214,6 +4214,16 @@ function StaffVolSemanal(){
   const PARTIDOS=P.length?P:PARTIDOS_FB;
   const ENTRENOS=E;
 
+  const PUESTOS_MAP={
+    "Alfaro Javiera":"WG","Arau María Paz":"WG","Carrasco Sofia":"VL",
+    "Errazu Sofia":"WG","Gacitua Emilia":"VL","Gomez Camila":"LT",
+    "Gutierrez Renata":"LT","Hevia Valentina":"LT","Liu Macarena":"WG",
+    "Manriquez Fernanda":"MC","Martinez Amanda":"DC","Mateluna Florencia":"LT",
+    "Muñoz Constanza":"DC","Pareja Camila":"DC","Pollmann Marianne":"DL",
+    "Retamal Antonia":"LT","Sepulveda Eileen":"DL","Sierra Julieta":"MC",
+    "Silva Victoria":"VL"
+  };
+
   const [desde,setDesde]=useState("");
   const [hasta,setHasta]=useState("");
   const [resultado,setResultado]=useState(null);
