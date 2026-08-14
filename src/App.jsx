@@ -1101,7 +1101,7 @@ function usePuestos(){return React.useContext(PuestosCtx);}
 function PuestosProvider({children}){
   const [puestos,setPuestos]=useState(PUESTOS);
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Perfil+Puestos")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Perfil Puestos"]||[];
@@ -1490,7 +1490,7 @@ function StaffYoyo(){
   React.useEffect(()=>{
     if(vista!=="reporte")return;
     setLoading(true);
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Yoyo+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Yoyo App"]||d["YOYO App"]||[];
@@ -1745,7 +1745,7 @@ function StaffCargas(){
   React.useEffect(()=>{
     if(vista!=="reporte")return;
     setLoading(true);
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Cargas+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Cargas App"]||[];
@@ -2351,7 +2351,7 @@ function StaffMinutos(){
   React.useEffect(()=>{
     if(vista!=="reporte")return;
     setLoadingDrive(true);
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Minutos+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Minutos App"]||[];
@@ -2615,7 +2615,7 @@ function StaffAsistenciaReporte({onTomar,onFechas}){
   const [modal,setModal]=useState(null);
 
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Asistencias+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Asistencias App"]||[];
@@ -2782,7 +2782,7 @@ function StaffTomarAsistencia({onVolver}){
 
   // Cargar fechas registradas al montar
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Asistencias+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Asistencias App"]||[];
@@ -2873,7 +2873,7 @@ function StaffRPE(){
   const [loading,setLoading]=React.useState(true);
   const [openDate,setOpenDate]=React.useState(null);
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=RPE+y+Wellness")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["RPE y Wellness"]||[];
@@ -2987,7 +2987,7 @@ function StaffWellness(){
   const [loading,setLoading]=React.useState(true);
   const [openDate,setOpenDate]=React.useState(null);
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=RPE+y+Wellness")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["RPE y Wellness"]||[];
@@ -3384,7 +3384,7 @@ function PlayerYoyo({player}){
   const [historial,setHistorial]=useState([]);// historial de tests de este jugador
 
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Yoyo+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["YOYO App"]||d["Yoyo App"]||[];
@@ -3531,7 +3531,7 @@ function PlayerCargas({player}){
   const [data,setData]=useState(null);
 
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Cargas+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Cargas App"]||[];
@@ -3590,7 +3590,7 @@ function PlayerMinutos({player}){
   const [ranking,setRanking]=useState([]);// [{n, tot}]
 
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Minutos+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Minutos App"]||[];
@@ -3687,7 +3687,7 @@ function PlayerAsistencia({player}){
   const [diasData,setDiasData]=useState(null);// [{fecha:"2026-03-04",est:"P"|"A"}]
 
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=Asistencias+App")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["Asistencias App"]||[];
@@ -3848,7 +3848,7 @@ function PlayerRPE({player}){
   const hoyISO=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
 
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=RPE+y+Wellness")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["RPE y Wellness"]||[];
@@ -3935,7 +3935,7 @@ function PlayerWellness({player}){
   const hoyISO=(()=>{const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");})();
 
   React.useEffect(()=>{
-    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec")
+    fetch("https://script.google.com/macros/s/AKfycbzmEC2pOI2o58IVlFIEoCqYgaCTdJbMvUIivgoerLjR0fxkGhPDqIK5RWiKW1xzh3cM/exec?accion=hoja&nombre=RPE+y+Wellness")
       .then(r=>r.json())
       .then(d=>{
         const sheet=d["RPE y Wellness"]||[];
