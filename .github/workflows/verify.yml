@@ -16,7 +16,10 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          # Misma major que la usada localmente para generar package-lock.json — con
+          # Node 20 (npm más viejo) "npm ci" fallaba con "Missing: yaml@2.9.0 from lock
+          # file" porque resuelve el árbol de dependencias distinto.
+          node-version: '24'
           cache: 'npm'
 
       - name: Instalar dependencias
