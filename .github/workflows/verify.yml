@@ -1,0 +1,37 @@
+name: Verify
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    name: Build + smoke test (Staff/Jugadora/Visita) + planilla GPS real
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: 1/4 — build/ commiteado es consistente (index.html vs. archivos del commit)
+        run: node scripts/checks/checkBuildConsistency.js ${{ github.sha }}
+
+      - name: 2/4 — npm run build
+        run: npm run build
+        env:
+          CI: 'true'
+
+      - name: 3/4 — login Staff / Jugadora / Visita en jsdom (sin errores de consola)
+        run: node scripts/checks/checkJsdomLogin.js
+
+      - name: 4/4 — planilla GPS real (Partidos / Amistosos / Entrenamientos)
+        run: node scripts/checks/checkGPSSheet.js

@@ -24,7 +24,20 @@ function formatGPSFailure(res) {
 }
 
 async function main() {
-  console.log('\n=== pre-push 1/3: npm run build ===');
+  console.log('\n=== pre-push 1/4: build/ commiteado consistente (index.html vs. archivos reales) ===');
+  const { checkBuildConsistency } = require('./checks/checkBuildConsistency');
+  const consistencyResult = checkBuildConsistency(ROOT, 'HEAD');
+  if (consistencyResult.errors.length) {
+    fail(
+      'El build/ que está commiteado ahora mismo (antes de recompilar) no es consistente — ' +
+      'si Vercel lo sirve tal cual, el deploy queda roto:\n\n' +
+      consistencyResult.errors.map(e => `- ${e}`).join('\n')
+    );
+    return;
+  }
+  console.log(`✔ build/index.html consistente (${consistencyResult.refsChecked} referencias OK).`);
+
+  console.log('\n=== pre-push 2/4: npm run build ===');
   try {
     execSync('npm run build', { cwd: ROOT, stdio: 'inherit', env: { ...process.env, CI: 'true' } });
   } catch (e) {
@@ -33,7 +46,7 @@ async function main() {
   }
   console.log('✔ build OK');
 
-  console.log('\n=== pre-push 2/3: login Staff / Jugadora / Visita en jsdom (sin errores de consola) ===');
+  console.log('\n=== pre-push 3/4: login Staff / Jugadora / Visita en jsdom (sin errores de consola) ===');
   const { runLoginSmokeTests } = require('./checks/checkJsdomLogin');
   const loginResult = await runLoginSmokeTests(path.join(ROOT, 'build'));
   if (!loginResult.ok) {
@@ -45,7 +58,7 @@ async function main() {
   }
   console.log('✔ Staff, Jugadora y Visita cargan sin errores de consola.');
 
-  console.log('\n=== pre-push 3/3: planilla GPS real (Partidos / Amistosos / Entrenamientos) ===');
+  console.log('\n=== pre-push 4/4: planilla GPS real (Partidos / Amistosos / Entrenamientos) ===');
   const { checkGPSSheet } = require('./checks/checkGPSSheet');
   let gpsResult;
   try {
