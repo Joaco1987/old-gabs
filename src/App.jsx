@@ -1009,7 +1009,13 @@ function StaffActividades(){
   if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Cargando actividades...</div></Card>;
   if(!rows.length)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>No hay actividades importadas todavía.</div></Card>;
 
-  const avg=k=>filtradas.length?Math.round(filtradas.reduce((s,r)=>s+(r[k]||0),0)/filtradas.length*10)/10:0;
+  // Sin decimales salvo Vel. Max (1 decimal) — mismo criterio que el resto
+  // de las columnas de esta tabla.
+  const avg=k=>{
+    if(!filtradas.length)return 0;
+    const m=filtradas.reduce((s,r)=>s+(r[k]||0),0)/filtradas.length;
+    return k==="vmax"?Math.round(m*10)/10:Math.round(m);
+  };
 
   // Objeto "sesion" en el formato que espera RadarChart
   const sesionRadar={jugadoras:filtradas.map(r=>({n:r.jugadora,dist:r.dist,mxm:r.mxm,hsr:r.hsr,acc:r.acc,ns:r.ns}))};
