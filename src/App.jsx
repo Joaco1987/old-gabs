@@ -990,7 +990,16 @@ function StaffActividades(){
       a.spr+=r.spr;a.acc+=r.acc;a.dsc+=r.dsc;a.ns+=r.ns;
       a.vmax=Math.max(a.vmax,r.vmax);
     });
-    return Object.values(byJug).map(a=>({...a,mxm:a.min>0?Math.round(a.dist/a.min*10)/10:0}));
+    // Redondear al sumar — sumar floats de a.pl+=r.pl etc. deja restos de
+    // punto flotante (ej. 107.22000000000001) que se ven feo en la tabla.
+    return Object.values(byJug).map(a=>({
+      ...a,
+      pl:Math.round(a.pl), dist:Math.round(a.dist), hsr:Math.round(a.hsr),
+      ai18:Math.round(a.ai18), spr:Math.round(a.spr), acc:Math.round(a.acc),
+      dsc:Math.round(a.dsc), ns:Math.round(a.ns),
+      vmax:Math.round(a.vmax*10)/10,
+      mxm:a.min>0?Math.round(a.dist/a.min*10)/10:0
+    }));
   })();
 
   if(loading)return<Card><div style={{color:T.muted,textAlign:"center",padding:20,fontSize:12}}>Cargando actividades...</div></Card>;
