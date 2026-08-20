@@ -948,16 +948,20 @@ function StaffActividades(){
           nroPeriodo:r[iNro]||"",
           jugadora:String(r[iJug]||"").trim(),
           min:Math.round(parseMin(r[iMin])||0),
-          pl:parseNum(r[iPL])??0,
-          dist:parseNum(r[iDist])??0,
-          mxm:parseNum(r[iMxm])??0,
-          hsr:parseNum(r[iHsr])??0,
-          ai18:parseNum(r[iAi18])??0,
-          spr:parseNum(r[iSpr])??0,
-          acc:parseNum(r[iAcc])??0,
-          dsc:parseNum(r[iDsc])??0,
-          ns:parseNum(r[iNs])??0,
-          vmax:parseNum(r[iVmax])??0,
+          // Redondear ya al leer de la planilla (no solo al combinar
+          // actividades) — filas viejas importadas antes del fix en el
+          // Apps Script pueden tener decimales guardados tal cual, y sin
+          // esto se ven en la vista de una sola actividad.
+          pl:Math.round(parseNum(r[iPL])??0),
+          dist:Math.round(parseNum(r[iDist])??0),
+          mxm:Math.round(parseNum(r[iMxm])??0),
+          hsr:Math.round(parseNum(r[iHsr])??0),
+          ai18:Math.round(parseNum(r[iAi18])??0),
+          spr:Math.round(parseNum(r[iSpr])??0),
+          acc:Math.round(parseNum(r[iAcc])??0),
+          dsc:Math.round(parseNum(r[iDsc])??0),
+          ns:Math.round(parseNum(r[iNs])??0),
+          vmax:Math.round((parseNum(r[iVmax])??0)*10)/10,
         }));
         setRows(parsed);
         setLoading(false);
@@ -998,7 +1002,7 @@ function StaffActividades(){
       ai18:Math.round(a.ai18), spr:Math.round(a.spr), acc:Math.round(a.acc),
       dsc:Math.round(a.dsc), ns:Math.round(a.ns),
       vmax:Math.round(a.vmax*10)/10,
-      mxm:a.min>0?Math.round(a.dist/a.min*10)/10:0
+      mxm:a.min>0?Math.round(a.dist/a.min):0
     }));
   })();
 
