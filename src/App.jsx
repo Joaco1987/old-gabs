@@ -940,7 +940,12 @@ function StaffActividades(){
         const iFecha=idx("Fecha"),iPer=idx("Periodo"),iNro=idx("Nro Periodo"),iJug=idx("Jugadora"),
           iMin=idx("Minutos"),iPL=idx("Player Load"),iDist=idx("Distancia Total"),iMxm=idx("m/min"),
           iHsr=idx("HSR"),iAi18=idx("18-21"),iSpr=idx("Sprint"),iAcc=idx("ACC"),iDsc=idx("DSC"),
-          iNs=idx("Nro Sprint"),iVmax=idx("Vel");
+          // Contiene "sprint" pero no arranca con eso — así matchea tanto
+          // "Nro Sprint" como "N Sprint" (label vieja o nueva) sin
+          // confundirse con la columna "Sprint >21 km/h (m)" (iSpr, que sí
+          // arranca con "Sprint").
+          iNs=headers.findIndex(h=>{const hl=h.toLowerCase();return hl.includes("sprint")&&!hl.startsWith("sprint");}),
+          iVmax=idx("Vel");
         const parsed=data.slice(1).filter(r=>r[iJug]).map(r=>({
           fecha:fmtDate(r[iFecha])||String(r[iFecha]||""),
           fechaRaw:String(r[iFecha]||""),
@@ -1168,16 +1173,16 @@ function StaffPuestos(){
               <tr key={p.p} style={{background:p.p==="PROM"?"#0d1020":"transparent"}}>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:p.p==="PROM"?T.muted:T.blue,fontWeight:600}}>{p.p}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.n}</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:p.p==="PROM"?700:400}}>{p.dist.toLocaleString()}m</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.maroon,fontWeight:p.p==="PROM"?700:400}}>{p.pl.toLocaleString()}</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{p.mxm}</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.green}}>{p.hsr.toLocaleString()}m</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{p.ai18}m</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.red}}>{p.spr}m</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.muted}}>{p.ns}</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.purple}}>{p.acc}</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{p.dsc}</td>
-                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber,fontWeight:500}}>{p.vmax}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.blue,fontWeight:p.p==="PROM"?700:400}}>{p.dist.toLocaleString()}m</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:"#ffffff",fontWeight:p.p==="PROM"?700:400}}>{p.pl.toLocaleString()}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.cyan}}>{p.mxm}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.green}}>{p.hsr.toLocaleString()}m</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.amber}}>{p.ai18}m</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.red}}>{p.spr}m</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.muted}}>{p.ns}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.purple}}>{p.acc}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.cyan}}>{p.dsc}</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.amber,fontWeight:500}}>{p.vmax}</td>
               </tr>
             ))}</tbody>
           </table>
@@ -4238,13 +4243,13 @@ function useReadOnly(){return React.useContext(ReadOnlyCtx);}
 // Perfil de Puestos. Acá simplemente se lee esa hoja tal cual — así el
 // número que ve el staff en la app es SIEMPRE el mismo que en Drive, sin
 // reimplementar el cálculo (y sin riesgo de que se desincronicen).
-const VOL_HEADERS_CRUDO=['Min','Dist Total','PL (prom)','HSR','AI 18-21','AI +21','Nro Sprint','ACC','DSC','Vel Max'];
-const VOL_HEADERS_PCT=['Dist %','PL %','HSR %','AI 18-21 %','AI +21 %','Nro Sprint %','ACC %','DSC %','Vel Max %'];
+const VOL_HEADERS_CRUDO=['Min','Dist Total','PL (prom)','HSR','AI 18-21','AI +21','N Sprint','ACC','DSC','Vel Max'];
+const VOL_HEADERS_PCT=['Dist %','PL %','HSR %','AI 18-21 %','AI +21 %','N Sprint %','ACC %','DSC %','Vel Max %'];
 // Mismos umbrales que colorUmbral_ en Apps Script: <lo verde, lo–hi amarillo, >hi rojo.
 const VOL_UMBRALES={
   "Dist %":{lo:200,hi:300}, "PL %":{lo:200,hi:300},
   "HSR %":{lo:250,hi:300}, "AI 18-21 %":{lo:250,hi:300},
-  "AI +21 %":{lo:75,hi:85}, "Nro Sprint %":{lo:180,hi:250},
+  "AI +21 %":{lo:75,hi:85}, "N Sprint %":{lo:180,hi:250},
   "ACC %":{lo:250,hi:350}, "DSC %":{lo:250,hi:350},
   "Vel Max %":{lo:75,hi:85}
 };
@@ -4288,7 +4293,15 @@ function StaffVolSemanal(){
     });
   },[]); // eslint-disable-line
 
-  const idx=(nombre)=>headers.indexOf(nombre);
+  // Alias por si la hoja "Vol Semanal" en Drive todavía no se recalculó
+  // desde que se renombró "Nro Sprint" → "N Sprint" — así no queda una
+  // columna en blanco hasta el próximo cálculo.
+  const VOL_ALIAS={"N Sprint":["N Sprint","Nro Sprint"],"N Sprint %":["N Sprint %","Nro Sprint %"]};
+  const idx=(nombre)=>{
+    const candidatos=VOL_ALIAS[nombre]||[nombre];
+    for(const c of candidatos){const i=headers.indexOf(c);if(i>=0)return i;}
+    return -1;
+  };
   const iMicro=idx("Microciclo"), iJug=idx("Jugadora"), iPuesto=idx("Puesto"), iSes=idx("Sesiones");
 
   const colorPct=(txt,def)=>{
