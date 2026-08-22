@@ -1132,6 +1132,7 @@ function PuestosProvider({children}){
           n:  String(r[idx("Nombre")]||"").trim(),
           jugadoras: String(r[idx("Jugadoras")]||"").split(",").map(x=>x.trim()).filter(Boolean),
           dist: +r[idx("Dist")]||0,
+          pl:   +r[idx("PL")]||0,
           mxm:  +r[idx("Mxm")]||0,
           hsr:  +r[idx("HSR")]||0,
           ai18: +r[idx("AI18")]||0,
@@ -1162,12 +1163,13 @@ function StaffPuestos(){
         <CT text="Por puesto — partidos oficiales (≥48 min) — en vivo desde Drive"/>
         <div style={{overflowX:"auto"}}>
           <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
-            <TH cols={["Puesto","Nombre","Dist.","M/min","HSR","AI 18-21","AI >21","Nº Spr","ACC","DSC","V.máx"]}/>
+            <TH cols={["Puesto","Nombre","Dist.","PL","M/min","HSR","AI 18-21","AI >21","Nº Spr","ACC","DSC","V.máx"]}/>
             <tbody>{puestos.map(p=>(
               <tr key={p.p} style={{background:p.p==="PROM"?"#0d1020":"transparent"}}>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:p.p==="PROM"?T.muted:T.blue,fontWeight:600}}>{p.p}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.text}}>{p.n}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.blue,fontWeight:p.p==="PROM"?700:400}}>{p.dist.toLocaleString()}m</td>
+                <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.maroon,fontWeight:p.p==="PROM"?700:400}}>{p.pl.toLocaleString()}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.cyan}}>{p.mxm}</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.green}}>{p.hsr.toLocaleString()}m</td>
                 <td style={{padding:"5px 6px",borderBottom:"1px solid #141824",color:T.amber}}>{p.ai18}m</td>
