@@ -4230,238 +4230,184 @@ const ReadOnlyCtx=React.createContext(false);
 function useReadOnly(){return React.useContext(ReadOnlyCtx);}
 
 // ─── VOL SEMANAL ──────────────────────────────────────────────────────────────
+// La hoja "Vol Semanal" ya viene calculada desde Sheets (menú GPS → "3.
+// Calcular Vol Semanal"): sumatoria cruda de la semana por jugadora (PL
+// como promedio, Vel Max como máxima) y el % de cada parámetro contra el
+// Perfil de Puestos. Acá simplemente se lee esa hoja tal cual — así el
+// número que ve el staff en la app es SIEMPRE el mismo que en Drive, sin
+// reimplementar el cálculo (y sin riesgo de que se desincronicen).
+const VOL_HEADERS_CRUDO=['Min','Dist Total','PL (prom)','HSR','AI 18-21','AI +21','Nro Sprint','ACC','DSC','Vel Max'];
+const VOL_HEADERS_PCT=['Dist %','PL %','HSR %','AI 18-21 %','AI +21 %','Nro Sprint %','ACC %','DSC %','Vel Max %'];
+// Mismos umbrales que colorUmbral_ en Apps Script: <lo verde, lo–hi amarillo, >hi rojo.
+const VOL_UMBRALES={
+  "Dist %":{lo:200,hi:300}, "PL %":{lo:200,hi:300},
+  "HSR %":{lo:250,hi:300}, "AI 18-21 %":{lo:250,hi:300},
+  "AI +21 %":{lo:75,hi:85}, "Nro Sprint %":{lo:180,hi:250},
+  "ACC %":{lo:250,hi:350}, "DSC %":{lo:250,hi:350},
+  "Vel Max %":{lo:75,hi:85}
+};
+
 function StaffVolSemanal(){
-  const {partidos:P=[],entrenos:E=[]}=useGPS();
-  const PARTIDOS=P.length?P:PARTIDOS_FB;
-  const ENTRENOS=E;
-
-  const PUESTOS_MAP={
-    "Alfaro Javiera":"WG","Arau María Paz":"WG","Carrasco Sofia":"VL",
-    "Errazu Sofia":"WG","Gacitua Emilia":"VL","Gomez Camila":"LT",
-    "Gutierrez Renata":"LT","Hevia Valentina":"LT","Liu Macarena":"WG",
-    "Manriquez Fernanda":"MC","Martinez Amanda":"DC","Mateluna Florencia":"LT",
-    "Muñoz Constanza":"DC","Pareja Camila":"DC","Pollmann Marianne":"DL",
-    "Retamal Antonia":"LT","Sepulveda Eileen":"DL","Sierra Julieta":"MC",
-    "Silva Victoria":"VL"
-  };
-
+  const [headers,setHeaders]=useState([]);
+  const [filas,setFilas]=useState([]);
+  const [microciclo,setMicrociclo]=useState(null);
+  const [loading,setLoading]=useState(true);
+  const [error,setError]=useState("");
   const [desde,setDesde]=useState("");
   const [hasta,setHasta]=useState("");
-  const [resultado,setResultado]=useState(null);
-  const [loading,setLoading]=useState(false);
+  const [calculando,setCalculando]=useState(false);
 
-  const GAME_REF={
-    DC:{hsr:374,acc:10,dsc:16,spr:4},
-    LT:{hsr:626,acc:13,dsc:22,spr:7},
-    MC:{hsr:974,acc:27,dsc:47,spr:8},
-    VL:{hsr:1170,acc:32,dsc:45,spr:77},
-    WG:{hsr:890,acc:26,dsc:22,spr:18},
-    DL:{hsr:581,acc:17,dsc:16,spr:3},
-  };
-  // Multiplicadores semana con partido
-  const MULT={
-    hsr:{lunes:0.4,miercoles:0.6,viernes:0.15,partido:1.0},
-    acc:{lunes:1.0,miercoles:0.5,viernes:0.6,partido:1.0},
-    dsc:{lunes:1.0,miercoles:0.5,viernes:0.6,partido:1.0},
-    spr:{lunes:0.1,miercoles:1.5,viernes:0.5,partido:1.0},
-  };
-  const targetSem=(ref,param)=>Math.round(ref*(MULT[param].lunes+MULT[param].miercoles+MULT[param].viernes+MULT[param].partido));
-
-  const calcular=()=>{
-    if(!desde||!hasta){alert("Ingresá ambas fechas");return;}
+  // Trae la hoja "Vol Semanal" tal cual está en Drive. Se usa tanto al
+  // entrar a la pestaña como después de calcular desde la app, para que
+  // los dos caminos (Sheets y app) siempre terminen mostrando lo mismo.
+  const cargar=()=>{
     setLoading(true);
-    try{
-      const d1=new Date(desde+"T00:00:00");
-      const d2=new Date(hasta+"T23:59:59");
-
-      const enRango=(fechaStr)=>{
-        const MESES={ene:0,feb:1,mar:2,abr:3,may:4,jun:5,jul:6,ago:7,sep:8,oct:9,nov:10,dic:11};
-        const s=String(fechaStr).trim();
-        let d;
-        // Formato "3-ago", "15-jun"
-        const m=s.match(/^(\d+)-([a-z]+)$/i);
-        if(m){const mes=MESES[m[2].toLowerCase()];if(mes===undefined)return false;d=new Date(2026,mes,parseInt(m[1]));}
-        // Formato "YYYY-MM-DD"
-        else if(s.match(/^\d{4}-\d{2}-\d{2}/)){d=new Date(s+"T12:00:00");}
-        // Formato "D/M/YYYY"
-        else if(s.match(/^\d+\/\d+\/\d{4}/)){const p=s.split("/");d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));}
-        else{d=new Date(s);if(isNaN(d.getTime()))return false;}
-        if(isNaN(d.getTime()))return false;
-        return d>=d1&&d<=d2;
-      };
-
-      const sesiones=[];
-      [...ENTRENOS,...PARTIDOS].forEach(s=>{
-        if(!enRango(s.fecha))return;
-        s.jugadoras.forEach(j=>{
-          sesiones.push({jugadora:j.n,hsr:j.hsr||0,ai18:j.ai18||0,acc:j.acc||0,dsc:j.dsc||0,spr:j.spr||0,ns:j.ns||0,pl:j.pl||0});
-        });
-      });
-
-      // Agrupar por jugadora
-      const porJug={};
-      sesiones.forEach(r=>{
-        if(!porJug[r.jugadora])porJug[r.jugadora]={hsr:0,ai18:0,acc:0,dsc:0,spr:0,ns:0,pl:0,ses:0};
-        porJug[r.jugadora].hsr+=r.hsr;
-        porJug[r.jugadora].ai18+=r.ai18;
-        porJug[r.jugadora].acc+=r.acc;
-        porJug[r.jugadora].dsc+=r.dsc;
-        porJug[r.jugadora].spr+=r.spr;
-        porJug[r.jugadora].ns+=r.ns;
-        porJug[r.jugadora].pl+=r.pl;
-        porJug[r.jugadora].ses++;
-      });
-
-      // Agrupar por puesto
-      const porPuesto={};
-      Object.keys(PUESTOS_MAP).forEach(jug=>{
-        const p=PUESTOS_MAP[jug];
-        if(!porPuesto[p])porPuesto[p]={jugs:[],hsr:0,ai18:0,acc:0,dsc:0,spr:0,ns:0,pl:0,count:0};
-        if(porJug[jug]){
-          porPuesto[p].jugs.push({n:jug,...porJug[jug]});
-          porPuesto[p].hsr+=porJug[jug].hsr;
-          porPuesto[p].ai18+=porJug[jug].ai18;
-          porPuesto[p].acc+=porJug[jug].acc;
-          porPuesto[p].dsc+=porJug[jug].dsc;
-          porPuesto[p].spr+=porJug[jug].spr;
-          porPuesto[p].ns+=porJug[jug].ns;
-          porPuesto[p].pl+=porJug[jug].pl;
-          porPuesto[p].count++;
-        }
-      });
-      // Promedios por puesto
-      Object.keys(porPuesto).forEach(p=>{
-        const pp=porPuesto[p];
-        if(pp.count>0){pp.hsr=Math.round(pp.hsr/pp.count);pp.ai18=Math.round(pp.ai18/pp.count);pp.acc=Math.round(pp.acc/pp.count);pp.dsc=Math.round(pp.dsc/pp.count);pp.spr=Math.round(pp.spr/pp.count);pp.ns=Math.round(pp.ns/pp.count);pp.pl=Math.round(pp.pl/pp.count);}
-      });
-
-      setResultado({porPuesto,porJug,totalSesiones:sesiones.length});
-    }catch(e){alert("Error: "+e.message);}
-    setLoading(false);
+    return fetch(`${APPS_URL}?accion=hoja&nombre=${encodeURIComponent("Vol Semanal")}`)
+      .then(r=>r.json())
+      .then(d=>{
+        const sheet=d["Vol Semanal"]||[];
+        if(sheet.length<2){setHeaders([]);setFilas([]);setLoading(false);return null;}
+        const head=sheet[0];
+        const rows=sheet.slice(1).filter(r=>r[1]); // con Jugadora cargada
+        setHeaders(head);
+        setFilas(rows);
+        setLoading(false);
+        return {head,rows};
+      })
+      .catch(()=>{setError("No se pudo cargar Vol Semanal");setLoading(false);return null;});
   };
 
-  const pct=(real,target)=>target>0?Math.round(real/target*100):0;
-  const pctColor=(p)=>p>=90?T.green:p>=70?T.amber:T.red;
-  const ORDEN=["DC","LT","MC","VL","WG","DL"];
+  React.useEffect(()=>{
+    cargar().then(res=>{
+      if(!res)return;
+      const iM=res.head.indexOf("Microciclo");
+      const micros=res.rows.map(r=>parseInt(r[iM],10)).filter(n=>!isNaN(n));
+      if(micros.length)setMicrociclo(Math.max(...micros));
+    });
+  },[]); // eslint-disable-line
+
+  const idx=(nombre)=>headers.indexOf(nombre);
+  const iMicro=idx("Microciclo"), iJug=idx("Jugadora"), iPuesto=idx("Puesto"), iSes=idx("Sesiones");
+
+  const colorPct=(txt,def)=>{
+    if(!def||txt===undefined||txt===null||txt==="—"||txt==="")return null;
+    const v=parseFloat(String(txt).replace("%",""));
+    if(isNaN(v))return null;
+    return v<def.lo?T.green:(v<=def.hi?T.amber:T.red);
+  };
+
+  const microciclos=Array.from(new Set(filas.map(r=>parseInt(r[iMicro],10)).filter(n=>!isNaN(n)))).sort((a,b)=>a-b);
+  const filasMicro=filas
+    .filter(r=>parseInt(r[iMicro],10)===microciclo)
+    .sort((a,b)=>String(a[iJug]).localeCompare(String(b[iJug])));
+
+  // "YYYY-MM-DD" (lo que devuelve <input type="date">) → "DD/MM/YYYY"
+  // (lo que espera calcularVolSemanalCore_ en Apps Script, igual que los
+  // prompts del menú de Sheets).
+  const aDDMMYYYY=(iso)=>{
+    if(!iso)return "";
+    const [y,m,d]=iso.split("-");
+    return `${d}/${m}/${y}`;
+  };
+
+  const calcularEnDrive=()=>{
+    if(!desde||!hasta){alert("Ingresá ambas fechas (Desde y Hasta)");return;}
+    setCalculando(true);
+    const params=new URLSearchParams({accion:"calcularVolSemanal",desde:aDDMMYYYY(desde),hasta:aDDMMYYYY(hasta)});
+    fetch(`${APPS_URL}?${params.toString()}`)
+      .then(r=>r.json())
+      .then(res=>{
+        setCalculando(false);
+        if(!res||!res.ok){alert((res&&res.error)||"Error al calcular Vol Semanal");return;}
+        alert(`✅ Vol Semanal calculado y guardado en Drive.\n\nMicrociclo: ${res.microciclo}\nJugadoras: ${res.jugadoras}\nRegistros GPS: ${res.sesiones}`);
+        cargar().then(()=>setMicrociclo(res.microciclo));
+      })
+      .catch(()=>{setCalculando(false);alert("No se pudo calcular — revisá tu conexión");});
+  };
+
+  const calcularCard=(
+    <Card style={{marginBottom:10}}>
+      <CT text="Calcular Vol Semanal"/>
+      <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"flex-end"}}>
+        <div>
+          <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Desde</div>
+          <input type="date" value={desde} onChange={e=>setDesde(e.target.value)}
+            style={{background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"7px 10px",outline:"none",fontFamily:"inherit"}}/>
+        </div>
+        <div>
+          <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Hasta</div>
+          <input type="date" value={hasta} onChange={e=>setHasta(e.target.value)}
+            style={{background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"7px 10px",outline:"none",fontFamily:"inherit"}}/>
+        </div>
+        <button onClick={calcularEnDrive} disabled={calculando} style={{padding:"8px 20px",borderRadius:6,border:"none",background:T.blue,color:"#fff",fontSize:12,fontWeight:600,cursor:calculando?"default":"pointer",opacity:calculando?0.6:1,fontFamily:"inherit"}}>
+          {calculando?"Calculando...":"Calcular y guardar en Drive"}
+        </button>
+      </div>
+      <div style={{fontSize:10,color:T.muted,marginTop:8}}>Calcula el microciclo de esa semana (igual que "3. Calcular Vol Semanal" en el menú GPS de Sheets) y lo agrega a la hoja "Vol Semanal" en Drive — no hace falta abrir la planilla.</div>
+    </Card>
+  );
+
+  if(loading)return <>{calcularCard}<Card><CT text="Volumen Semanal"/><div style={{color:T.muted,fontSize:12}}>Cargando...</div></Card></>;
+  if(error)return <>{calcularCard}<Card><CT text="Volumen Semanal"/><div style={{color:T.red,fontSize:12}}>{error}</div></Card></>;
+  if(!filas.length)return (
+    <>
+      {calcularCard}
+      <Card>
+        <CT text="Volumen Semanal"/>
+        <div style={{color:T.muted,fontSize:12}}>Todavía no hay ningún Vol Semanal calculado. Usá el cuadro de arriba, o corré "3. Calcular Vol Semanal" desde el menú GPS en la planilla.</div>
+      </Card>
+    </>
+  );
 
   return(
     <>
+      {calcularCard}
+
       <Card style={{marginBottom:10}}>
-        <CT text="Volumen Semanal — Seleccioná el período"/>
-        <div style={{display:"flex",gap:10,flexWrap:"wrap",alignItems:"flex-end"}}>
-          <div>
-            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Desde</div>
-            <input type="date" value={desde} onChange={e=>setDesde(e.target.value)}
-              style={{background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"7px 10px",outline:"none",fontFamily:"inherit"}}/>
-          </div>
-          <div>
-            <div style={{fontSize:11,color:T.muted,marginBottom:4}}>Hasta</div>
-            <input type="date" value={hasta} onChange={e=>setHasta(e.target.value)}
-              style={{background:"#0d1020",border:`1px solid ${T.border2}`,borderRadius:6,color:T.text,fontSize:12,padding:"7px 10px",outline:"none",fontFamily:"inherit"}}/>
-          </div>
-          <button onClick={calcular} style={{padding:"8px 20px",borderRadius:6,border:"none",background:T.blue,color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>
-            {loading?"Calculando...":"Calcular"}
-          </button>
-        </div>
-        <div style={{fontSize:10,color:T.muted,marginTop:8}}>Los targets se calculan con multiplicadores de semana CON partido (Lunes+Miérc+Viernes+Partido)</div>
+        <CT text="Volumen Semanal — Microciclo"/>
+        {fbtn(microciclo,setMicrociclo,microciclos.map(m=>[m,`Microciclo ${m}`]))}
+        <div style={{fontSize:10,color:T.muted}}>Datos guardados en Drive (hoja "Vol Semanal"): sumatoria de la semana por jugadora y % contra el Perfil de Puestos.</div>
       </Card>
 
-      {resultado&&(<>
-        {/* Resumen por puesto */}
-        <Card style={{marginBottom:10}}>
-          <CT text={`Resumen por Puesto — ${resultado.totalSesiones} registros GPS`}/>
-          <div style={{overflowX:"auto"}}>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-              <thead><tr>
-                <th style={{textAlign:"left",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>Puesto</th>
-                {["HSR >15","HSR >18","ACC","DSC","Sprint","Nº Spr","PL"].map(c=>(
-                  <th key={c} style={{textAlign:"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",whiteSpace:"nowrap"}}>{c}</th>
-                ))}
-              </tr></thead>
-              <tbody>{ORDEN.map(p=>{
-                const pp=resultado.porPuesto[p];
-                if(!pp||!pp.count)return null;
-                const ref=GAME_REF[p];
-                const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
-                const Cell=({real,target,unit})=>{
-                  const p2=target>0?Math.round(real/target*100):null;
-                  const col=p2===null?T.text:p2>=90?T.green:p2>=70?T.amber:T.red;
-                  return(
-                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
-                      <div style={{fontSize:9,color:T.muted,marginBottom:2}}>Plan: {target>0?target+unit:"—"}</div>
-                      <div style={{display:"flex",justifyContent:"center",alignItems:"baseline",gap:3}}>
-                        <span style={{fontWeight:700,color:col}}>{real}{unit}</span>
-                        {p2!==null&&<span style={{fontSize:9,color:col}}>({p2}%)</span>}
-                      </div>
+      <Card>
+        <CT text={`Detalle por Jugadora — Microciclo ${microciclo??""} (${filasMicro.length} jugadoras)`}/>
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
+            <thead><tr>
+              <th style={{textAlign:"left",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>Jugadora</th>
+              <th style={{textAlign:"left",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>P</th>
+              <th style={{textAlign:"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>Ses</th>
+              {VOL_HEADERS_CRUDO.map(c=>(
+                <th key={c} style={{textAlign:"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",whiteSpace:"nowrap"}}>{c}</th>
+              ))}
+              {VOL_HEADERS_PCT.map(c=>(
+                <th key={c} style={{textAlign:"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",whiteSpace:"nowrap"}}>{c}</th>
+              ))}
+            </tr></thead>
+            <tbody>{filasMicro.map((r,ri)=>(
+              <tr key={ri}>
+                <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontWeight:600}}>{String(r[iJug]).split(" ")[0]}</td>
+                <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.muted,fontSize:10}}>{r[iPuesto]}</td>
+                <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.text,textAlign:"center"}}>{r[iSes]}</td>
+                {VOL_HEADERS_CRUDO.map(c=>{
+                  const ci=idx(c);
+                  return <td key={c} style={{padding:"6px 6px",borderBottom:"1px solid #141824",textAlign:"center",color:T.text,fontWeight:600,whiteSpace:"nowrap"}}>{ci>=0?r[ci]:""}</td>;
+                })}
+                {VOL_HEADERS_PCT.map(c=>{
+                  const ci=idx(c);
+                  const val=ci>=0?r[ci]:"";
+                  const col=colorPct(val,VOL_UMBRALES[c]);
+                  return (
+                    <td key={c} style={{padding:"4px 4px",borderBottom:"1px solid #141824",textAlign:"center"}}>
+                      <div style={{padding:"3px 4px",borderRadius:4,fontWeight:700,color:col?"#fff":T.muted,background:col||"transparent",whiteSpace:"nowrap"}}>{val||"—"}</div>
                     </td>
                   );
-                };
-                return(
-                  <tr key={p}>
-                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.text,fontWeight:600}}>{p}</td>
-                    <Cell real={pp.hsr} target={tH} unit="m"/>
-                    <Cell real={pp.ai18} target={Math.round(tH*0.3)} unit="m"/>
-                    <Cell real={pp.acc} target={tA} unit=""/>
-                    <Cell real={pp.dsc} target={tD} unit=""/>
-                    <Cell real={pp.spr} target={tS} unit="m"/>
-                    <Cell real={pp.ns} target={0} unit=""/>
-                    <Cell real={pp.pl} target={0} unit=""/>
-                  </tr>
-                );
-              })}</tbody>
-            </table>
-          </div>
-        </Card>
-
-        {/* Detalle por jugadora */}
-        <Card>
-          <CT text="Detalle por Jugadora"/>
-          <div style={{overflowX:"auto"}}>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:11}}>
-              <thead><tr>
-                <th style={{textAlign:"left",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>Jugadora</th>
-                <th style={{textAlign:"left",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase"}}>P</th>
-                {["HSR >15","HSR >18","ACC","DSC","Sprint","Nº Spr","PL"].map(c=>(
-                  <th key={c} style={{textAlign:"center",fontSize:10,color:T.muted,padding:"5px 6px",borderBottom:`1px solid ${T.border}`,textTransform:"uppercase",whiteSpace:"nowrap"}}>{c}</th>
-                ))}
-              </tr></thead>
-              <tbody>{Object.keys(PUESTOS_MAP).sort().map(jug=>{
-                const d=resultado.porJug[jug];
-                if(!d)return null;
-                const p=PUESTOS_MAP[jug];
-                const ref=GAME_REF[p]||GAME_REF.DC;
-                const tH=targetSem(ref.hsr,"hsr"),tA=targetSem(ref.acc,"acc"),tD=targetSem(ref.dsc,"dsc"),tS=targetSem(ref.spr,"spr");
-                const Cell=({real,target,unit})=>{
-                  const p2=target>0?Math.round(real/target*100):null;
-                  const col=p2===null?T.text:p2>=90?T.green:p2>=70?T.amber:T.red;
-                  return(
-                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",textAlign:"center"}}>
-                      <div style={{fontSize:9,color:T.muted,marginBottom:2}}>Plan: {target>0?target+unit:"—"}</div>
-                      <div style={{display:"flex",justifyContent:"center",alignItems:"baseline",gap:3}}>
-                        <span style={{fontWeight:700,color:col}}>{real}{unit}</span>
-                        {p2!==null&&<span style={{fontSize:9,color:col}}>({p2}%)</span>}
-                      </div>
-                    </td>
-                  );
-                };
-                return(
-                  <tr key={jug}>
-                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.text,whiteSpace:"nowrap",fontSize:11}}>{jug.split(" ")[0]}</td>
-                    <td style={{padding:"6px 6px",borderBottom:"1px solid #141824",color:T.muted,fontSize:10}}>{p}</td>
-                    <Cell real={Math.round(d.hsr)} target={tH} unit="m"/>
-                    <Cell real={Math.round(d.ai18)} target={Math.round(tH*0.3)} unit="m"/>
-                    <Cell real={Math.round(d.acc)} target={tA} unit=""/>
-                    <Cell real={Math.round(d.dsc)} target={tD} unit=""/>
-                    <Cell real={Math.round(d.spr)} target={tS} unit="m"/>
-                    <Cell real={Math.round(d.ns)} target={0} unit=""/>
-                    <Cell real={Math.round(d.pl)} target={0} unit=""/>
-                  </tr>
-                );
-              })}</tbody>
-            </table>
-          </div>
-        </Card>
-      </>)}
+                })}
+              </tr>
+            ))}</tbody>
+          </table>
+        </div>
+      </Card>
     </>
   );
 }
